@@ -7,21 +7,14 @@
   text-decoration: none;
   padding: 5px;
 }
-.not_main{
-  background-color: #0B1840;
-}
-.main{
-  background-color: #eff1f5;
-  position: relative;
 
-}
-.box_back{
+.login_back{
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: white;
-  height:400px;
-  width: 500px;
+  padding:60px;
+
 
 }
 .middle{
@@ -42,4 +35,12 @@
 .button{
   margin-top: 20px;
   justify-content: center;
+}
+.signup_back{
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+
 }

@@ -4,8 +4,12 @@ import { authActions } from "../../redux/reducer/authReducer";
 import jwtDecode from "jwt-decode";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import {useDispatch} from 'react-redux'
 
 const Login = () => {
+
+  const dispatch = useDispatch();
+
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -13,8 +17,9 @@ const Login = () => {
   }, []);
 
   const onSubmit = async (data) => {
-    await new Promise((r) => setTimeout(r, 1000));
-    alert(JSON.stringify(data));
+    console.log(data)
+    dispatch(authActions.logIn())
+
   };
 
   const {
@@ -29,7 +34,7 @@ const Login = () => {
 
   return (
     <div className='middle'>
-      <div className="box_back">
+      <div className="login_back">
         <Form onSubmit={handleSubmit(onSubmit)} >
           <div className='login'> 
             로그인
