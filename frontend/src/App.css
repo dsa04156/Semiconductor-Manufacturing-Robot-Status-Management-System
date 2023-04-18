@@ -7,3 +7,39 @@
   text-decoration: none;
   padding: 5px;
 }
+.not_main{
+  background-color: #0B1840;
+}
+.main{
+  background-color: #eff1f5;
+  position: relative;
+
+}
+.box_back{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  height:400px;
+  width: 500px;
+
+}
+.middle{
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  
+  background: linear-gradient(45deg,#050A24 40%,#0B1840);
+
+}
+.login{
+  text-align: center;
+  font-weight: bold;
+  font-size: x-large;
+  margin-bottom: 20px;
+}
+.button{
+  margin-top: 20px;
+  justify-content: center;
+}
