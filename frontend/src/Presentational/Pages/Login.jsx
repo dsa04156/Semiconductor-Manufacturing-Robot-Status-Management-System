@@ -4,10 +4,10 @@ import { authActions } from "../../redux/reducer/authReducer";
 import jwtDecode from "jwt-decode";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import {useDispatch} from 'react-redux'
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Login = () => {
-
   const dispatch = useDispatch();
 
   const [isMounted, setIsMounted] = useState(false);
@@ -17,9 +17,8 @@ const Login = () => {
   }, []);
 
   const onSubmit = async (data) => {
-    console.log(data)
-    dispatch(authActions.logIn())
-
+    console.log(data);
+    dispatch(authActions.logIn());
   };
 
   const {
@@ -33,16 +32,12 @@ const Login = () => {
   }
 
   return (
-    <div className='middle'>
+    <div className="middle">
       <div className="login_back">
-        <Form onSubmit={handleSubmit(onSubmit)} >
-          <div className='login'> 
-            로그인
-          </div>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <div className="login">로그인</div>
           <Form.Group>
-            <Form.Label htmlFor="email" >
-              이메일
-            </Form.Label>
+            <Form.Label htmlFor="email">이메일</Form.Label>
             <Form.Control
               id="email"
               type="text"
@@ -60,9 +55,7 @@ const Login = () => {
           </Form.Group>
 
           <Form.Group>
-            <Form.Label htmlFor="password">
-              비밀번호
-            </Form.Label>
+            <Form.Label htmlFor="password">비밀번호</Form.Label>
             <Form.Control
               id="password"
               type="password"
@@ -81,6 +74,9 @@ const Login = () => {
           <Button type="submit" disabled={isSubmitting} className="button">
             로그인
           </Button>
+          <Link to="/signup">
+            <Button className="button">회원가입</Button>
+          </Link>
         </Form>
       </div>
     </div>
