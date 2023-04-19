@@ -33,15 +33,19 @@ const Login = () => {
 
   return (
     <div className="middle">
+      <div className="logo">WPHM</div>
+
       <div className="login_back">
         <Form onSubmit={handleSubmit(onSubmit)}>
           <div className="login">로그인</div>
           <Form.Group>
-            <Form.Label htmlFor="email">이메일</Form.Label>
+            <Form.Label htmlFor="email">아이디</Form.Label>
             <Form.Control
+              autoFocus={true}
+              htmlSize={50}
               id="email"
               type="text"
-              placeholder="test@email.com"
+              placeholder="balamia@wonik.co.kr"
               aria-invalid={!isDirty ? undefined : errors.email ? "true" : "false"}
               {...register("email", {
                 required: "이메일은 필수 입력입니다.",
@@ -55,11 +59,13 @@ const Login = () => {
           </Form.Group>
 
           <Form.Group>
-            <Form.Label htmlFor="password">비밀번호</Form.Label>
+            <Form.Label htmlFor="password" className="mt-3">
+              비밀번호
+            </Form.Label>
             <Form.Control
               id="password"
               type="password"
-              placeholder="****************"
+              placeholder="Enter your password"
               aria-invalid={!isDirty ? undefined : errors.password ? "true" : "false"}
               {...register("password", {
                 required: "비밀번호는 필수 입력입니다.",
@@ -71,12 +77,15 @@ const Login = () => {
             />
             {errors.password && <small role="alert">{errors.password.message}</small>}
           </Form.Group>
-          <Button type="submit" disabled={isSubmitting} className="button">
-            로그인
-          </Button>
-          <Link to="/signup">
-            <Button className="button">회원가입</Button>
-          </Link>
+          <div className=" d-grid gap-2 mt-4">
+            <Button size="lg" type="submit" disabled={isSubmitting} className="button">
+              로그인
+            </Button>
+            <Link to="/signup" className="btn">
+                회원가입
+
+            </Link>
+          </div>
         </Form>
       </div>
     </div>
