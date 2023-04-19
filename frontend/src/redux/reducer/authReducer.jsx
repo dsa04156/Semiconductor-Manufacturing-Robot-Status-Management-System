@@ -14,6 +14,7 @@ const authReducer = createSlice({
     logIn(state, action) {
       state.isLogined = true
       state.email = action.payload.data.sub
+
     },
 
     logOut(state) {
