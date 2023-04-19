@@ -16,9 +16,8 @@ const Login = () => {
     setIsMounted(true);
   }, []);
 
-  const onSubmit = async (data) => {
-    console.log(data);
-    dispatch(authActions.logIn());
+  const onSubmit =  (data) => {
+    dispatch(authActions.logIn({data}));
   };
 
   const {
@@ -82,8 +81,7 @@ const Login = () => {
               로그인
             </Button>
             <Link to="/signup" className="btn">
-                회원가입
-
+              회원가입
             </Link>
           </div>
         </Form>
