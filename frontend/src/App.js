@@ -11,10 +11,9 @@ import SignUp from './Presentational/Pages/SignUp';
 import { useSelector } from "react-redux";
 
 function App() {
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  useEffect(() => {
+  const isLoggedIn = useSelector((state) => state.auth.isLogined);
 
-  },[isLoggedIn])
+  console.log(isLoggedIn)
   return (
     <Back>
       <Routes>
@@ -28,7 +27,7 @@ function App() {
         <Route path="/main" element={<Mainpage/>} />
         <Route path="/vm" element={<VirtualMetrology />} />
       </Routes>
-      {isLoggedIn && <SideBar />}
+      {isLoggedIn?<SideBar />:""}
     </Back>
   );
 }

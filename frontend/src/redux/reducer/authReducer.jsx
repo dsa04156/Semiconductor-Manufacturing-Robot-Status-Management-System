@@ -13,7 +13,8 @@ const authReducer = createSlice({
   reducers: {
     logIn(state, action) {
       state.isLogined = true
-      state.email = action.payload.data.sub
+      state.email = action.payload.data.email
+      
 
     },
 
