@@ -7,9 +7,9 @@ import Form from "react-bootstrap/Form";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
-const Login = () => {
+const FindPassword = () => {
   const dispatch = useDispatch();
-
+  
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const Login = () => {
   }, []);
 
   const onSubmit =  (data) => {
-    dispatch(authActions.logIn({data}));
+    dispatch(authActions.FindPassword({data}));
   };
 
   const {
@@ -36,10 +36,9 @@ const Login = () => {
 
       <div className="login_back">
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <div className="login"><h1>로그인</h1></div>
+          <div className="login"><h1>비밀번호 찾기</h1></div>
           <Form.Group>
-            <Form.Label htmlFor="email">아이디</Form.Label>
-            <Link to="/FindID" className="btn2"> 아이디 찾기 </Link>
+            <Form.Label htmlFor="name"> 아이디</Form.Label>
             <Form.Control
               autoFocus={true}
               htmlSize={50}
@@ -59,32 +58,34 @@ const Login = () => {
           </Form.Group>
 
           <Form.Group>
-            <Form.Label htmlFor="password" className="mt-3">
-              비밀번호
-              <Link to="/FindPassword" className="btn4"> 비밀번호 찾기 </Link>
+            <Form.Label htmlFor="name" className="mt-3">
+              이름
             </Form.Label>
+            
             <Form.Control
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              aria-invalid={!isDirty ? undefined : errors.password ? "true" : "false"}
-              {...register("password", {
-                required: "비밀번호는 필수 입력입니다.",
-                minLength: {
-                  value: 8,
-                  message: "8자리 이상 비밀번호를 사용하세요.",
+              autoFocus={true}
+              htmlSize={50}
+              id="name"
+              type="text"
+              placeholder="Enter your Name"
+              
+              aria-invalid={!isDirty ? undefined : errors.name ? "true" : "false"}
+              {...register("name", {
+                required: "이름은 필수 입력입니다.",
+                pattern: {
+                  value: /^[가-힣a-zA-Z0-9]+$/,
+                  message: "한글, 영어만 사용 가능합니다.",
                 },
               })}
             />
-            {errors.password && <small role="alert">{errors.password.message}</small>}
+            {errors.name && <small role="alert">{errors.name.message}</small>}
           </Form.Group>
           <div className=" d-grid gap-2 mt-4">
             <Button size="lg" type="submit" disabled={isSubmitting} className="button">
-              로그인
+            다음
             </Button>
-            
-            <Link to="/signup" className="btn">
-              회원가입
+            <Link to="/" className="btn">
+              취소
             </Link>
           </div>
         </Form>
@@ -93,4 +94,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default FindPassword;

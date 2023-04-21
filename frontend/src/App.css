@@ -58,5 +58,16 @@
 }
 .btn:hover{
   text-decoration: none;
-  text-decoration-color: rgb(63, 98, 204);
+
+}
+
+.btn2{
+  margin-left : 315px; 
+}
+
+.btn3{
+  color: white;
+}
+.btn4{
+  margin-left : 283px; 
 }
