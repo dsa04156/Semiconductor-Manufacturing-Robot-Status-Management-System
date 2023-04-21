@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mariadb://stg-yswa-kr-practice-db-master.mariadb.database.azure.com:3306/S08P31S101?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
-    username: S08P31S101
-    password: DidIP0GxNb
+    url: jdbc:mariadb://54.180.202.20/wonik
+    username: ssafy
+    password: ssafy1111
     driver-class-name: org.mariadb.jdbc.Driver
 
   data:
