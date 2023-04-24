@@ -31,12 +31,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		// REST API는 UI를 사용하지 않으므로 기본설정을 비활성화
 		httpSecurity.httpBasic().disable() 
 				// REST API는 csrf 보안이 필요 없으므로 비활성화
-				.csrf().disable() 
+				.csrf().disable()
 				// JWT Token 인증방식으로 세션은 필요 없으므로 비활성화
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) 
 				// 리퀘스트에 대한 사용권한 체크			
 				.and().authorizeRequests()
-				.antMatchers("**").permitAll();
+				.antMatchers("**","/").permitAll();
+				
 				
 		
 	}
