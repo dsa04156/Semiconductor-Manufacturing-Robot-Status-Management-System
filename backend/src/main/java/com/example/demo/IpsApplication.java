@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 public class IpsApplication {
 
-	@RequestMapping("/")	// 원래 컨트롤러에 작성할 메서드
+	@RequestMapping("/")	
 	public String hello() {		
 		return "Hello World!";
 	}	
