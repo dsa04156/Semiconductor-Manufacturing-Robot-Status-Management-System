@@ -258,8 +258,74 @@ const HealthStatus = () => {
   return (
     <div>
       <Desktop>
-        <Box>
+        <Big>
           <ReactApexChart
+            options={TotdonutData.options}
+            series={TotdonutData.series}
+            type="donut"
+            width={180}
+
+          />
+          <ReactApexChart
+            options={unacceptdonutData.options}
+            series={unacceptdonutData.series}
+            type="donut"
+            width={180}
+
+          />
+          <ReactApexChart
+            options={unsatdonutData.options}
+            series={unsatdonutData.series}
+            type="donut"
+            width={180}
+
+          />
+          <ReactApexChart
+            options={satdonutData.options}
+            series={satdonutData.series}
+            type="donut"
+            width={180}
+
+          />
+          <ReactApexChart
+            options={gooddonutData.options}
+            series={gooddonutData.series}
+            type="donut"
+            width={180}
+
+          />
+        </Big>
+      </Desktop>
+
+      <Tablet>
+        <Mid>
+        <ReactApexChart
+            options={TotdonutData.options}
+            series={TotdonutData.series}
+            type="donut"
+            width={180}
+
+          />
+          <ReactApexChart
+            options={unacceptdonutData.options}
+            series={unacceptdonutData.series}
+            type="donut"
+            width={180}
+
+          />
+          <ReactApexChart
+            options={unsatdonutData.options}
+            series={unsatdonutData.series}
+            type="donut"
+            width={180}
+
+          />
+        </Mid>
+      </Tablet>
+
+      <Mobile>
+        <Small>
+        <ReactApexChart
             options={TotdonutData.options}
             series={TotdonutData.series}
             type="donut"
@@ -273,36 +339,7 @@ const HealthStatus = () => {
             width={200}
 
           />
-          <ReactApexChart
-            options={unsatdonutData.options}
-            series={unsatdonutData.series}
-            type="donut"
-            width={200}
-
-          />
-          <ReactApexChart
-            options={satdonutData.options}
-            series={satdonutData.series}
-            type="donut"
-            width={200}
-
-          />
-          <ReactApexChart
-            options={gooddonutData.options}
-            series={gooddonutData.series}
-            type="donut"
-            width={200}
-
-          />
-        </Box>
-      </Desktop>
-
-      <Tablet>
-        <Box></Box>
-      </Tablet>
-
-      <Mobile>
-        <Box></Box>
+        </Small>
       </Mobile>
     </div>
   );
@@ -310,17 +347,42 @@ const HealthStatus = () => {
 
 export default HealthStatus;
 
-const Box = styled.div`
+const Big = styled.div`
   position: absolute;
   top: 30px;
   left: 150px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  width: 60%;
+  width: 900px;
   height: 200px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   display: flex;
   align-items: center;
-
+`;
+const Mid = styled.div`
+  position: absolute;
+  top: 30px;
+  left: 150px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  width: 550px;
+  height: 200px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+`;
+const Small = styled.div`
+  position: absolute;
+  top: 30px;
+  left: 150px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  width: 400px;
+  height: 200px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
 `;
