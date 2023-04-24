@@ -50,7 +50,7 @@ const FindID = () => {
               {...register("name", {
                 required: "이름은 필수 입력입니다.",
                 pattern: {
-                  value: /^[가-힣a-zA-Z]+$/,
+                  value: /^[가-힣a-zA-Z0-9]+$/,
                   message: "한글, 영어만 사용 가능합니다.",
                 },
                 
