@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Configuration
-//Spring Security¿¡ ´ëÇÑ µð¹ö±ë ¸ðµå¸¦ »ç¿ëÇÏ±â À§ÇÑ ¾î³ëÅ×ÀÌ¼Ç (default : false)
+//Spring Securityï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ (default : false)
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
@@ -28,13 +28,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		// REST API´Â UI¸¦ »ç¿ëÇÏÁö ¾ÊÀ¸¹Ç·Î ±âº»¼³Á¤À» ºñÈ°¼ºÈ­
 		httpSecurity.httpBasic().disable() 
-				// REST API´Â csrf º¸¾ÈÀÌ ÇÊ¿ä ¾øÀ¸¹Ç·Î ºñÈ°¼ºÈ­
 				.csrf().disable()
-				// JWT Token ÀÎÁõ¹æ½ÄÀ¸·Î ¼¼¼ÇÀº ÇÊ¿ä ¾øÀ¸¹Ç·Î ºñÈ°¼ºÈ­
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) 
-				// ¸®Äù½ºÆ®¿¡ ´ëÇÑ »ç¿ë±ÇÇÑ Ã¼Å©			
 				.and().authorizeRequests()
 				.antMatchers("**","/").permitAll();
 				
@@ -42,11 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 	}
 
-	/**
-	 * Swagger ÆäÀÌÁö Á¢±Ù¿¡ ´ëÇÑ ¿¹¿Ü Ã³¸®
-	 *
-	 * @param webSecurity
-	 */
+
 	@Override
 	public void configure(WebSecurity webSecurity) {
 		webSecurity.ignoring().antMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**",
