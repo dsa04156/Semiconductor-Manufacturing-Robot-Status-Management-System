@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mariadb://54.180.202.20/wonik
-    username: ssafy
-    password: ssafy1111
+    url: jdbc:mariadb://stg-yswa-kr-practice-db-master.mariadb.database.azure.com
+    username: S08P31S101
+    password: DidIP0GxNb
     driver-class-name: org.mariadb.jdbc.Driver
 
   mvc:
