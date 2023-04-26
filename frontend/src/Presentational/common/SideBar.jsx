@@ -30,6 +30,16 @@ const SideBar = () => {
           <Font2> VM</Font2>
         </Menu>
       </NavLink>
+
+      <NavLink to="/Admin" onClick={() => setnum(2)} className={num === 2 ? "back_type" : "nav_item"}>
+        <Menu>
+          <div>
+            <Icon icon="mdi:human-male" width="35" />
+          </div>
+          <Font2> Admin</Font2>
+        </Menu>
+        
+      </NavLink>
     </Side>
   );
 };

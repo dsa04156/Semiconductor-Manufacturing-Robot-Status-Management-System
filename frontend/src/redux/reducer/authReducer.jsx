@@ -4,6 +4,10 @@ import jwtDecode from 'jwt-decode'
 
 let initialState = {
   isLogined: false,
+  isFindID: false,
+  isFindPassword : false,
+  Gobackhome : false,
+  Gobackhome2 : false,
   email: '',
 }
 
@@ -18,6 +22,25 @@ const authReducer = createSlice({
 
     },
 
+    Gobackhome(state,action){
+      state.Gobackhome = true
+      state.isFindID = false
+    },
+
+    Gobackhome2(state,action){
+      state.Gobackhome2 = true
+      state.isFindPassword = false
+    },
+
+    FindID(state, action){
+      state.isFindID = true
+    },
+
+    FindPassword(state, action){
+      state.isFindPassword = true
+      state.isFindID = false
+      state.Gobackhome = false
+    },
     logOut(state) {
       state.isLogined = false
       state.email = ''

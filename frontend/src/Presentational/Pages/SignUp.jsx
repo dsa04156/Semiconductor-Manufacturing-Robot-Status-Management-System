@@ -54,7 +54,21 @@ const SignUp = () => {
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>비밀번호</Form.Label>
-              <Form.Control type="text" className="form-control" placeholder="Password Setting" />
+              <Form.Control
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              aria-invalid={!isDirty ? undefined : errors.password ? "true" : "false"}
+              {...register("password", {
+                required: "비밀번호는 필수 입력입니다.",
+                minLength: {
+                  value: 8,
+                  message: "8자리 이상 비밀번호를 사용하세요.",
+                },
+              })}
+            />
+            {errors.password && <small role="alert">{errors.password.message}</small>}
+          
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>비밀번호 확인</Form.Label>
