@@ -14,6 +14,7 @@ import Solid from "./Presentational/UserPage/Solid";
 import SolPass from "./Presentational/UserPage/SolPass"
 import FindPassword from "./Presentational/UserPage/FindPassword";
 import Admin from "./Presentational/Pages/Admin";
+import axios from 'axios';
 
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLogined);
@@ -21,6 +22,16 @@ function App() {
   const isFindPassword = useSelector((state) => state.auth.isFindPassword);
   const isGobackhome = useSelector((state) => state.auth.Gobackhome);
   const isGobackhome2 = useSelector((state) => state.auth.Gobackhome2);
+
+ 
+  // useEffect(() => {
+  //   const _dbTest = async () => {
+  //     const res = await axios.get('http://localhost:4000/api/test');
+  //     console.log(res.data);
+  //   };
+  //   _dbTest();
+  // }, []);
+
 
   console.log("\nisLoggedIn = " + isLoggedIn)
   console.log("isFindID = " + isFindID)
