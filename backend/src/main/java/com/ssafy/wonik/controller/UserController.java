@@ -3,12 +3,10 @@ package com.ssafy.wonik.controller;
 import com.ssafy.wonik.domain.dto.UserJoinDto;
 import com.ssafy.wonik.domain.dto.UserLoginDto;
 import com.ssafy.wonik.service.UserService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +24,11 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto){
         String token = userService.login(userLoginDto);
-
         return ResponseEntity.ok().body(token);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<?> getUser(){
+        return ResponseEntity.ok().body(userService.getAllUser());
     }
 }

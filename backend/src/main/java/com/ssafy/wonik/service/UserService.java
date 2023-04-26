@@ -2,6 +2,9 @@ package com.ssafy.wonik.service;
 
 import com.ssafy.wonik.domain.dto.UserJoinDto;
 import com.ssafy.wonik.domain.dto.UserLoginDto;
+import com.ssafy.wonik.domain.entity.User;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -9,6 +12,6 @@ public interface UserService {
 
     String login(UserLoginDto userLoginDto);
 
-//    String findEmail()
+    List<User> getAllUser();
 }
 
