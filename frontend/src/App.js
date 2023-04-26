@@ -3,16 +3,16 @@ import React, { useState,useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import VirtualMetrology from "./Presentational/Pages/VirtualMetrology";
-import Mainpage from "./Presentational/UserPage/MainPage";
+import Mainpage from "./Presentational/Pages/MainPage";
 import SideBar from "./Presentational/common/SideBar";
 import styled from "styled-components";
-import Login from "./Presentational/UserPage/Login";
-import SignUp from './Presentational/UserPage/SignUp';
+import Login from "./Presentational/Pages/Login";
+import SignUp from './Presentational/Pages/SignUp';
 import { useSelector } from "react-redux";
-import FindID from "./Presentational/UserPage/FindID";
-import Solid from "./Presentational/UserPage/Solid";
-import SolPass from "./Presentational/UserPage/SolPass"
-import FindPassword from "./Presentational/UserPage/FindPassword";
+import FindID from "./Presentational/Pages/FindID";
+import Solid from "./Presentational/Pages/Solid";
+import SolPass from "./Presentational/Pages/SolPass"
+import FindPassword from "./Presentational/Pages/FindPassword";
 import Admin from "./Presentational/Pages/Admin";
 import axios from 'axios';
 
