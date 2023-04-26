@@ -6,25 +6,47 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { useSelector } from 'react-redux';
+import api from '../../redux/api'
 
 const Login = () => {
   const dispatch = useDispatch();
 
   const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const onSubmit =  (data) => {
-    dispatch(authActions.logIn({data}));
-  };
-
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, isDirty, errors },
   } = useForm();
+
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const onSubmit = handleSubmit(({ email, password }) => {
+    api.post('/USER', {
+      headers: {
+        "Content-Type" : "application/json;charset-utf-8",
+      },
+      body: JSON.stringify({email,password})
+    })
+      .then((data) => {
+        if (data.status === 400) {
+        alert(data.message)
+        }
+        else {
+          localStorage.setItem('accessToken', data.accessToken)
+          localStorage.setItem('refreshToken', data.refreshToken)
+          
+          const datas = jwtDecode(data.accessToken)
+          
+          dispatch(authActions.logIn({data:datas}))
+        }
+    })
+  });
+
+
 
   if (!isMounted) {
     return null;
@@ -35,7 +57,7 @@ const Login = () => {
       <div className="logo">WPHM</div>
 
       <div className="login_back">
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={onSubmit}>
           <div className="login"><h1>로그인</h1></div>
           <Form.Group>
             <Form.Label htmlFor="email">아이디</Form.Label>
