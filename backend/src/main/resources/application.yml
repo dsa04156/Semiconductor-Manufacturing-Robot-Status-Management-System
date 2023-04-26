@@ -1,18 +1,17 @@
 spring:
-  datasource:
-    url: jdbc:mariadb://3.36.125.122:3306
-    username: ssafy
-    password: ssafy1111
-    driver-class-name: org.mariadb.jdbc.Driver
-
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
       
   data:
     mongodb:
-      uri: mongodb+srv://S08P31S101:J7C78fYHve@ssafy.ngivl.mongodb.net/S08P31S101?authSource=admin
-    
+      host: 3.36.125.122
+      port: 27017
+      authentication-database: admin
+      database: ﻿admin
+      username: ssafy
+      password: ssafy1111
+        
   jpa:
     defer-datasource-initialization: true
       
