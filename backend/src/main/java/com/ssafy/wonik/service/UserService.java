@@ -5,8 +5,10 @@ import com.ssafy.wonik.domain.dto.UserLoginDto;
 
 public interface UserService {
 
-    void sighup(UserJoinDto userJoinDto);
+    void signup(UserJoinDto userJoinDto);
 
     String login(UserLoginDto userLoginDto);
+
+//    String findEmail()
 }
 
