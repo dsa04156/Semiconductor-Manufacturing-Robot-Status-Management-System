@@ -16,13 +16,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Configuration
-//Spring Security�� ���� ����� ��带 ����ϱ� ���� ������̼� (default : false)
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
     
-    @Value("${url.front-url}")
-    private String frontUrl;
+//    @Value("${url.front-url}")
+//    private String frontUrl;
     
 
 
@@ -42,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity webSecurity) {
 		webSecurity.ignoring().antMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**",
-				"/swagger/**", "/sign-api/exception", "/v3/api-docs/**", "/swagger-ui/**");
+				"/swagger/**", "/sign-api/exception", "/v3/api-docs/**", "/swagger-ui/**","/**");
 	}
 }
 
