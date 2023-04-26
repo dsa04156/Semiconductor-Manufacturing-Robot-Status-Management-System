@@ -1,8 +1,6 @@
 package com.ssafy.wonik.controller;
 
-import java.io.IOException;
-
-import org.springframework.http.HttpStatus;
+import java.io.IOException;                                                                                       import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
