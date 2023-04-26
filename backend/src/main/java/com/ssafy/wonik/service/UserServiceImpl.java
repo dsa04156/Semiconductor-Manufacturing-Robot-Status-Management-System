@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -40,13 +42,13 @@ public class UserServiceImpl implements UserService {
 //                .phone(userJoinDto.getPhone())
 //                .type(4)
 //                .build();
-
         User user = new User();
         user.setEmail(userJoinDto.getEmail());
-        user.setPassword(encoder.encode(user.getPassword()));
+        user.setPassword(encoder.encode(userJoinDto.getPassword()));
         user.setName(userJoinDto.getName());
         user.setPhone(userJoinDto.getPhone());
         user.setType(4);
+
         userReposistory.save(user);
     }
 
@@ -62,7 +64,13 @@ public class UserServiceImpl implements UserService {
         // Exception 안됐을시 토큰 발행
         String token = JwtToken.createToken(user.getEmail(), key, expiredTimeMs);
 
-
         return token;
     }
+
+    @Override
+    public List<User> getAllUser() {
+        return userReposistory.findAll();
+    }
+
+
 }
