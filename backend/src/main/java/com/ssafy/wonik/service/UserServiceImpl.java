@@ -40,8 +40,14 @@ public class UserServiceImpl implements UserService {
 //                .phone(userJoinDto.getPhone())
 //                .type(4)
 //                .build();
-//
-//        userReposistory.save(user);
+
+        User user = new User();
+        user.setEmail(userJoinDto.getEmail());
+        user.setPassword(encoder.encode(user.getPassword()));
+        user.setName(userJoinDto.getName());
+        user.setPhone(userJoinDto.getPhone());
+        user.setType(4);
+        userReposistory.save(user);
     }
 
 
