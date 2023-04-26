@@ -71,7 +71,36 @@
 .btn4{
   margin-left : 283px; 
 }
-
+.unacceptable_condition{
+  background: #FF5172;
+  border: 1px solid #FF5172;
+  width: 200px;
+  height: 50px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.unsatisfactory_condition{
+  background: #fcec4f;
+  border: 1px solid #fcec4f;
+  width: 200px;
+  height: 50px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.satisfactory_condition{
+  background: #30ADF3;
+  border: 1px solid #30ADF3;
+  width: 200px;
+  height: 50px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .admin{
   position:absolute;
   font-size: 80px;
