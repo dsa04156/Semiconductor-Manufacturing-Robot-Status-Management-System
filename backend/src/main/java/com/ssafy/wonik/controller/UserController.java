@@ -19,7 +19,7 @@ public class UserController {
 
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody UserJoinDto userJoinDto){
-        userService.sighup(userJoinDto);
+        userService.signup(userJoinDto);
         return ResponseEntity.ok().body("회원가입 성공");
     }
 

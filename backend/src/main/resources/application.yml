@@ -5,13 +5,9 @@ spring:
       
   data:
     mongodb:
-      host: 3.36.125.122
-      port: 27017
-      authentication-database: admin
-      database: ﻿admin
-      username: ssafy
-      password: ssafy1111
-        
+      uri: mongodb://ssafy:ssafy1111@3.36.125.122:27017/admin?authMechanism=SCRAM-SHA-256&authSource=admin
+
+
   jpa:
     defer-datasource-initialization: true
       

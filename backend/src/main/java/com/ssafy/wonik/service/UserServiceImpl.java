@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     private Long expiredTimeMs = 1000 * 60 * 60l; //1시간
 
     @Override
-    public void sighup(UserJoinDto userJoinDto) {
+    public void signup(UserJoinDto userJoinDto) {
         // 중복 체크 (email)
         userReposistory.findByEmail(userJoinDto.getEmail())
                 .ifPresent(user -> {
