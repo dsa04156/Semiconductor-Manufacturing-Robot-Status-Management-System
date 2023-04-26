@@ -28,7 +28,8 @@ const authReducer = createSlice({
     },
 
     Gobackhome2(state,action){
-      state.Gobackhome2 = false
+      state.Gobackhome2 = true
+      state.isFindPassword = false
     },
 
     FindID(state, action){

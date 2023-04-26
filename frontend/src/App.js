@@ -13,18 +13,32 @@ import FindID from "./Presentational/Pages/FindID";
 import Solid from "./Presentational/Pages/Solid";
 import SolPass from "./Presentational/Pages/SolPass"
 import FindPassword from "./Presentational/Pages/FindPassword";
-
+import Admin from "./Presentational/Pages/Admin";
+import axios from 'axios';
 
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLogined);
   const isFindID = useSelector((state) => state.auth.isFindID);
   const isFindPassword = useSelector((state) => state.auth.isFindPassword);
   const isGobackhome = useSelector((state) => state.auth.Gobackhome);
+  const isGobackhome2 = useSelector((state) => state.auth.Gobackhome2);
+
+ 
+  // useEffect(() => {
+  //   const _dbTest = async () => {
+  //     const res = await axios.get('http://localhost:4000/api/test');
+  //     console.log(res.data);
+  //   };
+  //   _dbTest();
+  // }, []);
+
 
   console.log("\nisLoggedIn = " + isLoggedIn)
   console.log("isFindID = " + isFindID)
   console.log("isFindPassword = " + isFindPassword)
   console.log("isgobackhome = " + isGobackhome)
+  console.log("isgobackhome2 = " + isGobackhome2)
+
   return (
     <Back>
       <Routes>
@@ -52,14 +66,21 @@ function App() {
         )}
 
         {isGobackhome ? (
-          //아이디 다 찾았고 로그인 화면으로 돌아갈때
-        <Route path="/Solid" element={<Navigate to="/"/>} />,
-
-        <Route path="/SolPass" element={<Navigate to="/"/>} />
+          //아이디 찾고 로그인 화면으로 돌아갈때
+        <Route path="/Solid" element={<Navigate to="/"/>} />
         ) : (
           //아이디 찾기 조건에 부합하지 않는다면 Solid 페이지에 머뭄
           console.log("Stay Solid page")
         )}
+
+        {isGobackhome2 ? (
+          //비밀번호 찾았고 로그인 화면으로 돌아갈때
+        <Route path="/SolPass" element={<Navigate to="/"/>} />
+        ) : (
+          //아이디 찾기 조건에 부합하지 않는다면 SolPass 페이지에 머뭄
+          console.log("Stay SolPass page")
+        )}
+
 
         <Route path="/FindPassword" element={<FindPassword/>} />  
         <Route path="/Solid" element={<Solid/>} />  
@@ -68,6 +89,7 @@ function App() {
         <Route path="/signup" element={<SignUp/>} />
         <Route path="/main" element={<Mainpage/>} />
         <Route path="/vm" element={<VirtualMetrology />} />
+        <Route path="/Admin" element={<Admin />} />
       </Routes>
       {isLoggedIn?<SideBar />:""}
     </Back>

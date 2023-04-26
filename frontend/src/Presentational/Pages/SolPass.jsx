@@ -17,7 +17,7 @@ const SolPass = () => {
   }, []);
 
   const onSubmit = (data) => {
-    dispatch(authActions.Gobackhome({data}));
+    dispatch(authActions.Gobackhome2({data}));
  
   };
 
@@ -47,7 +47,7 @@ const SolPass = () => {
             <br></br>
             <Form.Label htmlFor="password">123456789</Form.Label>
             
-                </Form.Group>
+          </Form.Group>
 
           <div className=" d-grid gap-2 mt-4">
             <Button size="lg" type="submit" disabled={isSubmitting} className="button">
