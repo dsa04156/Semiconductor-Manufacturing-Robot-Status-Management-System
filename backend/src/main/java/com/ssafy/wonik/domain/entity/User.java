@@ -1,26 +1,17 @@
 package com.ssafy.wonik.domain.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-@Entity
-@Builder
+@Document(collection = "USER")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idx;
-
     private String email;
 
     private String password;

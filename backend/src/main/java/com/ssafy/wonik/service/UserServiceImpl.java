@@ -33,14 +33,20 @@ public class UserServiceImpl implements UserService {
                     throw new AppException(ErrorCode.USERNAME_DUPLICATE, userJoinDto.getEmail() + "는 이미있습니다");
                 });
 
-        User user = User.builder()
-                .email(userJoinDto.getEmail())
-                .password(encoder.encode(userJoinDto.getPassword()))
-                .name(userJoinDto.getName())
-                .phone(userJoinDto.getPhone())
-                .type(4)
-                .build();
+//        User user = User.builder()
+//                .email(userJoinDto.getEmail())
+//                .password(encoder.encode(userJoinDto.getPassword()))
+//                .name(userJoinDto.getName())
+//                .phone(userJoinDto.getPhone())
+//                .type(4)
+//                .build();
 
+        User user = new User();
+        user.setEmail(userJoinDto.getEmail());
+        user.setPassword(encoder.encode(user.getPassword()));
+        user.setName(userJoinDto.getName());
+        user.setPhone(userJoinDto.getPhone());
+        user.setType(4);
         userReposistory.save(user);
     }
 
