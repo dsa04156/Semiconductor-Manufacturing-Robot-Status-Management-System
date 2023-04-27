@@ -1,12 +1,14 @@
-
-import HealthStatus from '../Component/MainPage/HealthStatus'
-
+import HealthStatus from "../Component/MainPage/HealthStatus";
+import Condition from '../Component/MainPage/Condition';
+import { useMediaQuery } from "react-responsive";
 
 const Mainpage = () => {
-    
   return (
-      <HealthStatus/>
-    );
+    <div>
+      <HealthStatus />
+      <Condition/>
+    </div>
+  );
 };
 
 export default Mainpage;

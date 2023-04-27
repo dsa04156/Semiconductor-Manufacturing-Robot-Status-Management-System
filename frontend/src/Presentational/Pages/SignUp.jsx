@@ -8,6 +8,7 @@ import Col from "react-bootstrap/Col";
 import { useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
+import api from '../../redux/api'
 
 const SignUp = () => {
   const dispatch = useDispatch();
@@ -18,15 +19,23 @@ const SignUp = () => {
     setIsMounted(true);
   }, []);
 
-  const onSubmit = async (data) => {
-    console.log(data);
-  };
-
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, isDirty, errors },
   } = useForm();
+
+
+
+  const onSubmit = async (data) => {
+    api.post('USER', {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  };
+
+
 
   if (!isMounted) {
     return null;
@@ -50,11 +59,33 @@ const SignUp = () => {
                 id="email"
                 type="text"
                 placeholder="balamia@wonik.co.kr"
+                aria-invalid={!isDirty ? undefined : errors.email ? "true" : "false"}
+                {...register("email", {
+                  required: "이메일은 필수 입력입니다.",
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: "이메일 형식에 맞지 않습니다.",
+                  },
+                })}
               />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>비밀번호</Form.Label>
-              <Form.Control type="text" className="form-control" placeholder="Password Setting" />
+              <Form.Control
+              id="password"
+              type="password"
+              placeholder="********"
+              aria-invalid={!isDirty ? undefined : errors.password ? "true" : "false"}
+              {...register("password", {
+                required: "비밀번호는 필수 입력입니다.",
+                minLength: {
+                  value: 8,
+                  message: "8자리 이상 비밀번호를 사용하세요.",
+                },
+              })}
+            />
+            {errors.password && <small role="alert">{errors.password.message}</small>}
+          
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>비밀번호 확인</Form.Label>

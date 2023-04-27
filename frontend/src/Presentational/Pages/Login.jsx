@@ -6,25 +6,52 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { useSelector } from 'react-redux';
+import api from '../../redux/api'
+
 
 const Login = () => {
   const dispatch = useDispatch();
 
   const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const onSubmit =  (data) => {
-    dispatch(authActions.logIn({data}));
-  };
 
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, isDirty, errors },
   } = useForm();
+
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const onSubmit = handleSubmit(({ email, password }) => {
+    api.post('/account/login', {
+      headers: {
+        // "Content-Type": "application/json;charset-utf-8",
+        "Access-Control-Allow-Origin": `http://localhost:3000`,
+        'Access-Control-Allow-Credentials':"true",
+      },
+      body: JSON.stringify({email,password})
+    })
+    //   .then((data) => {
+    //     if (data.status === 400) {
+    //     alert(data.message)
+    //     }
+    //     else {
+    //       localStorage.setItem('accessToken', data.accessToken)
+    //       localStorage.setItem('refreshToken', data.refreshToken)
+          
+    //       const datas = jwtDecode(data.accessToken)
+          
+    //       dispatch(authActions.logIn({data:datas}))
+    //     }
+    // })
+  });
+
+
 
   if (!isMounted) {
     return null;
@@ -35,10 +62,11 @@ const Login = () => {
       <div className="logo">WPHM</div>
 
       <div className="login_back">
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <div className="login">로그인</div>
+        <Form onSubmit={onSubmit}>
+          <div className="login"><h1>로그인</h1></div>
           <Form.Group>
             <Form.Label htmlFor="email">아이디</Form.Label>
+            <Link to="/FindID" className="btn2"> 아이디 찾기 </Link>
             <Form.Control
               autoFocus={true}
               htmlSize={50}
@@ -60,6 +88,7 @@ const Login = () => {
           <Form.Group>
             <Form.Label htmlFor="password" className="mt-3">
               비밀번호
+              <Link to="/FindPassword" className="btn4"> 비밀번호 찾기 </Link>
             </Form.Label>
             <Form.Control
               id="password"
@@ -80,6 +109,7 @@ const Login = () => {
             <Button size="lg" type="submit" disabled={isSubmitting} className="button">
               로그인
             </Button>
+            
             <Link to="/signup" className="btn">
               회원가입
             </Link>

@@ -17,7 +17,6 @@ const authReducer = createSlice({
       
 
     },
-
     logOut(state) {
       state.isLogined = false
       state.email = ''
