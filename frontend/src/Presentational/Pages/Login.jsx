@@ -9,10 +9,13 @@ import { Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import api from '../../redux/api'
 
+
 const Login = () => {
   const dispatch = useDispatch();
 
   const [isMounted, setIsMounted] = useState(false);
+
+
   const {
     register,
     handleSubmit,
@@ -25,25 +28,27 @@ const Login = () => {
   }, []);
 
   const onSubmit = handleSubmit(({ email, password }) => {
-    api.post('/USER', {
+    api.post('/account/login', {
       headers: {
-        "Content-Type" : "application/json;charset-utf-8",
+        // "Content-Type": "application/json;charset-utf-8",
+        "Access-Control-Allow-Origin": `http://localhost:3000`,
+        'Access-Control-Allow-Credentials':"true",
       },
       body: JSON.stringify({email,password})
     })
-      .then((data) => {
-        if (data.status === 400) {
-        alert(data.message)
-        }
-        else {
-          localStorage.setItem('accessToken', data.accessToken)
-          localStorage.setItem('refreshToken', data.refreshToken)
+    //   .then((data) => {
+    //     if (data.status === 400) {
+    //     alert(data.message)
+    //     }
+    //     else {
+    //       localStorage.setItem('accessToken', data.accessToken)
+    //       localStorage.setItem('refreshToken', data.refreshToken)
           
-          const datas = jwtDecode(data.accessToken)
+    //       const datas = jwtDecode(data.accessToken)
           
-          dispatch(authActions.logIn({data:datas}))
-        }
-    })
+    //       dispatch(authActions.logIn({data:datas}))
+    //     }
+    // })
   });
 
 
