@@ -63,7 +63,6 @@ public class UserServiceImpl implements UserService {
         }
         // Exception 안됐을시 토큰 발행
         String token = JwtToken.createToken(user.getEmail(), key, expiredTimeMs);
-
         return token;
     }
 
