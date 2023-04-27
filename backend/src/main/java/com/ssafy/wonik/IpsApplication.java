@@ -14,11 +14,5 @@ public class IpsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(IpsApplication.class, args );
 	}
-	
-	@RequestMapping("/")
-	String home() {
-		return "Hello World!";
-	}
-
 
 }
