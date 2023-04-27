@@ -4,7 +4,7 @@ import jwtDecode from 'jwt-decode'
 
 let initialState = {
   isLogined: false,
-  email: '',
+
 }
 
 const authReducer = createSlice({
@@ -13,7 +13,6 @@ const authReducer = createSlice({
   reducers: {
     logIn(state, action) {
       state.isLogined = true
-      state.email = action.payload.data.email
       
 
     },
@@ -27,6 +26,7 @@ const authReducer = createSlice({
     
 
     checkAccessToken(state) {
+      console.log(state)
       const accessToken = localStorage.getItem('accessToken');
       if (!accessToken) {
         return;
@@ -37,6 +37,7 @@ const authReducer = createSlice({
         const data_ = jwtDecode(localStorage.getItem('accessToken') ?? '') ;
         state.isLogined = true;
         state.email = data_.sub;
+
 
       } catch (error) {
         // 에러 처리
