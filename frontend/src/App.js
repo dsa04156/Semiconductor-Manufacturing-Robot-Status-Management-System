@@ -14,6 +14,7 @@ import Solid from "./Presentational/Pages/Solid";
 import SolPass from "./Presentational/Pages/SolPass";
 import FindPassword from "./Presentational/Pages/FindPassword";
 import Admin from "./Presentational/Pages/Admin";
+import Changepw from './Presentational/Pages/Changepw';
 
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLogined);
@@ -61,6 +62,7 @@ function App() {
         <Route path="/main" element={<Mainpage />} />
         <Route path="/vm" element={<VirtualMetrology />} />
         <Route path="/Admin" element={<Admin />} />
+        <Route path="/changepw" element={ <Changepw/>} />
       </Routes>
       {isLoggedIn && <SideBar />}
     </Back>

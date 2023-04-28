@@ -63,13 +63,15 @@
 
 .btn2{
   margin-left : 315px; 
+  text-decoration: none;
 }
 
 .btn3{
   color: white;
 }
 .btn4{
-  margin-left : 283px; 
+  margin-left : 283px;
+  text-decoration: none;
 }
 .unacceptable_condition{
   background: #FF5172;
