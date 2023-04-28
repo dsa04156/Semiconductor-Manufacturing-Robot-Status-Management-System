@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import jwtDecode from "jwt-decode";
-import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -10,7 +9,10 @@ import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import api from '../../redux/api'
 
+
+
 const SignUp = () => {
+  
   const dispatch = useDispatch();
 
   const [isMounted, setIsMounted] = useState(false);
@@ -27,13 +29,20 @@ const SignUp = () => {
 
 
 
-  const onSubmit = async (data) => {
-    api.post('USER', {
-      headers: {
-        'Content-Type': 'application/json'
-      }
+  const onSubmit = handleSubmit(({ email, password }) => {
+    api.post("/account/login",JSON.stringify({email,password}))
+      .then((response) => {
+        if (response.status === 401) {
+          alert(response.message)
+        }
+        else {
+          console.log(response)
+        }
+      }).catch((error) => {
+      console.log(error)
     })
-  };
+
+  });
 
 
 
@@ -50,7 +59,7 @@ const SignUp = () => {
       <Col>
         <div className="signup_back">
           <Form>
-            <div className="login">회원가입</div>
+            <div className="bold_header">회원가입</div>
             <Form.Group className="mb-3">
               <Form.Label htmlFor="email">아이디</Form.Label>
               <Form.Control
@@ -90,9 +99,9 @@ const SignUp = () => {
             <Form.Group className="mb-3">
               <Form.Label>비밀번호 확인</Form.Label>
               <Form.Control
-                type="email"
+                type="password"
                 className="form-control"
-                placeholder="verify password"
+                placeholder="********"
               />
             </Form.Group>
             <Form.Group className="mb-3">

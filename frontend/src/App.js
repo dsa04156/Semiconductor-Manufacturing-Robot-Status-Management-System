@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import VirtualMetrology from "./Presentational/Pages/VirtualMetrology";
@@ -7,49 +7,21 @@ import Mainpage from "./Presentational/Pages/MainPage";
 import SideBar from "./Presentational/common/SideBar";
 import styled from "styled-components";
 import Login from "./Presentational/Pages/Login";
-import SignUp from './Presentational/Pages/SignUp';
+import SignUp from "./Presentational/Pages/SignUp";
 import { useSelector } from "react-redux";
 import FindID from "./Presentational/Pages/FindID";
 import Solid from "./Presentational/Pages/Solid";
-import SolPass from "./Presentational/Pages/SolPass"
+import SolPass from "./Presentational/Pages/SolPass";
 import FindPassword from "./Presentational/Pages/FindPassword";
 import Admin from "./Presentational/Pages/Admin";
-import axios from 'axios';
 
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLogined);
-  const isFindID = useSelector((state) => state.auth.isFindID);
-  const isFindPassword = useSelector((state) => state.auth.isFindPassword);
-  const isGobackhome = useSelector((state) => state.auth.Gobackhome);
-  const isGobackhome2 = useSelector((state) => state.auth.Gobackhome2);
-
- 
-  // useEffect(() => {
-  //   const _dbTest = async () => {
-  //     const res = await axios.get('http://localhost:4000/api/test');
-  //     console.log(res.data);
-  //   };
-  //   _dbTest();
-  // }, []);
-
-
-  console.log("\nisLoggedIn = " + isLoggedIn)
-  console.log("isFindID = " + isFindID)
-  console.log("isFindPassword = " + isFindPassword)
-  console.log("isgobackhome = " + isGobackhome)
-  console.log("isgobackhome2 = " + isGobackhome2)
 
   return (
     <Back>
       <Routes>
-        {isLoggedIn ? ( // 로그인이 되었으면 Mainpage로 이동
-          <Route path="/" element={<Navigate to="/main" />} />
-        ) : (
-          // 로그인이 되지 않았으면 Login 페이지로 이동
-          <Route path="/" element={<Login/>} />
-        )}
-
-        {isFindID ? (
+        {/* {isFindID ? (
           //아이디 찾기 조건에 부합하면 Solid 페이지로 이동
         <Route path="/FindID" element={<Navigate to="/Solid"/>} />
         ) : (
@@ -79,24 +51,28 @@ function App() {
         ) : (
           //아이디 찾기 조건에 부합하지 않는다면 SolPass 페이지에 머뭄
           console.log("Stay SolPass page")
+        )} */}
+        {isLoggedIn ? (
+          <Route path="/main" element={<Navigate to="/main" />} />
+        ) : (
+          <Route path="/" element={<Login />} />
         )}
-
-
-        <Route path="/FindPassword" element={<FindPassword/>} />  
-        <Route path="/Solid" element={<Solid/>} />  
-        <Route path="/SolPass" element={<SolPass/>} />  
-        <Route path="/FindID" element={<FindID/>} />
-        <Route path="/signup" element={<SignUp/>} />
-        <Route path="/main" element={<Mainpage/>} />
+        <Route path="/FindPassword" element={<FindPassword />} />
+        <Route path="/Solid" element={<Solid />} />
+        <Route path="/SolPass" element={<SolPass />} />
+        <Route path="/FindID" element={<FindID />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/main" element={<Mainpage />} />
         <Route path="/vm" element={<VirtualMetrology />} />
         <Route path="/Admin" element={<Admin />} />
       </Routes>
-      {isLoggedIn?<SideBar />:""}
+      {isLoggedIn ? <SideBar /> : ""}
     </Back>
   );
 }
 
 export default App;
+
 const Back = styled.div`
   background-color: #eff1f5;
   position: relative;
