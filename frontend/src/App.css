@@ -103,7 +103,7 @@
 }
 .admin {
   position: absolute;
-  font-size: 80px;
+  font-size: 90px;
   font-style: italic;
   color: gray;
   size: 300px;
@@ -139,17 +139,15 @@
   position: absolute;
   height: 45px;
   width: 40px;
-  margin-top: 110px;
-
+  margin-top: 130px;
+  margin-left: 10px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 20px;
 }
 .table-container {
   width: 100%;
   height: 100%;
-  overflow-y: scroll;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -158,4 +156,23 @@
 table {
   width: 100%;
   min-width: 800px; /* 예시값 */
+}
+
+tbody {
+  display: block;
+  max-height: 600px; /* 적절한 높이 값을 지정하세요. */
+  overflow-y: scroll;
+  position: relative;
+}
+
+tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.searchicons {
+  margin-top: 136px;
+
+  color: gray;
 }

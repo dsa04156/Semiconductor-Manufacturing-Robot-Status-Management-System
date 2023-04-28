@@ -2,22 +2,21 @@ import React from "react";
 import styled from "styled-components";
 import Form from "react-bootstrap/Form";
 import { useState, useEffect } from "react";
-import axios from "axios";
+
+import { FaSearch } from "react-icons/fa";
 import api from "../../redux/api";
 
 const Admin = () => {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPermission, setSelectedPermission] = useState("Unknown");
+  const [permissionData, setPermissionData] = useState([]);
 
   useEffect(() => {
     const _dbTest = async () => {
-      // **헤더값에 토큰 값**을 주면 -> 토큰 값 인지해서 admin이 맞구나
-      // 하면 다시 보낸다
-      //axios.get('http://3.36.125.122:8082/account/list')
       const res = await api.get("account/list");
       console.log(res.data);
       setData(res.data);
+      setPermissionData(res.data.map((item) => item.type));
     };
     _dbTest();
   }, []);
@@ -35,16 +34,13 @@ const Admin = () => {
   });
 
   //권한 변경 부분
-  const handleApply = async (event, name, permission) => {
+  const handleApply = async (event, email, type) => {
     event.preventDefault();
     try {
-      const res = await axios.post(
-        "http://localhost:4000/api/updatePermission",
-        {
-          Name: name,
-          Permission: permission,
-        }
-      );
+      const res = await api.put("account/typeUpdate", {
+        email: email,
+        type: type,
+      });
       console.log(res.data);
       alert(res.data);
     } catch (error) {
@@ -58,7 +54,14 @@ const Admin = () => {
       <Box>
         <div className="table-container">
           <table className="table table-hover">
-            <thead style={{ fontSize: "40px" }}>
+            <thead
+              style={{
+                fontSize: "40px",
+                position: "sticky",
+                top: "0",
+                zIndex: 1,
+              }}
+            >
               <tr>
                 <th>ID</th>
                 <th>H.P</th>
@@ -67,43 +70,49 @@ const Admin = () => {
                 <th>Edit Permission</th>
               </tr>
             </thead>
-            <tbody>
-              {filteredData.map((item, index) => (
-                <tr key={index}>
-                  <td key={index} style={{ color: "blue", fontSize: "20px" }}>
-                    {item.email}
-                  </td>
-                  <td style={{ fontSize: "20px" }} key={index}>
-                    {item.phone}
-                  </td>
-                  <td style={{ fontSize: "20px" }} key={index}>
-                    {item.name}
-                  </td>
-                  <td style={{ fontSize: "20px" }} key={index}>
-                    {item.type}
-                  </td>
-                  <td style={{ fontSize: "20px" }} key={index}>
-                    <Form.Select
-                      size="sm"
-                      value={selectedPermission}
-                      onChange={(e) => setSelectedPermission(e.target.value)}
-                    >
-                      <option value="Unknown">Unknown</option>
-                      <option value="G-Client">G-Client</option>
-                      <option value="N-Client">N-Client</option>
-                    </Form.Select>
-                    <button
-                      className="btn btn-primary"
-                      type="submit"
-                      onClick={(e) =>
-                        handleApply(e, item.Name, selectedPermission)
-                      }
-                    >
-                      Apply
-                    </button>
-                  </td>
-                </tr>
-              ))}
+            <tbody style={{ position: "sticky" }}>
+              {filteredData
+                .filter((item) => item.type !== "Master") //마스터는 출력 안되게
+                .map((item, index) => (
+                  <tr key={index}>
+                    <td key={index} style={{ color: "blue", fontSize: "23px" }}>
+                      {item.email}
+                    </td>
+                    <td style={{ fontSize: "20px" }} key={index}>
+                      {item.phone}
+                    </td>
+                    <td style={{ fontSize: "20px" }} key={index}>
+                      {item.name}
+                    </td>
+                    <td style={{ fontSize: "20px" }} key={index}>
+                      {item.type}
+                    </td>
+                    <td style={{ fontSize: "20px" }} key={index}>
+                      <Form.Select
+                        size="sm"
+                        value={"Unknown"}
+                        onChange={(e) => {
+                          const newPermissionData = [permissionData];
+                          newPermissionData[index] = e.target.value;
+                          setPermissionData(newPermissionData);
+                        }}
+                      >
+                        <option value="Unknown">Unknown</option>
+                        <option value="G-Client">G-Client</option>
+                        <option value="N-Client">N-Client</option>
+                      </Form.Select>
+                      <button
+                        className="btn btn-primary"
+                        type="submit"
+                        onClick={(e) =>
+                          handleApply(e, item.email, permissionData[index])
+                        }
+                      >
+                        Apply
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -111,15 +120,14 @@ const Admin = () => {
       <Box2>
         <Form.Group>
           <Form.Label className="admin">Administer</Form.Label>
-
+          <FaSearch className="searchicons" style={{ fontSize: "30px" }} />
           <input
             autoFocus={true}
             type="text"
-            htmlsize={30}
             className="search"
-            placeholder=" 이름 검색"
+            placeholder="     이름 검색"
             value={searchTerm}
-            onChange={handleSearch}
+            onChange={(e) => setSearchTerm(e.target.value)}
             style={{ width: "300px" }}
           />
         </Form.Group>
