@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 작업 디렉토리에서, 명령어 사용하기, 시작 프로그램 실행
 # CMD [ "python", "./setup.py" ]
 # 시작 프로그램 마친후에, 메인 프로그램 실행
-ENTRYPOINT ["python", "CsvFileMaker.py"]
+ENTRYPOINT ["python3.8", "CsvFileMaker.py"]
