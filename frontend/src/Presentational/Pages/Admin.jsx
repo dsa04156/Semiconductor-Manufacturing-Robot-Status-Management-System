@@ -10,6 +10,7 @@ const Admin = () => {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [permissionData, setPermissionData] = useState([]);
+  const [defaultPermission, setDefaultPermission] = useState("Unknown");
 
   useEffect(() => {
     const _dbTest = async () => {
@@ -90,10 +91,11 @@ const Admin = () => {
                     <td style={{ fontSize: "20px" }} key={index}>
                       <Form.Select
                         size="sm"
-                        value={"Unknown"}
+                        value={defaultPermission}
                         onChange={(e) => {
                           const newPermissionData = [permissionData];
                           newPermissionData[index] = e.target.value;
+                          setDefaultPermission(e.target.value);
                           setPermissionData(newPermissionData);
                         }}
                       >
