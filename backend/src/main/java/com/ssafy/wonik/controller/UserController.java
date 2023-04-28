@@ -2,6 +2,7 @@ package com.ssafy.wonik.controller;
 
 import com.ssafy.wonik.domain.dto.UserJoinDto;
 import com.ssafy.wonik.domain.dto.UserLoginDto;
+import com.ssafy.wonik.domain.dto.UserTypeUpdateDto;
 import com.ssafy.wonik.service.UserService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,8 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto){
+        System.out.println(userLoginDto.getEmail());
+        System.out.println(userLoginDto.getPassword());
         String token = userService.login(userLoginDto);
         return ResponseEntity.ok().body(token);
     }
@@ -30,5 +33,11 @@ public class UserController {
     @GetMapping("/list")
     public ResponseEntity<?> getUser(){
         return ResponseEntity.ok().body(userService.getAllUser());
+    }
+
+    @PutMapping("/typeUpdate")
+    public ResponseEntity<?> typeUpdate(@RequestBody UserTypeUpdateDto userTypeUpdateDto){
+        userService.typeUpdate(userTypeUpdateDto);
+        return ResponseEntity.ok().body("type 수정 완료");
     }
 }
