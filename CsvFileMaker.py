@@ -13,7 +13,7 @@ def read_csv():
     return data
 
 def write_csv(data,filename):
-    with open(filename+'.csv', 'w', newline='') as file:
+    with open('test/'+filename+'.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerows(data)
 
