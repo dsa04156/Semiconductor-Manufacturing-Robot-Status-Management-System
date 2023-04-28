@@ -21,8 +21,8 @@ import org.springframework.stereotype.Component;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
     
-    @Value("${url.front-url}")
-    private String frontUrl;
+//    @Value("${url.front-url}")
+//    private String frontUrl;
     
 
 
