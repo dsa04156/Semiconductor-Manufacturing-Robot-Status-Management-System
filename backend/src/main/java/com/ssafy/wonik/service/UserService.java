@@ -9,7 +9,7 @@ public interface UserService {
 
     void signup(UserJoinDto userJoinDto);
 
-    String login(UserLoginDto userLoginDto);
+    UserResponseDto login(UserLoginDto userLoginDto);
 
     List<User> getAllUser();
 
