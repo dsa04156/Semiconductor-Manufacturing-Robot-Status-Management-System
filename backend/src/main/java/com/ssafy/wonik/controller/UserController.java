@@ -25,8 +25,8 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto){
         System.out.println(userLoginDto.getEmail());
         System.out.println(userLoginDto.getPassword());
-        String token = userService.login(userLoginDto);
-        return ResponseEntity.ok().body(token);
+        UserResponseDto userResponseDto = userService.login(userLoginDto);
+        return ResponseEntity.ok().body(userResponseDto);
     }
 
     @GetMapping("/list")

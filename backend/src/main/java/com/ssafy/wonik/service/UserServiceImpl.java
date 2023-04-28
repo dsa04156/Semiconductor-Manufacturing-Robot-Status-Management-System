@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public String login(UserLoginDto userLoginDto) {
+    public UserResponseDto login(UserLoginDto userLoginDto) {
         // email 없음
         User user = userReposistory.findByEmail(userLoginDto.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "없는 email 입니다"));
@@ -63,7 +63,9 @@ public class UserServiceImpl implements UserService {
         }
         // Exception 안됐을시 토큰 발행
         String token = JwtToken.createToken(user.getEmail(), key, expiredTimeMs);
-        return token;
+
+        UserResponseDto userResponseDto = new UserResponseDto(token, user.getType());
+        return userResponseDto;
     }
 
     @Override
