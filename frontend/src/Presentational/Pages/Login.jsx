@@ -35,10 +35,9 @@ const Login = () => {
       })
       .catch((error) => {
         if (error.response.status === 401) {
-          alert("아이디/비밀번호가 존재하지 않습니다.")
-        }
-        else {
-          alert("요천한 페이지가 존재하지 않습니다.")
+          alert("아이디/비밀번호가 존재하지 않습니다.");
+        } else {
+          alert("요천한 페이지가 존재하지 않습니다.");
         }
       });
   });
@@ -59,8 +58,7 @@ const Login = () => {
           <Form.Group>
             <Form.Label htmlFor="email">아이디</Form.Label>
             <Link to="/FindID" className="btn2">
-              {" "}
-              아이디 찾기{" "}
+              아이디 찾기
             </Link>
             <Form.Control
               autoFocus={true}

@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { authActions } from "../../redux/reducer/authReducer";
-import jwtDecode from "jwt-decode";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
-const FindID = () => {
-  const dispatch = useDispatch();
+const FindID = () => {  
   
   const [isMounted, setIsMounted] = useState(false);
 
@@ -17,7 +14,6 @@ const FindID = () => {
   }, []);
 
   const onSubmit =  (data) => {
-    dispatch(authActions.FindID({data}));
   };
 
   const {
@@ -36,7 +32,7 @@ const FindID = () => {
 
       <div className="login_back">
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <div className="login"><h1>아이디 찾기</h1></div>
+          <div className="bold_header">아이디 찾기</div>
           <Form.Group>
             <Form.Label htmlFor="name"> 이름</Form.Label>
             <Form.Control
@@ -66,11 +62,11 @@ const FindID = () => {
             </Form.Label>
             
             <Form.Control
-              id="phonenumber"
+              id="phone"
               type="text"
               placeholder="Enter your Phone-Number"
-              aria-invalid={!isDirty ? undefined : errors.phonenumber ? "true" : "false"}
-              {...register("phonenumber", {
+              aria-invalid={!isDirty ? undefined : errors.phone ? "true" : "false"}
+              {...register("phone", {
                 required: "전화번호는 필수 입력입니다.",
                 pattern: {
                     value: /^01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})$/,
@@ -82,7 +78,7 @@ const FindID = () => {
                 },
               })}
             />
-            {errors.phonenumber && <small role="alert">{errors.phonenumber.message}</small>}
+            {errors.phone && <small role="alert">{errors.phone.message}</small>}
           </Form.Group>
           <div className=" d-grid gap-2 mt-4">
             <Button size="lg" type="submit" disabled={isSubmitting} className="button">

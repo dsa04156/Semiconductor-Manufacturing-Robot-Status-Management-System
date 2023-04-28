@@ -36,7 +36,7 @@ const FindPassword = () => {
 
       <div className="login_back">
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <div className="login"><h1>비밀번호 찾기</h1></div>
+          <div className="bold_header">비밀번호 찾기</div>
           <Form.Group>
             <Form.Label htmlFor="name"> 아이디</Form.Label>
             <Form.Control
