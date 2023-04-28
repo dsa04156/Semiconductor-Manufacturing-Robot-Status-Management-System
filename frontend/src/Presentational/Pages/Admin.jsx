@@ -1,19 +1,19 @@
 import React from 'react'
-import ReactApexChart from "react-apexcharts";
-import { useMediaQuery } from "react-responsive";
 import styled from "styled-components";
 import Form from "react-bootstrap/Form";
 import { useState,useEffect } from "react";
 import axios from 'axios';
 
-
 const Admin= () => {
     const [data, setData] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedPermission, setSelectedPermission] = useState("Unknown");
 
     useEffect(() => {
         const _dbTest = async () => {
             // **헤더값에 토큰 값**을 주면 -> 토큰 값 인지해서 admin이 맞구나
             // 하면 다시 보낸다
+            //axios.get('http://3.36.125.122:8082/account/list')
             const res = await axios.get('http://localhost:4000/api/test');
             console.log(res.data);
             setData(res.data);
@@ -21,74 +21,95 @@ const Admin= () => {
     _dbTest();
 }, []);
 
+    // 이름 검색 부분
+    const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+     };
+
+     const filteredData = data.filter((item) => {
+        if (item && item.Name) {
+          return item.Name.toLowerCase().includes(searchTerm.toLowerCase());
+        }
+        return false;
+      });
+    
+
+    //권한 변경 부분
+    const handleApply = async (event, name, permission) => {
+        event.preventDefault();
+        try {
+            
+            const res = await axios.post('http://localhost:4000/api/updatePermission', {
+            Name: name,
+            Permission: permission
+        });
+            console.log(res.data);
+            alert(res.data);
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
+        }
+    }
+     
+
   return (
     <div>
         {/* <HorizonLine /> */}
         <Box>
-        <table class="table table-hover">
+        <table className="table table-hover">
  <thead>
    <tr>
       <th>ID</th>
-      <th>Email</th>
-      <th>Email</th>
+      <th>H.P</th>
+      <th>Name</th>
+      <th>Permission</th>
+      <th>Edit Permission</th>
    </tr>
  </thead>
  <tbody>
-   <tr>
-      <td>
-        {data.map((item, index) => (
-          <li className="idlist" key={index} style={{fontSize: "24px"}}>
-            {item.ID}  {item.Password} {item.PhoneNumber}
-            </li>
-        ))}
-       </td>
-      <td>Doe</td>
-      <td>john@example.com</td>
-   </tr>
-   <tr>
-      <td>Mary</td>
-      <td>Moe</td>
-      <td>mary@example.com</td>
-   </tr>
-   <tr>
-      <td>July</td>
-      <td>Dooley</td>
-      <td>july@example.com</td>
-   </tr>
+  {filteredData.map((item, index) => (
+    <tr key={index}>
+        <td key={index}>
+            {item.ID} 
+        </td>
+        <td key={index}>
+            {item.PhoneNumber} 
+        </td>
+        <td key={index}>
+            {item.Name} 
+        </td>
+        <td key={index}>
+            {item.Permission} 
+        </td>
+        <td key={index}>
+        <Form.Select size="sm" value={selectedPermission} onChange={(e) => setSelectedPermission(e.target.value)}>
+    <option value="Unknown">Unknown</option>
+    <option value="G-Client">G-Client</option>
+    <option value="N-Client">N-Client</option>
+</Form.Select>
+<button className="btn btn-primary" type="submit" onClick={(e) => handleApply(e, item.Name, selectedPermission)}>Apply</button>
+        
+        </td>
+    </tr>
+  ))}
+
  </tbody> 
 
 </table>
-        {/* <Box3>
-        <ul className="idlabel" >ID
-        {data.map((item, index) => (
-          <li className="idlist" key={index} style={{fontSize: "24px"}}>
-            {item.ID}  
-            </li>
-        ))}
-       </ul>
-       </Box3> */}
-
-       {/* <Box4>
-       <ul className="Passwordlabel">
-        {data.map((item, index) => (
-          <li className="idlist" key={index} style={{fontSize: "24px"}}>
-            {item.PhoneNumber}  
-            </li>
-        ))}
-       </ul>
-       </Box4> */}
         </Box>
-       {/* <Form.Label className="adlabel">ID H.P Name Permisson Edit-Permission </Form.Label> */}
-       
        <Box2>
        <Form.Group>
         <Form.Label className="admin">Administer</Form.Label>
-       <Form.Control
+        
+       <input
         autoFocus={true}
         type="text" 
-        htmlSize={30} 
+        htmlsize={30} 
         className="search" 
         placeholder=" 이름 검색"
+        value={searchTerm}
+        onChange={handleSearch}
+        style={{ width: "300px" }}
        />
        
         </Form.Group>
@@ -126,26 +147,3 @@ const Box2 = styled.div`
   align-items: center;
 `;
 
-
-
-const Box3 = styled.div`
-  position: absolute;
-  top: 70px;
-  left: 10px;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  display: flex;
-  align-items: center;
-`;
-
-const Box4 = styled.div`
-  position: absolute;
-  top: 70px;
-  left: 400px;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  display: flex;
-  align-items: center;
-`;

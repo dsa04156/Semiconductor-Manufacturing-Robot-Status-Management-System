@@ -14,6 +14,11 @@ import Solid from "./Presentational/Pages/Solid";
 import SolPass from "./Presentational/Pages/SolPass";
 import FindPassword from "./Presentational/Pages/FindPassword";
 import Admin from "./Presentational/Pages/Admin";
+<<<<<<< HEAD
+=======
+import TestIDs from "./Presentational/Pages/TestIDs";
+import axios from 'axios';
+>>>>>>> 925aa79 (feat:Admin+findid)
 
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLogined);
@@ -61,6 +66,7 @@ function App() {
         <Route path="/main" element={<Mainpage />} />
         <Route path="/vm" element={<VirtualMetrology />} />
         <Route path="/Admin" element={<Admin />} />
+        <Route path="/TestIDs" element={<TestIDs />} />
       </Routes>
       {isLoggedIn && <SideBar />}
     </Back>
