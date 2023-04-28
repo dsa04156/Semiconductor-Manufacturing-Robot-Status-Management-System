@@ -1,6 +1,5 @@
 # python 이미지 다운
-FROM ubuntu:latest
-RUN apt-get update && apt-get install -y python3.8
+FROM python:3.8.12
 # 컨테이너 속, 명령어 사용할 경로 지정 ( 작업 디렉토리 )
 WORKDIR /app
 # 현재 폴더에 있는 내용 복사, 작업 디렉토리에 붙여넣기
