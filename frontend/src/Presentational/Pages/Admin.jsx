@@ -3,8 +3,6 @@ import ReactApexChart from "react-apexcharts";
 import { useMediaQuery } from "react-responsive";
 import styled from "styled-components";
 import Form from "react-bootstrap/Form";
-import Information from './info-json';
-import HorizonLine from '../common/HorizontalLine';
 import { useState,useEffect } from "react";
 import axios from 'axios';
 

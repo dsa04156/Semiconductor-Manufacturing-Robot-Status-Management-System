@@ -52,11 +52,7 @@ function App() {
           //아이디 찾기 조건에 부합하지 않는다면 SolPass 페이지에 머뭄
           console.log("Stay SolPass page")
         )} */}
-        {isLoggedIn ? (
-          <Route path="/main" element={<Navigate to="/main" />} />
-        ) : (
-          <Route path="/" element={<Login />} />
-        )}
+        <Route path="/" element={isLoggedIn ? <Mainpage /> : <Login />}/>
         <Route path="/FindPassword" element={<FindPassword />} />
         <Route path="/Solid" element={<Solid />} />
         <Route path="/SolPass" element={<SolPass />} />
@@ -66,7 +62,7 @@ function App() {
         <Route path="/vm" element={<VirtualMetrology />} />
         <Route path="/Admin" element={<Admin />} />
       </Routes>
-      {isLoggedIn ? <SideBar /> : ""}
+      {isLoggedIn && <SideBar />}
     </Back>
   );
 }

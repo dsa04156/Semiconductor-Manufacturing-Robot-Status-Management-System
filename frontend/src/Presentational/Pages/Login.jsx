@@ -25,21 +25,22 @@ const Login = () => {
   }, []);
 
   const onSubmit = handleSubmit(({ email, password }) => {
-    api.post("/account/login",JSON.stringify({email,password}))
+    api
+      .post("/account/login", JSON.stringify({ email, password }))
       .then((response) => {
-        if (response.status === 401) {
-          alert(response.message)
+        localStorage.setItem("accessToken", response.data);
+        const data_ = jwtDecode(response.data);
+
+        dispatch(authActions.logIn({ data: data_ }));
+      })
+      .catch((error) => {
+        if (error.response.status === 401) {
+          alert("아이디/비밀번호가 존재하지 않습니다.")
         }
         else {
-          localStorage.setItem('accessToken', response.data)
-          const data_ = jwtDecode(response.data)
-
-          dispatch(authActions.logIn({data:data_}))
+          alert("요천한 페이지가 존재하지 않습니다.")
         }
-      }).catch((error) => {
-      console.log(error)
-    })
-
+      });
   });
 
   if (!isMounted) {

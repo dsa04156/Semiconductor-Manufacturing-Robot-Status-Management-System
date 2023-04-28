@@ -25,6 +25,7 @@ const authReducer = createSlice({
     },
     
 
+    
     checkAccessToken(state) {
       console.log(state)
       const accessToken = localStorage.getItem('accessToken');
@@ -33,7 +34,6 @@ const authReducer = createSlice({
       }
       
       try {
-        // 나중에 만료시간 관련 처리도 해야한다
         const data_ = jwtDecode(localStorage.getItem('accessToken') ?? '') ;
         state.isLogined = true;
         state.email = data_.sub;
