@@ -31,7 +31,13 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation("org.junit.vintage:junit-vintage-engine") {
+		exclude group: "org.hamcrest", module: "hamcrest-core"
+	}
 	implementation group:'io.jsonwebtoken', name: 'jjwt', version:'0.9.1'
+
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+
 }
 
 tasks.named('test') {

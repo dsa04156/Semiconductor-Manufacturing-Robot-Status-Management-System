@@ -2,6 +2,7 @@ package com.ssafy.wonik.service;
 
 import com.ssafy.wonik.domain.dto.UserJoinDto;
 import com.ssafy.wonik.domain.dto.UserLoginDto;
+import com.ssafy.wonik.domain.dto.UserTypeUpdateDto;
 import com.ssafy.wonik.domain.entity.User;
 import com.ssafy.wonik.exception.AppException;
 import com.ssafy.wonik.exception.ErrorCode;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class UserServiceImpl implements UserService {
     private String key;
 
     private Long expiredTimeMs = 1000 * 60 * 60l; //1시간
+    private Long RefreshtokenExpiredTime = 48 * 30 * 60 * 1000L; //1일
 
     @Override
     public void signup(UserJoinDto userJoinDto) {
@@ -40,13 +44,13 @@ public class UserServiceImpl implements UserService {
 //                .phone(userJoinDto.getPhone())
 //                .type(4)
 //                .build();
-
         User user = new User();
         user.setEmail(userJoinDto.getEmail());
-        user.setPassword(encoder.encode(user.getPassword()));
+        user.setPassword(encoder.encode(userJoinDto.getPassword()));
         user.setName(userJoinDto.getName());
         user.setPhone(userJoinDto.getPhone());
-        user.setType(4);
+        user.setType("UnKnown");
+
         userReposistory.save(user);
     }
 
@@ -61,8 +65,22 @@ public class UserServiceImpl implements UserService {
         }
         // Exception 안됐을시 토큰 발행
         String token = JwtToken.createToken(user.getEmail(), key, expiredTimeMs);
-
-
         return token;
     }
+
+    @Override
+    public List<User> getAllUser() {
+        return userReposistory.findAll();
+    }
+
+    @Override
+    public void typeUpdate(UserTypeUpdateDto userTypeUpdateDto) {
+        User user = userReposistory.findByEmail(userTypeUpdateDto.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "없는 email 입니다" ));
+
+        user.setType(userTypeUpdateDto.getType());
+        userReposistory.save(user);
+    }
+
+
 }
