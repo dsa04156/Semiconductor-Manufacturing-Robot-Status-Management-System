@@ -84,7 +84,10 @@ public class UserServiceImpl implements UserService {
     public String findUserEmail(UserFindIdDto userFindIdDto) {
         User user = userReposistory.findByPhone(userFindIdDto.getPhone())
                 .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, " 없는 phone, name 입니다."));
-        return user.getEmail();
+        System.out.println("2");
+        String email = user.getEmail();
+        System.out.println(email);
+        return email;
     }
 
     @Override

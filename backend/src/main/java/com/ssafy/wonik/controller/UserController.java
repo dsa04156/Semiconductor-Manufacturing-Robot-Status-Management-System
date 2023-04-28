@@ -40,14 +40,17 @@ public class UserController {
         return ResponseEntity.ok().body("type 수정 완료");
     }
 
-    @GetMapping("/findid")
+    @PostMapping("/findid")
     public ResponseEntity<?> findEmail(@RequestBody UserFindIdDto userFindIdDto){
-        return  ResponseEntity.ok().body(userService.findUserEmail(userFindIdDto));
+        String email = userService.findUserEmail(userFindIdDto);
+        System.out.println("1");
+        return  ResponseEntity.ok().body(email);
     }
 
     @PostMapping("/findpw")
     public ResponseEntity<?> findPw(@RequestBody UserFindPwDto userFindPwDto){
-        return ResponseEntity.ok().body(userService.findUserPassword(userFindPwDto));
+        userService.findUserPassword(userFindPwDto);
+        return ResponseEntity.ok().body("");
     }
 
     @PutMapping("/changepw")
