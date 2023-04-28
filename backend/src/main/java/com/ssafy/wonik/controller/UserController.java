@@ -1,8 +1,6 @@
 package com.ssafy.wonik.controller;
 
-import com.ssafy.wonik.domain.dto.UserJoinDto;
-import com.ssafy.wonik.domain.dto.UserLoginDto;
-import com.ssafy.wonik.domain.dto.UserTypeUpdateDto;
+import com.ssafy.wonik.domain.dto.*;
 import com.ssafy.wonik.service.UserService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +38,21 @@ public class UserController {
     public ResponseEntity<?> typeUpdate(@RequestBody UserTypeUpdateDto userTypeUpdateDto){
         userService.typeUpdate(userTypeUpdateDto);
         return ResponseEntity.ok().body("type 수정 완료");
+    }
+
+    @GetMapping("/findid")
+    public ResponseEntity<?> findEmail(@RequestBody UserFindIdDto userFindIdDto){
+        return  ResponseEntity.ok().body(userService.findUserEmail(userFindIdDto));
+    }
+
+    @PostMapping("/findpw")
+    public ResponseEntity<?> findPw(@RequestBody UserFindPwDto userFindPwDto){
+        return ResponseEntity.ok().body(userService.findUserPassword(userFindPwDto));
+    }
+
+    @PutMapping("/changepw")
+    public ResponseEntity<?> changePw(@RequestBody UserChangePwDto userChangePwDto){
+        userService.changePassword(userChangePwDto);
+        return ResponseEntity.ok().body("비밀번호 변경 완료");
     }
 }
