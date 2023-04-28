@@ -6,10 +6,10 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import api from "../../redux/api";
 
 const Login = () => {
+
   const dispatch = useDispatch();
 
   const [isMounted, setIsMounted] = useState(false);
@@ -28,17 +28,15 @@ const Login = () => {
     api
       .post("/account/login", JSON.stringify({ email, password }))
       .then((response) => {
-        localStorage.setItem("accessToken", response.data);
-        const data_ = jwtDecode(response.data);
+        localStorage.setItem("accessToken", response.data.token);
+
+        const data_ = jwtDecode(response.data.token);
 
         dispatch(authActions.logIn({ data: data_ }));
       })
       .catch((error) => {
-        if (error.response.status === 401) {
-          alert("아이디/비밀번호가 존재하지 않습니다.");
-        } else {
-          alert("요천한 페이지가 존재하지 않습니다.");
-        }
+        alert(error.response.data)
+
       });
   });
 
@@ -53,7 +51,7 @@ const Login = () => {
       <div className="login_back">
         <Form onSubmit={onSubmit}>
           <div className="bold_header">
-            <h1>로그인</h1>
+            로그인
           </div>
           <Form.Group>
             <Form.Label htmlFor="email">아이디</Form.Label>

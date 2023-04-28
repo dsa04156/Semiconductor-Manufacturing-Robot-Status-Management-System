@@ -4,34 +4,51 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import api from '../../redux/api'
 
 const FindID = () => {  
-  
+
   const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const onSubmit =  (data) => {
-  };
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, isDirty, errors },
   } = useForm();
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const onSubmit = handleSubmit(({ name, phone }) => {
+    api
+      .post("/account/findid", JSON.stringify({ name, phone }))
+      .then((response) => {
+        alert(response.data)
+        navigate("/")
+
+      })
+      .catch((error) => {
+        if (error.response.status === 401) {
+          alert("일치하는 아이디가 존재하지 않습니다.");
+        } else {
+          alert("요청한 페이지가 존재하지 않습니다.");
+        }
+      });
+  });
+
   if (!isMounted) {
     return null;
   }
 
   return (
+
     <div className="middle">
       <div className="logo">WPHM</div>
 
       <div className="login_back">
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={onSubmit}>
           <div className="bold_header">아이디 찾기</div>
           <Form.Group>
             <Form.Label htmlFor="name"> 이름</Form.Label>
@@ -49,8 +66,6 @@ const FindID = () => {
                   value: /^[가-힣a-zA-Z0-9]+$/,
                   message: "한글, 영어만 사용 가능합니다.",
                 },
-                
-                
               })}
             />
             {errors.name && <small role="alert">{errors.name.message}</small>}

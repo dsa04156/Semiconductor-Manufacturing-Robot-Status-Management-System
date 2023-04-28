@@ -1,30 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { authActions } from "../../redux/reducer/authReducer";
-import jwtDecode from "jwt-decode";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import api from '../../redux/api'
+import { useNavigate } from 'react-router-dom';
 
 const FindPassword = () => {
-  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
   
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  const onSubmit =  (data) => {
-    dispatch(authActions.FindPassword({data}));
-  };
-
+  
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, isDirty, errors },
   } = useForm();
+
+
+  const onSubmit = handleSubmit(({ email, name }) => {
+    api
+      .post("/account/findpw", JSON.stringify({ email, name }))
+      .then(() => {
+        alert("비밀번호 변경 페이지로 이동합니다.")
+        navigate("/changepw")
+
+      })
+      .catch((error) => {
+        if (error.response.status === 401) {
+          alert("일치하는 아이디가 존재하지 않습니다.");
+        } else {
+          alert("요청한 페이지가 존재하지 않습니다.");
+        }
+      });
+  });
 
   if (!isMounted) {
     return null;
@@ -35,10 +49,11 @@ const FindPassword = () => {
       <div className="logo">WPHM</div>
 
       <div className="login_back">
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={onSubmit}>
           <div className="bold_header">비밀번호 찾기</div>
+
           <Form.Group>
-            <Form.Label htmlFor="name"> 아이디</Form.Label>
+            <Form.Label htmlFor="email"> 아이디</Form.Label>
             <Form.Control
               autoFocus={true}
               htmlSize={50}
