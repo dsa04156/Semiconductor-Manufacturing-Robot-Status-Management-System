@@ -1,16 +1,20 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../redux/reducer/authReducer";
 import { useSelector } from "react-redux";
 
 const SideBar = () => {
-  const [num, setnum] = useState(0);
+  const [num, setnum] = useState(parseInt(localStorage.getItem("num")) || 0);
   const dispatch = useDispatch();
   const isMaster = useSelector((state) => state.auth.type === "Master");
+
+  useEffect(() => {
+    localStorage.setItem("num", num);
+  }, [num])
 
 
   return (
