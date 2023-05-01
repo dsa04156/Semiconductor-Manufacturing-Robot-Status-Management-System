@@ -18,91 +18,28 @@ const Mobile = ({ children }) => {
   return isMobile ? children : null;
 };
 
-const HealthStatus = ({ componentData }) => {
-  console.log(componentData);
-  const compodata = componentData.map((data) => {
-    return {
-      name: data.name,
-      value: data.value,
-      eval: data.eval,
-    };
-  });
-  const unaccep_compodata = compodata.reduce((unaccep_count, data) => {
-    if (data.eval === "unacceptable") {
-      unaccep_count++;
-    }
-    return unaccep_count;
-  }, 0);
+const HealthStatus = () => {
+  const datas = [50, 40, 30, 10];
+  const labels = ["Good", "satisfactory", "unsatisfactory", "unacceptable"];
+  const colors = ["#A5FF32", "#30ADF3", "#FFEE32", "#FF5172"];
+
+  let sum = datas.reduce((a, b) => a + b, 0);
+
+  const unaccep_data = [datas[3], sum - datas[3]];
   const unaccep_lables = ["unacceptable", "others"];
   const unaccep_colors = ["#FF5172", "#F2D8DF"];
 
-  const unsat_compodata = compodata.reduce((unsat_count, data) => {
-    if (data.eval === "unsatisfactory") {
-      unsat_count++;
-    }
-    return unsat_count;
-  }, 0);
+  const unsat_data = [datas[2], sum - datas[2]];
   const unsat_lables = ["unsatisfactory", "others"];
   const unsat_colors = ["#FFEE32", "#F4E4C4"];
 
-  const sat_compodata = compodata.reduce((sat_count, data) => {
-    if (data.eval === "satisfactory") {
-      sat_count++;
-    }
-    return sat_count;
-  }, 0);
-
+  const sat_data = [datas[1], sum - datas[1]];
   const sat_lables = ["satisfactory", "others"];
   const sat_colors = ["#30ADF3", "#C4E2F4"];
 
-  const good_compodata = compodata.reduce((good_count, data) => {
-    if (data.eval === "Good") {
-      good_count++;
-    }
-    return good_count;
-  }, 0);
+  const good_data = [datas[0], sum - datas[0]];
   const good_lables = ["Good", "others"];
   const good_colors = ["#A5FF32", "#D9ECC8"];
-
-  console.log(compodata);
-
-  const datas = [
-    unaccep_compodata,
-    unsat_compodata,
-    sat_compodata,
-    good_compodata,
-  ];
-  console.log(unaccep_compodata);
-  const labels = ["unacceptable", "unsatisfactory", "satisfactory", "Good"];
-  const colors = ["#FF5172", "#FFEE32", "#30ADF3", "#A5FF32"];
-
-  // let sum = datas.reduce((a, b) => a + b, 0);
-  let totalcount = componentData.reduce((acc, cur) => {
-    return acc + 1;
-  }, 0);
-
-  console.log(totalcount);
-
-  const unaccep_data = [unaccep_compodata, totalcount - unaccep_compodata];
-  const unsat_data = [datas[1], totalcount - datas[1]];
-  const sat_data = [datas[2], totalcount - datas[2]];
-  const good_data = [datas[3], totalcount - datas[3]];
-  console.log(datas[0]);
-  console.log(totalcount - datas[0]);
-  // const unaccep_lables = ["unacceptable", "others"];
-  // const unaccep_colors = ["#FF5172", "#F2D8DF"];
-
-  // const unsat_data = [datas[2], sum - datas[2]];
-  // const unsat_lables = ["unsatisfactory", "others"];
-  // const unsat_colors = ["#FFEE32", "#F4E4C4"];
-
-  // const sat_data = [datas[1], sum - datas[1]];
-  // const sat_lables = ["satisfactory", "others"];
-  // const sat_colors = ["#30ADF3", "#C4E2F4"];
-
-  // const good_data = [datas[0], sum - datas[0]];
-  // const good_lables = ["Good", "others"];
-  // const good_colors = ["#A5FF32", "#D9ECC8"];
 
   const TotdonutData = {
     series: datas,
@@ -147,7 +84,7 @@ const HealthStatus = ({ componentData }) => {
   };
 
   const unacceptdonutData = {
-    series: [unaccep_compodata],
+    series: unaccep_data,
     options: {
       chart: {
         type: "donut",
@@ -172,7 +109,7 @@ const HealthStatus = ({ componentData }) => {
               total: {
                 showAlways: true,
                 show: true,
-                label: "unacceptable",
+                label: "Total",
                 fontSize: "16px",
                 color: "#ADB1B8",
               },
@@ -215,7 +152,7 @@ const HealthStatus = ({ componentData }) => {
               total: {
                 showAlways: true,
                 show: true,
-                label: "unsatisfactory",
+                label: "Total",
                 fontSize: "16px",
                 color: "#ADB1B8",
               },
@@ -258,7 +195,7 @@ const HealthStatus = ({ componentData }) => {
               total: {
                 showAlways: true,
                 show: true,
-                label: "satisfactory",
+                label: "Total",
                 fontSize: "16px",
                 color: "#ADB1B8",
               },
@@ -301,7 +238,7 @@ const HealthStatus = ({ componentData }) => {
               total: {
                 showAlways: true,
                 show: true,
-                label: "Good",
+                label: "Total",
                 fontSize: "16px",
                 color: "#ADB1B8",
               },
@@ -401,8 +338,8 @@ export default HealthStatus;
 
 const Big = styled.div`
   position: absolute;
-  top: 0px;
-  left: -920px;
+  top: 30px;
+  left: 150px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
   width: 900px;

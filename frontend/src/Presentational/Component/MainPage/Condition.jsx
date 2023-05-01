@@ -3,7 +3,6 @@ import { useMediaQuery } from "react-responsive";
 import styled from "styled-components";
 import Form from "react-bootstrap/Form";
 import Conbox from "../Condition/Conbox";
-import ComponentList from "../../Component/MainPage/ComponentList";
 
 const Desktop = ({ children }) => {
   const isDesktop = useMediaQuery({ minWidth: 992 });
@@ -22,17 +21,7 @@ const Mobile = ({ children }) => {
 
 let mstate = "satisfactory";
 
-const Condition = ({ moduleData }) => {
-  const [selectedChild, setSelectedChild] = useState([]);
-  console.log(moduleData);
-
-  const handleChange = (event) => {
-    const selectedName = event.target.value;
-    const selectedData = moduleData.find((data) => data.name === selectedName);
-    setSelectedChild(selectedData ? selectedData.child : []);
-  };
-  console.log(selectedChild);
-
+const Condition = () => {
   return (
     <div>
       <Desktop>
@@ -43,14 +32,11 @@ const Condition = ({ moduleData }) => {
           </div>
           <div className="d-flex mt-3 ms-5 me-5 space-between">
             <Fontmargin>G*****</Fontmargin>
-            <Form.Select size="sm" onChange={handleChange}>
-              {moduleData.map((data) => (
-                <option key={data.name}>{data.name}</option>
-              ))}
+            <Form.Select size="sm">
+              <option>Chamber A</option>
             </Form.Select>
           </div>
           <div className="mt-4 d-flex justify-content-center align-items-center">
-            <ComponentList child={selectedChild} />
             <Conbox mstate={mstate} width={200} fontsize={24} />
           </div>
         </Big>
@@ -63,14 +49,11 @@ const Condition = ({ moduleData }) => {
           </div>
           <div className="d-flex mt-3 ms-3 me-5 justify-content-between">
             <Fontmargin size={14}>G*****</Fontmargin>
-            <Form.Select size="sm" onChange={handleChange}>
-              {moduleData.map((data) => (
-                <option key={data.name}>{data.name}</option>
-              ))}
+            <Form.Select size="sm">
+              <option>Chamber A</option>
             </Form.Select>
           </div>
           <div className="mt-4 d-flex justify-content-center align-items-center">
-            <ComponentList child={selectedChild} />
             <Conbox mstate={mstate} width={150} fontsize={18} />
           </div>
         </Mid>
@@ -83,14 +66,11 @@ const Condition = ({ moduleData }) => {
           </div>
           <div className="d-flex mt-3 ms-1 me-1 justify-content-between">
             <Fontmargin size={10}>G*****</Fontmargin>
-            <Form.Select size="sm" onChange={handleChange}>
-              {moduleData.map((data) => (
-                <option key={data.name}>{data.name}</option>
-              ))}
+            <Form.Select size="sm">
+              <option>Chamber A</option>
             </Form.Select>
           </div>
           <div className="mt-4 d-flex justify-content-center align-items-center">
-            <ComponentList child={selectedChild} />
             <Conbox mstate={mstate} width={100} fontsize={13} />
           </div>
         </Small>

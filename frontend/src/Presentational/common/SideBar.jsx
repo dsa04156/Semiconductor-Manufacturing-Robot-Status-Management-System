@@ -14,16 +14,19 @@ const SideBar = () => {
 
   useEffect(() => {
     localStorage.setItem("num", num);
-  }, [num])
-
+  }, [num]);
 
   return (
     <Side>
-      <NavLink to="/" onClick={() => setnum(0)} >
+      <NavLink to="/" onClick={() => setnum(0)}>
         <img src="image/logo.png" alt="" />
       </NavLink>
 
-      <NavLink to="/" onClick={() => setnum(0)} className={num === 0 ? "back_type" : "nav_item"}>
+      <NavLink
+        to="/"
+        onClick={() => setnum(0)}
+        className={num === 0 ? "back_type" : "nav_item"}
+      >
         <Menu>
           <div>
             <Icon icon="ion:extension-puzzle" width="35" />
@@ -32,7 +35,11 @@ const SideBar = () => {
         </Menu>
       </NavLink>
 
-      <NavLink to="/vm" onClick={() => setnum(1)} className={num === 1 ? "back_type" : "nav_item"}>
+      <NavLink
+        to="/vm"
+        onClick={() => setnum(1)}
+        className={num === 1 ? "back_type" : "nav_item"}
+      >
         <Menu>
           <div>
             <Icon icon="bi:globe" width="35" />
@@ -75,7 +82,7 @@ const Side = styled.div`
   height: 100vh;
   background-color: white;
   align-items: center;
-  position : relative;
+  position: relative;
 `;
 const Menu = styled.div`
   margin-top: 30px;
@@ -96,9 +103,9 @@ const Font2 = styled.div`
   font-size: small;
 `;
 const Logout = styled.button`
-  position : absolute;
+  position: absolute;
   bottom: 50px;
-  left:50%;
+  left: 50%;
   transform: translateX(-50%);
   font-size: small;
   background: none;
