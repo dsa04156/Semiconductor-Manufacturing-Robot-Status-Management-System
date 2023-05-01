@@ -2,54 +2,66 @@ import { createSlice } from "@reduxjs/toolkit";
 import jwtDecode from 'jwt-decode'
 
 
-
 let initialState = {
   isLogined: false,
-  email: "",
-  type: localStorage.getItem("type") || "",
-
+  isFindID: false,
+  isFindPassword : false,
+  Gobackhome : false,
+  Gobackhome2 : false,
+  email: '',
 }
-
 
 const authReducer = createSlice({
   name: "authReducer",
   initialState,
   reducers: {
     logIn(state, action) {
-      state.isLogined = true
+      state.isLogined = true // isLogined 속성을 true로 변경
+      state.email = action.payload.data.email // action.payload는 'login' 액션 객체가 가진 'payload' 속성.
+      // 이 'payload' 객체는 'dispatch(authActions.logIn({data: data_})) 에서 전달된 '{data: data_}' 객체임.
+      
 
     },
-    logOut(state,action) {
+
+    Gobackhome(state,action){
+      state.Gobackhome = true
+      state.isFindID = false
+    },
+
+    Gobackhome2(state,action){
+      state.Gobackhome2 = true
+      state.isFindPassword = false
+    },
+
+    FindID(state, action){
+      state.isFindID = true
+    },
+
+    FindPassword(state, action){
+      state.isFindPassword = true
+      state.isFindID = false
+      state.Gobackhome = false
+    },
+    logOut(state) {
       state.isLogined = false
-      state.email = ""
-      state.type ="" 
-      localStorage.clear()
-      
-      // localStorage.setItem('accessToken','')
-      // localStorage.setItem('refreshToken','')
+      state.email = ''
+      localStorage.setItem('accessToken','')
+      localStorage.setItem('refreshToken','')
       // api 요청 필요
     },
-    findPW(state, action) {
-      state.email = action.payload;
-      
-    },
-    settype(state, action) {
-      state.type = action.payload;
-      localStorage.setItem("type", action.payload);
-    },
     
+
     checkAccessToken(state) {
-      console.log(state)
       const accessToken = localStorage.getItem('accessToken');
       if (!accessToken) {
         return;
       }
       
       try {
+        // 나중에 만료시간 관련 처리도 해야한다
         const data_ = jwtDecode(localStorage.getItem('accessToken') ?? '') ;
         state.isLogined = true;
         state.email = data_.sub;
-
 
       } catch (error) {
         // 에러 처리
