@@ -19,7 +19,7 @@ const SideBar = () => {
 
   return (
     <Side>
-      <NavLink to="/">
+      <NavLink to="/" onClick={() => setnum(0)} >
         <img src="image/logo.png" alt="" />
       </NavLink>
 
