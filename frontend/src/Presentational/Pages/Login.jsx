@@ -30,8 +30,10 @@ const Login = () => {
       .then((response) => {
         localStorage.setItem("accessToken", response.data.token);
         const data_ = jwtDecode(response.data.token);
+        dispatch(authActions.settype( response.data.type ));
 
         dispatch(authActions.logIn({ data: data_ }));
+
       })
       .catch((error) => {
         alert(error.response.data)

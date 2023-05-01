@@ -15,7 +15,6 @@ const Admin = () => {
   useEffect(() => {
     const _dbTest = async () => {
       const res = await api.get("account/list");
-      console.log(res.data);
       setData(res.data);
       setPermissionData(res.data.map((item) => item.type));
     };

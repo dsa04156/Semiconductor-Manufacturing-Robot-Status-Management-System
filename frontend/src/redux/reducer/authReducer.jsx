@@ -2,11 +2,14 @@ import { createSlice } from "@reduxjs/toolkit";
 import jwtDecode from 'jwt-decode'
 
 
+
 let initialState = {
   isLogined: false,
-  email:""
+  email: "",
+  type: localStorage.getItem("type") || "",
 
 }
+
 
 const authReducer = createSlice({
   name: "authReducer",
@@ -18,7 +21,8 @@ const authReducer = createSlice({
     },
     logOut(state,action) {
       state.isLogined = false
-      state.email=""
+      state.email = ""
+      state.type ="" 
       localStorage.clear()
       
       // localStorage.setItem('accessToken','')
@@ -28,6 +32,10 @@ const authReducer = createSlice({
     findPW(state, action) {
       state.email = action.payload;
       
+    },
+    settype(state, action) {
+      state.type = action.payload;
+      localStorage.setItem("type", action.payload);
     },
     
     checkAccessToken(state) {
