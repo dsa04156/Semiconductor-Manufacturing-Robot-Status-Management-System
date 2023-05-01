@@ -1,0 +1,164 @@
+import React from "react";
+import styled from "styled-components";
+import Form from "react-bootstrap/Form";
+import { useState, useEffect } from "react";
+
+import { FaSearch } from "react-icons/fa";
+import api from "../../redux/api";
+
+const Admin = () => {
+  const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [permissionData, setPermissionData] = useState([]);
+  const [defaultPermission, setDefaultPermission] = useState("Unknown");
+
+  useEffect(() => {
+    const _dbTest = async () => {
+      const res = await api.get("account/list");
+      setData(res.data);
+      setPermissionData(res.data.map((item) => item.type));
+    };
+    _dbTest();
+  }, []);
+
+  // 이름 검색 부분
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredData = data.filter((item) => {
+    if (item && item.name) {
+      return item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    }
+    return false;
+  });
+
+  //권한 변경 부분
+  const handleApply = async (event, email, type) => {
+    event.preventDefault();
+    try {
+      const res = await api.put("account/typeUpdate", {
+        email: email,
+        type: type,
+      });
+      console.log(res.data);
+      alert(res.data);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
+  };
+
+  return (
+    <div>
+      <Box>
+        <div className="table-container">
+          <table className="table table-hover">
+            <thead
+              style={{
+                fontSize: "40px",
+                position: "sticky",
+                top: "0",
+                zIndex: 1,
+              }}
+            >
+              <tr>
+                <th>ID</th>
+                <th>H.P</th>
+                <th>Name</th>
+                <th>Permission</th>
+                <th>Edit Permission</th>
+              </tr>
+            </thead>
+            <tbody style={{ position: "sticky" }}>
+              {filteredData
+                .filter((item) => item.type !== "Master") //마스터는 출력 안되게
+                .map((item, index) => (
+                  <tr key={index}>
+                    <td key={index} style={{ color: "blue", fontSize: "23px" }}>
+                      {item.email}
+                    </td>
+                    <td style={{ fontSize: "20px" }} key={index}>
+                      {item.phone}
+                    </td>
+                    <td style={{ fontSize: "20px" }} key={index}>
+                      {item.name}
+                    </td>
+                    <td style={{ fontSize: "20px" }} key={index}>
+                      {item.type}
+                    </td>
+                    <td style={{ fontSize: "20px" }} key={index}>
+                      <Form.Select
+                        size="sm"
+                        value={defaultPermission}
+                        onChange={(e) => {
+                          const newPermissionData = [permissionData];
+                          newPermissionData[index] = e.target.value;
+                          setDefaultPermission(e.target.value);
+                          setPermissionData(newPermissionData);
+                        }}
+                      >
+                        <option value="Unknown">Unknown</option>
+                        <option value="G-Client">G-Client</option>
+                        <option value="N-Client">N-Client</option>
+                      </Form.Select>
+                      <button
+                        className="btn btn-primary"
+                        type="submit"
+                        onClick={(e) =>
+                          handleApply(e, item.email, permissionData[index])
+                        }
+                      >
+                        Apply
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </Box>
+      <Box2>
+        <Form.Group>
+          <Form.Label className="admin">Administer</Form.Label>
+          <FaSearch className="searchicons" style={{ fontSize: "30px" }} />
+          <input
+            autoFocus={true}
+            type="text"
+            className="search"
+            placeholder="     이름 검색"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ width: "300px" }}
+          />
+        </Form.Group>
+      </Box2>
+    </div>
+  );
+};
+
+export default Admin;
+
+const Box = styled.div`
+  position: absolute;
+  top: 200px;
+  left: 150px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  width: 80%;
+  height: 70%;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+`;
+
+const Box2 = styled.div`
+  position: absolute;
+  top: 10px;
+  left: 150px;
+  width: 40%;
+  display: flex;
+  align-items: center;
+`;
