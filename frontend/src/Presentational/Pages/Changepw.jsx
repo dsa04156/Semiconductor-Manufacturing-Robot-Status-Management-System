@@ -1,14 +1,15 @@
-import React, { useState, useEffect ,useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { Link } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
-import api from '../../redux/api'
+import { useNavigate } from "react-router-dom";
+import api from "../../redux/api";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
 
-const Changepw = () => {  
-
+const Changepw = () => {
+  const email = useSelector((state) => state.auth.email.email);
   const [isMounted, setIsMounted] = useState(false);
   const navigate = useNavigate();
   const {
@@ -25,13 +26,12 @@ const Changepw = () => {
   const password = useRef();
   password.current = watch("password");
 
-  const onSubmit = handleSubmit(({ email, password }) => {
+  const onSubmit = handleSubmit(({ password }) => {
     api
       .put("/account/changepw", JSON.stringify({ email, password }))
       .then((response) => {
-        alert(response.data)
-        navigate("/")
-
+        alert(response.data);
+        navigate("/");
       })
       .catch((error) => {
         if (error.response.status === 401) {
@@ -47,7 +47,6 @@ const Changepw = () => {
   }
 
   return (
-
     <div className="middle">
       <div className="logo">WPHM</div>
 
@@ -56,59 +55,47 @@ const Changepw = () => {
           <div className="bold_header">비밀번호 변경</div>
           <Form.Group className="mb-3">
             <Form.Label htmlFor="email"> 아이디</Form.Label>
-            <Form.Control
-              autoFocus={true}
-              htmlSize={50}
-              id="email"
-              type="text"
-              placeholder="balamia@wonik.co.kr"
-              aria-invalid={!isDirty ? undefined : errors.email ? "true" : "false"}
-              {...register("email", {
-                required: "이메일은 필수 입력입니다.",
-                pattern: {
-                  value: /\S+@\S+\.\S+/,
-                  message: "이메일 형식에 맞지 않습니다.",
-                },
-              })}
-            />
-            {errors.email && <small role="alert">{errors.email.message}</small>}
+            <Form.Control htmlSize={50} id="email" type="text" value={email} disabled={true} />
           </Form.Group>
 
           <Form.Group className="mb-3">
-              <Form.Label>비밀번호</Form.Label>
-              <Form.Control
-                id="password"
-                type="password"
-                placeholder="********"
-                aria-invalid={!isDirty ? undefined : errors.password ? "true" : "false"}
-                {...register("password", {
-                  required: true,
-                  minLength: {
-                    value: 8,
-                    message: "8자리 이상 비밀번호를 사용하세요.",
-                  },
-                })}
-              />
-              {errors.password && <small role="alert">{errors.password.message}</small>}
-            </Form.Group>
-            <Form.Group className="mt-3">
-              <Form.Label>비밀번호 확인</Form.Label>
-              <Form.Control
-                id="password_conform"
-                type="password"
-                className="form-control"
-                placeholder="********"
-                aria-invalid={!isDirty ? undefined : errors.password_conform ? "true" : "false"}
-                {...register("password_conform", {
-                  required: true,
-                  validate: (value) => value === password.current,
-                })}
-              />
-              {errors.password_conform && errors.password_conform.type ==="validate" && <Alert>The passwords do not match</Alert>}
-            </Form.Group>
+            <Form.Label>비밀번호</Form.Label>
+            <Form.Control
+              autoFocus={true}
+              id="password"
+              type="password"
+              placeholder="********"
+              aria-invalid={!isDirty ? undefined : errors.password ? "true" : "false"}
+              {...register("password", {
+                required: true,
+                minLength: {
+                  value: 8,
+                  message: "8자리 이상 비밀번호를 사용하세요.",
+                },
+              })}
+            />
+            {errors.password && <small role="alert">{errors.password.message}</small>}
+          </Form.Group>
+          <Form.Group className="mt-3">
+            <Form.Label>비밀번호 확인</Form.Label>
+            <Form.Control
+              id="password_conform"
+              type="password"
+              className="form-control"
+              placeholder="********"
+              aria-invalid={!isDirty ? undefined : errors.password_conform ? "true" : "false"}
+              {...register("password_conform", {
+                required: true,
+                validate: (value) => value === password.current,
+              })}
+            />
+            {errors.password_conform && errors.password_conform.type === "validate" && (
+              <Alert>The passwords do not match</Alert>
+            )}
+          </Form.Group>
           <div className=" d-grid gap-2 mt-4">
             <Button size="lg" type="submit" disabled={isSubmitting} className="button">
-            확인
+              확인
             </Button>
             <Link to="/" className="btn">
               취소
@@ -123,5 +110,5 @@ const Changepw = () => {
 export default Changepw;
 
 const Alert = styled.div`
-  color : red
-`
+  color: red;
+`;

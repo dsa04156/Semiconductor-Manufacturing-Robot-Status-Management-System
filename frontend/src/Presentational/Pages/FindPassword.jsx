@@ -5,10 +5,13 @@ import Form from "react-bootstrap/Form";
 import { Link } from "react-router-dom";
 import api from '../../redux/api'
 import { useNavigate } from 'react-router-dom';
+import { authActions } from '../../redux/reducer/authReducer'
+import { useDispatch } from 'react-redux';
 
 const FindPassword = () => {
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   
   const [isMounted, setIsMounted] = useState(false);
 
@@ -24,9 +27,12 @@ const FindPassword = () => {
 
 
   const onSubmit = handleSubmit(({ email, name }) => {
+    dispatch(authActions.findPW({ email }));
+
     api
       .post("/account/findpw", JSON.stringify({ email, name }))
       .then(() => {
+
         alert("비밀번호 변경 페이지로 이동합니다.")
         navigate("/changepw")
 
