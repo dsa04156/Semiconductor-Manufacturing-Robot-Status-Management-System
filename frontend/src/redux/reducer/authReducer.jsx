@@ -2,10 +2,14 @@ import { createSlice } from "@reduxjs/toolkit";
 import jwtDecode from 'jwt-decode'
 
 
+
 let initialState = {
   isLogined: false,
+  email: "",
+  type: localStorage.getItem("type") || "",
 
 }
+
 
 const authReducer = createSlice({
   name: "authReducer",
@@ -13,18 +17,26 @@ const authReducer = createSlice({
   reducers: {
     logIn(state, action) {
       state.isLogined = true
-      
 
     },
-    logOut(state) {
+    logOut(state,action) {
       state.isLogined = false
-      state.email = ''
-      localStorage.setItem('accessToken','')
-      localStorage.setItem('refreshToken','')
+      state.email = ""
+      state.type ="" 
+      localStorage.clear()
+      
+      // localStorage.setItem('accessToken','')
+      // localStorage.setItem('refreshToken','')
       // api 요청 필요
     },
-    
-
+    findPW(state, action) {
+      state.email = action.payload;
+      
+    },
+    settype(state, action) {
+      state.type = action.payload;
+      localStorage.setItem("type", action.payload);
+    },
     
     checkAccessToken(state) {
       console.log(state)
