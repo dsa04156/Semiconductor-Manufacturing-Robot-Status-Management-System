@@ -232,7 +232,6 @@ const HealthStatus = () => {
       ],
       plotOptions: {
         pie: {
-
           donut: {
             labels: {
               show: true,
@@ -264,80 +263,70 @@ const HealthStatus = () => {
             series={TotdonutData.series}
             type="donut"
             width={180}
-
           />
           <ReactApexChart
             options={unacceptdonutData.options}
             series={unacceptdonutData.series}
             type="donut"
             width={180}
-
           />
           <ReactApexChart
             options={unsatdonutData.options}
             series={unsatdonutData.series}
             type="donut"
             width={180}
-
           />
           <ReactApexChart
             options={satdonutData.options}
             series={satdonutData.series}
             type="donut"
             width={180}
-
           />
           <ReactApexChart
             options={gooddonutData.options}
             series={gooddonutData.series}
             type="donut"
             width={180}
-
           />
         </Big>
       </Desktop>
 
       <Tablet>
         <Mid>
-        <ReactApexChart
+          <ReactApexChart
             options={TotdonutData.options}
             series={TotdonutData.series}
             type="donut"
             width={180}
-
           />
           <ReactApexChart
             options={unacceptdonutData.options}
             series={unacceptdonutData.series}
             type="donut"
             width={180}
-
           />
           <ReactApexChart
             options={unsatdonutData.options}
             series={unsatdonutData.series}
             type="donut"
             width={180}
-
           />
         </Mid>
       </Tablet>
 
       <Mobile>
         <Small>
-        <ReactApexChart
+          <ReactApexChart
             options={TotdonutData.options}
             series={TotdonutData.series}
             type="donut"
             width={200}
-
           />
           <ReactApexChart
             options={unacceptdonutData.options}
             series={unacceptdonutData.series}
             type="donut"
             width={200}
-
           />
         </Small>
       </Mobile>
