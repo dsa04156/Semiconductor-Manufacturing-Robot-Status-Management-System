@@ -23,11 +23,6 @@ const VirtualMetrology = () => {
 }, []);
   return (
     <div>
-      <ul>
-        {data.map((item, index) => (
-          <li key={index}>{item.ID}</li>
-        ))}
-      </ul>
     </div>
   )
 }
