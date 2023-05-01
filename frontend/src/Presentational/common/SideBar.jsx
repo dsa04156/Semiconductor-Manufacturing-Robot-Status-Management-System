@@ -3,12 +3,15 @@ import { NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import styled from "styled-components";
-import { useDispatch } from 'react-redux';
-import { authActions } from '../../redux/reducer/authReducer'
+import { useDispatch } from "react-redux";
+import { authActions } from "../../redux/reducer/authReducer";
+import { useSelector } from "react-redux";
 
 const SideBar = () => {
   const [num, setnum] = useState(0);
   const dispatch = useDispatch();
+  const isMaster = useSelector((state) => state.auth.type === "Master");
+
 
   return (
     <Side>
@@ -34,23 +37,27 @@ const SideBar = () => {
         </Menu>
       </NavLink>
 
-      <NavLink
-        to="/Admin"
-        onClick={() => setnum(2)}
-        className={num === 2 ? "back_type" : "nav_item"}
-      >
-        <Menu>
-          <div>
-            <Icon icon="mdi:human-male" width="35" />
-          </div>
-          <Font2> Admin</Font2>
-        </Menu>
-      </NavLink>
+      {isMaster && (
+        <NavLink
+          to="/Admin"
+          onClick={() => setnum(2)}
+          className={num === 2 ? "back_type" : "nav_item"}
+        >
+          <Menu>
+            <div>
+              <Icon icon="mdi:human-male" width="35" />
+            </div>
+            <Font2> Admin</Font2>
+          </Menu>
+        </NavLink>
+      )}
 
-      <Logout onClick={() =>dispatch(authActions.logOut()) }>
-        <Font2> Logout </Font2>
-        <Icon icon="ic:sharp-logout" />
-      </Logout>
+      <NavLink to="/">
+        <Logout onClick={() => dispatch(authActions.logOut())}>
+          <Font2> Logout </Font2>
+          <Icon icon="ic:sharp-logout" />
+        </Logout>
+      </NavLink>
     </Side>
   );
 };
@@ -64,6 +71,7 @@ const Side = styled.div`
   height: 100vh;
   background-color: white;
   align-items: center;
+  position : relative;
 `;
 const Menu = styled.div`
   margin-top: 30px;
@@ -84,9 +92,12 @@ const Font2 = styled.div`
   font-size: small;
 `;
 const Logout = styled.button`
-  margin-top: 300px;
+  position : absolute;
+  bottom: 50px;
+  left:50%;
+  transform: translateX(-50%);
   font-size: small;
-  background:none;
-  border : none;
-  cursor:pointer;
+  background: none;
+  border: none;
+  cursor: pointer;
 `;
