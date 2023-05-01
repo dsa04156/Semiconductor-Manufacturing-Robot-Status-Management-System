@@ -3,9 +3,12 @@ import { NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import styled from "styled-components";
+import { useDispatch } from 'react-redux';
+import { authActions } from '../../redux/reducer/authReducer'
 
 const SideBar = () => {
   const [num, setnum] = useState(0);
+  const dispatch = useDispatch();
 
   return (
     <Side>
@@ -31,15 +34,23 @@ const SideBar = () => {
         </Menu>
       </NavLink>
 
-      <NavLink to="/Admin" onClick={() => setnum(2)} className={num === 2 ? "back_type" : "nav_item"}>
+      <NavLink
+        to="/Admin"
+        onClick={() => setnum(2)}
+        className={num === 2 ? "back_type" : "nav_item"}
+      >
         <Menu>
           <div>
             <Icon icon="mdi:human-male" width="35" />
           </div>
           <Font2> Admin</Font2>
         </Menu>
-        
       </NavLink>
+
+      <Logout onClick={() =>dispatch(authActions.logOut()) }>
+        <Font2> Logout </Font2>
+        <Icon icon="ic:sharp-logout" />
+      </Logout>
     </Side>
   );
 };
@@ -71,4 +82,11 @@ const Font = styled.div`
 const Font2 = styled.div`
   margin-top: 5px;
   font-size: small;
+`;
+const Logout = styled.button`
+  margin-top: 300px;
+  font-size: small;
+  background:none;
+  border : none;
+  cursor:pointer;
 `;

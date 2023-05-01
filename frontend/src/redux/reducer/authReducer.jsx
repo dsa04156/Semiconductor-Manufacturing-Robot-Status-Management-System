@@ -4,6 +4,7 @@ import jwtDecode from 'jwt-decode'
 
 let initialState = {
   isLogined: false,
+  email:""
 
 }
 
@@ -13,18 +14,21 @@ const authReducer = createSlice({
   reducers: {
     logIn(state, action) {
       state.isLogined = true
-      
 
     },
-    logOut(state) {
+    logOut(state,action) {
       state.isLogined = false
-      state.email = ''
-      localStorage.setItem('accessToken','')
-      localStorage.setItem('refreshToken','')
+      state.email=""
+      localStorage.clear()
+      
+      // localStorage.setItem('accessToken','')
+      // localStorage.setItem('refreshToken','')
       // api 요청 필요
     },
-    
-
+    findPW(state, action) {
+      state.email = action.payload;
+      
+    },
     
     checkAccessToken(state) {
       console.log(state)

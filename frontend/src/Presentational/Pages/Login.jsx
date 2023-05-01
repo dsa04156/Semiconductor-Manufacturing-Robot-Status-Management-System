@@ -29,7 +29,6 @@ const Login = () => {
       .post("/account/login", JSON.stringify({ email, password }))
       .then((response) => {
         localStorage.setItem("accessToken", response.data.token);
-
         const data_ = jwtDecode(response.data.token);
 
         dispatch(authActions.logIn({ data: data_ }));
