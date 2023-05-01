@@ -1,8 +1,6 @@
 package com.ssafy.wonik.controller;
 
-import com.ssafy.wonik.domain.dto.UserJoinDto;
-import com.ssafy.wonik.domain.dto.UserLoginDto;
-import com.ssafy.wonik.domain.dto.UserTypeUpdateDto;
+import com.ssafy.wonik.domain.dto.*;
 import com.ssafy.wonik.service.UserService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +25,8 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto){
         System.out.println(userLoginDto.getEmail());
         System.out.println(userLoginDto.getPassword());
-        String token = userService.login(userLoginDto);
-        return ResponseEntity.ok().body(token);
+        UserResponseDto userResponseDto = userService.login(userLoginDto);
+        return ResponseEntity.ok().body(userResponseDto);
     }
 
     @GetMapping("/list")
@@ -40,5 +38,24 @@ public class UserController {
     public ResponseEntity<?> typeUpdate(@RequestBody UserTypeUpdateDto userTypeUpdateDto){
         userService.typeUpdate(userTypeUpdateDto);
         return ResponseEntity.ok().body("type 수정 완료");
+    }
+
+    @PostMapping("/findid")
+    public ResponseEntity<?> findEmail(@RequestBody UserFindIdDto userFindIdDto){
+        String email = userService.findUserEmail(userFindIdDto);
+        System.out.println("1");
+        return  ResponseEntity.ok().body(email);
+    }
+
+    @PostMapping("/findpw")
+    public ResponseEntity<?> findPw(@RequestBody UserFindPwDto userFindPwDto){
+        userService.findUserPassword(userFindPwDto);
+        return ResponseEntity.ok().body("");
+    }
+
+    @PutMapping("/changepw")
+    public ResponseEntity<?> changePw(@RequestBody UserChangePwDto userChangePwDto){
+        userService.changePassword(userChangePwDto);
+        return ResponseEntity.ok().body("비밀번호 변경 완료");
     }
 }

@@ -1,8 +1,6 @@
 package com.ssafy.wonik.service;
 
-import com.ssafy.wonik.domain.dto.UserJoinDto;
-import com.ssafy.wonik.domain.dto.UserLoginDto;
-import com.ssafy.wonik.domain.dto.UserTypeUpdateDto;
+import com.ssafy.wonik.domain.dto.*;
 import com.ssafy.wonik.domain.entity.User;
 import com.ssafy.wonik.exception.AppException;
 import com.ssafy.wonik.exception.ErrorCode;
@@ -55,17 +53,19 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public String login(UserLoginDto userLoginDto) {
+    public UserResponseDto login(UserLoginDto userLoginDto) {
         // email 없음
         User user = userReposistory.findByEmail(userLoginDto.getEmail())
-                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "없는 email 입니다" ));
+                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "없는 email 입니다"));
         // password 틀림
         if (!encoder.matches(userLoginDto.getPassword(), user.getPassword())) {
             throw new AppException(ErrorCode.INVALID_PASSWORD, "password 오류");
         }
         // Exception 안됐을시 토큰 발행
         String token = JwtToken.createToken(user.getEmail(), key, expiredTimeMs);
-        return token;
+
+        UserResponseDto userResponseDto = new UserResponseDto(token, user.getType());
+        return userResponseDto;
     }
 
     @Override
@@ -76,10 +76,38 @@ public class UserServiceImpl implements UserService {
     @Override
     public void typeUpdate(UserTypeUpdateDto userTypeUpdateDto) {
         User user = userReposistory.findByEmail(userTypeUpdateDto.getEmail())
-                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "없는 email 입니다" ));
+                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "없는 email 입니다"));
 
         user.setType(userTypeUpdateDto.getType());
         userReposistory.save(user);
+    }
+
+    @Override
+    public String findUserEmail(UserFindIdDto userFindIdDto) {
+        User user = userReposistory.findByPhone(userFindIdDto.getPhone())
+                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, " 없는 phone, name 입니다."));
+        System.out.println("2");
+        String email = user.getEmail();
+        System.out.println(email);
+        return email;
+    }
+
+    @Override
+    public String findUserPassword(UserFindPwDto userFindPwDto) {
+        User user = userReposistory.findByEmail(userFindPwDto.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, " 없는 Email 입니다."));
+
+        return null;
+    }
+
+    @Override
+    public String changePassword(UserChangePwDto userChangePwDto) {
+        User user = userReposistory.findByEmail(userChangePwDto.getEmail())
+                .orElseThrow(()-> new AppException(ErrorCode.USERNAME_NOT_FOUND, "없는 Email 입니다"));
+
+        user.setPassword(encoder.encode(userChangePwDto.getPassword()));
+        userReposistory.save(user);
+        return null;
     }
 
 
