@@ -18,9 +18,17 @@ spring:
 jwt:
   token:
     secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 17e5faf04a5661260fc668365292e0b7b03821b0
 cors:
   allowed-origins: 'http://localhost:3000'
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS
   allowed-headers: '*'
+<<<<<<< HEAD
   max-age: 3600
+=======
+  max-age: 3600
+>>>>>>> 17e5faf04a5661260fc668365292e0b7b03821b0

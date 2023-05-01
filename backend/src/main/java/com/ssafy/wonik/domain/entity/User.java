@@ -19,5 +19,5 @@ public class User {
 
     private String phone;
 
-    private int type;
+    private String type;
 }
