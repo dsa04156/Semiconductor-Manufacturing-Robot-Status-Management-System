@@ -1,6 +1,8 @@
 package com.ssafy.wonik.controller;
 
 import com.ssafy.wonik.domain.dto.ComponentRootDto;
+import com.ssafy.wonik.domain.dto.GraphInputDto;
+import com.ssafy.wonik.domain.dto.GraphRootDto;
 import com.ssafy.wonik.service.MachineService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,11 @@ public class MachineController {
 //        }
         System.out.println(componentRootDto);
         return ResponseEntity.ok().body(componentRootDto);
+    }
+
+    @PostMapping("/machine/graph")
+    public ResponseEntity<?> findGraph(@RequestBody GraphInputDto graphInputDto){
+        GraphRootDto graphRootDto = machineService.findGraph(graphInputDto);
     }
 
 }

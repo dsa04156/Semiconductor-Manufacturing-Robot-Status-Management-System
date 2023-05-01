@@ -1,6 +1,8 @@
 package com.ssafy.wonik.service;
 
 import com.ssafy.wonik.domain.dto.ComponentRootDto;
+import com.ssafy.wonik.domain.dto.GraphInputDto;
+import com.ssafy.wonik.domain.dto.GraphRootDto;
 import com.ssafy.wonik.domain.entity.Machine;
 import com.ssafy.wonik.repository.MachineRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +28,11 @@ public class MachineServiceImpl implements MachineService{
         ComponentRootDto componentRootDto = list.get(0);
         System.out.println(componentRootDto);
         return componentRootDto;
+    }
+
+    @Override
+    public GraphRootDto findGraph(GraphInputDto graphInputDto) {
+        List<GraphRootDto> list = machineRepository.findGraph(graphInputDto);
+        return list;
     }
 }

@@ -1,6 +1,8 @@
 package com.ssafy.wonik.repository;
 
 import com.ssafy.wonik.domain.dto.ComponentRootDto;
+import com.ssafy.wonik.domain.dto.GraphInputDto;
+import com.ssafy.wonik.domain.dto.GraphRootDto;
 import com.ssafy.wonik.domain.entity.Machine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -33,5 +35,9 @@ public class MachineRepository {
 
         return result.getMappedResults();
 //        return mongoTemplate.findAll(ComponentDto.class, componentFindDto.getMachineName());
+    }
+
+    public List<GraphRootDto> findGraph(GraphInputDto graphInputDto) {
+
     }
 }
