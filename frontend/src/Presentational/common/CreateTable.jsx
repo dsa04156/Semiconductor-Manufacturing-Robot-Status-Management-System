@@ -6,38 +6,31 @@ import EvalStatus from './EvalStatus';
 function CreateTable({ setTest, data, test }) {
   const [selected, setSelected] = useState(test);
 
-  // Check if "data" and "test" are defined before using them
-  if (!data || !test) {
-    return null;
-  }
-
   const idxHandler = (idx) => {
     setSelected(idx);
     setTest(idx);
   }
 
   const dataTable = data.map((elem, idx) => {
-    let evalValue = '';
-
     if (elem.value < 0){
-      evalValue = "unacceptable";
+      elem.eval = "unacceptable";
     }
     else if (elem.value < 0.03){
-      evalValue = "unsatisfactory";
+      elem.eval = "unsatisfactory";
     }
     else if (elem.value < 0.3){
-      evalValue = "satisfactory";
+      elem.eval = "satisfactory";
     }
     else {
-      evalValue = "Good";
+      elem.eval = "Good";
     }
-
+    
     return (
       <tr className='tableBody' key={idx}>
         <td><input type="radio" checked={idx === selected} onChange={() => idxHandler(idx)} /></td>
         <td>{elem.name}</td>
         <td>
-          <EvalStatus evalValue={evalValue}/> {/* Check if "elem.eval" is defined before using it */}
+          <EvalStatus evalValue={elem.eval}/>
         </td>
         <td>{elem.value}</td>
       </tr>
