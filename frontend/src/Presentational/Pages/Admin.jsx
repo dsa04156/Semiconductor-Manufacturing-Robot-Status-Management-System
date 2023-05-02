@@ -16,7 +16,6 @@ const Admin = () => {
     const _dbTest = async () => {
       const res = await api.get("account/list");
       setData(res.data);
-      setPermissionData(res.data.map((item) => item.type));
     };
     _dbTest();
   }, []);
@@ -72,32 +71,32 @@ const Admin = () => {
             </thead>
             <tbody style={{ position: "sticky" }}>
               {filteredData
-                .filter((item) => item.type !== "Master") //마스터는 출력 안되게
+                .filter((item) => item.type !== "Master")
                 .map((item, index) => (
-                  <tr key={index}>
-                    <td key={index} style={{ color: "blue", fontSize: "23px" }}>
+                  <tr key={item.email}>
+                    <td style={{ color: "blue", fontSize: "23px" }}>
                       {item.email}
                     </td>
-                    <td style={{ fontSize: "20px" }} key={index}>
-                      {item.phone}
-                    </td>
-                    <td style={{ fontSize: "20px" }} key={index}>
-                      {item.name}
-                    </td>
-                    <td style={{ fontSize: "20px" }} key={index}>
-                      {item.type}
-                    </td>
-                    <td style={{ fontSize: "20px" }} key={index}>
+                    <td style={{ fontSize: "20px" }}>{item.phone}</td>
+                    <td style={{ fontSize: "20px" }}>{item.name}</td>
+                    <td style={{ fontSize: "20px" }}>{item.type}</td>
+                    <td style={{ fontSize: "20px" }}>
                       <Form.Select
                         size="sm"
-                        value={defaultPermission}
+                        value={permissionData[index] || "-------"}
                         onChange={(e) => {
-                          const newPermissionData = [permissionData];
-                          newPermissionData[index] = e.target.value;
-                          setDefaultPermission(e.target.value);
-                          setPermissionData(newPermissionData);
+                          const selectedValue = e.target.value;
+                          if (selectedValue === "-------") {
+                            return; // 함수 실행하지 않음
+                          }
+                          setPermissionData((prevPermissionData) => {
+                            const newPermissionData = [...prevPermissionData];
+                            newPermissionData[index] = selectedValue;
+                            return newPermissionData;
+                          });
                         }}
                       >
+                        <option value="-------">-------</option>
                         <option value="Unknown">Unknown</option>
                         <option value="G-Client">G-Client</option>
                         <option value="N-Client">N-Client</option>
@@ -105,9 +104,11 @@ const Admin = () => {
                       <button
                         className="btn btn-primary"
                         type="submit"
-                        onClick={(e) =>
-                          handleApply(e, item.email, permissionData[index])
-                        }
+                        onClick={(e) => {
+                          if (permissionData[index]) {
+                            handleApply(e, item.email, permissionData[index]);
+                          }
+                        }}
                       >
                         Apply
                       </button>
@@ -126,7 +127,7 @@ const Admin = () => {
             autoFocus={true}
             type="text"
             className="search"
-            placeholder="     이름 검색"
+            placeholder=" 이름 검색"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ width: "300px" }}
