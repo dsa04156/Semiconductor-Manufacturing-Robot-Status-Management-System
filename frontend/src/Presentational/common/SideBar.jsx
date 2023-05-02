@@ -63,6 +63,19 @@ const SideBar = () => {
         </NavLink>
       )}
 
+      <NavLink
+        to="/Graphtest"
+        onClick={() => setnum(3)}
+        className={num === 1 ? "back_type" : "nav_item"}
+      >
+        <Menu>
+          <div>
+            <Icon icon="mdi:human-female" width="35" />
+          </div>
+          <Font2> Graphtest</Font2>
+        </Menu>
+      </NavLink>
+
       <NavLink to="/">
         <Logout onClick={() => dispatch(authActions.logOut())}>
           <Font2> Logout </Font2>

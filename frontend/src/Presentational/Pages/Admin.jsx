@@ -16,6 +16,7 @@ const Admin = () => {
     const _dbTest = async () => {
       const res = await api.get("account/list");
       setData(res.data);
+      console.log(res.data);
     };
     _dbTest();
   }, []);
@@ -87,7 +88,7 @@ const Admin = () => {
                         onChange={(e) => {
                           const selectedValue = e.target.value;
                           if (selectedValue === "-------") {
-                            return; // 함수 실행하지 않음
+                            return; // 선택 안할 시 함수 실행하지 않음
                           }
                           setPermissionData((prevPermissionData) => {
                             const newPermissionData = [...prevPermissionData];

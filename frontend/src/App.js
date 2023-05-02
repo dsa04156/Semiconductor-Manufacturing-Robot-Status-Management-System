@@ -16,6 +16,7 @@ import Changepw from './Presentational/Pages/Changepw';
 import { useDispatch } from 'react-redux';
 import jwtDecode from 'jwt-decode';
 import { authActions } from './redux/reducer/authReducer';
+import Graphtest from './Presentational/Pages/Graphtest';
 
 function App() {
 
@@ -40,8 +41,10 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/main" element={<Mainpage />} />
         <Route path="/vm" element={<VirtualMetrology />} />
+       
         <Route path="/Admin" element={<Admin />} />
         <Route path="/changepw" element={ <Changepw/>} />
+        <Route path="/Graphtest" element={<Graphtest/>} />
       </Routes>
       {isLoggedIn && <SideBar />}
     </Back>
