@@ -1,143 +1,108 @@
-import React from "react";
+import React from 'react'
+import ReactApexChart from "react-apexcharts";
+import { useMediaQuery } from "react-responsive";
 import styled from "styled-components";
 import Form from "react-bootstrap/Form";
-import { useState, useEffect } from "react";
+import Information from './info-json';
+import HorizonLine from '../common/HorizontalLine';
+import { useState,useEffect } from "react";
+import axios from 'axios';
 
-import { FaSearch } from "react-icons/fa";
-import api from "../../redux/api";
 
-const Admin = () => {
-  const [data, setData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [permissionData, setPermissionData] = useState([]);
-  const [defaultPermission, setDefaultPermission] = useState("Unknown");
+const Admin= () => {
+    const [data, setData] = useState([]);
 
-  useEffect(() => {
-    const _dbTest = async () => {
-      const res = await api.get("account/list");
-      setData(res.data);
-      setPermissionData(res.data.map((item) => item.type));
-    };
+    useEffect(() => {
+        const _dbTest = async () => {
+            // **헤더값에 토큰 값**을 주면 -> 토큰 값 인지해서 admin이 맞구나
+            // 하면 다시 보낸다
+            const res = await axios.get('http://localhost:4000/api/test');
+            console.log(res.data);
+            setData(res.data);
+    };  
     _dbTest();
-  }, []);
-
-  // 이름 검색 부분
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const filteredData = data.filter((item) => {
-    if (item && item.name) {
-      return item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    }
-    return false;
-  });
-
-  //권한 변경 부분
-  const handleApply = async (event, email, type) => {
-    event.preventDefault();
-    try {
-      const res = await api.put("account/typeUpdate", {
-        email: email,
-        type: type,
-      });
-      console.log(res.data);
-      alert(res.data);
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
+}, []);
 
   return (
     <div>
-      <Box>
-        <div className="table-container">
-          <table className="table table-hover">
-            <thead
-              style={{
-                fontSize: "40px",
-                position: "sticky",
-                top: "0",
-                zIndex: 1,
-              }}
-            >
-              <tr>
-                <th>ID</th>
-                <th>H.P</th>
-                <th>Name</th>
-                <th>Permission</th>
-                <th>Edit Permission</th>
-              </tr>
-            </thead>
-            <tbody style={{ position: "sticky" }}>
-              {filteredData
-                .filter((item) => item.type !== "Master") //마스터는 출력 안되게
-                .map((item, index) => (
-                  <tr key={index}>
-                    <td key={index} style={{ color: "blue", fontSize: "23px" }}>
-                      {item.email}
-                    </td>
-                    <td style={{ fontSize: "20px" }} key={index}>
-                      {item.phone}
-                    </td>
-                    <td style={{ fontSize: "20px" }} key={index}>
-                      {item.name}
-                    </td>
-                    <td style={{ fontSize: "20px" }} key={index}>
-                      {item.type}
-                    </td>
-                    <td style={{ fontSize: "20px" }} key={index}>
-                      <Form.Select
-                        size="sm"
-                        value={defaultPermission}
-                        onChange={(e) => {
-                          const newPermissionData = [permissionData];
-                          newPermissionData[index] = e.target.value;
-                          setDefaultPermission(e.target.value);
-                          setPermissionData(newPermissionData);
-                        }}
-                      >
-                        <option value="Unknown">Unknown</option>
-                        <option value="G-Client">G-Client</option>
-                        <option value="N-Client">N-Client</option>
-                      </Form.Select>
-                      <button
-                        className="btn btn-primary"
-                        type="submit"
-                        onClick={(e) =>
-                          handleApply(e, item.email, permissionData[index])
-                        }
-                      >
-                        Apply
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-      </Box>
-      <Box2>
-        <Form.Group>
-          <Form.Label className="admin">Administer</Form.Label>
-          <FaSearch className="searchicons" style={{ fontSize: "30px" }} />
-          <input
-            autoFocus={true}
-            type="text"
-            className="search"
-            placeholder="     이름 검색"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: "300px" }}
-          />
-        </Form.Group>
-      </Box2>
-    </div>
-  );
-};
+        {/* <HorizonLine /> */}
+        <Box>
+        <table class="table table-hover">
+ <thead>
+   <tr>
+      <th>ID</th>
+      <th>Email</th>
+      <th>Email</th>
+   </tr>
+ </thead>
+ <tbody>
+   <tr>
+      <td>
+        {data.map((item, index) => (
+          <li className="idlist" key={index} style={{fontSize: "24px"}}>
+            {item.ID}  {item.Password} {item.PhoneNumber}
+            </li>
+        ))}
+       </td>
+      <td>Doe</td>
+      <td>john@example.com</td>
+   </tr>
+   <tr>
+      <td>Mary</td>
+      <td>Moe</td>
+      <td>mary@example.com</td>
+   </tr>
+   <tr>
+      <td>July</td>
+      <td>Dooley</td>
+      <td>july@example.com</td>
+   </tr>
+ </tbody> 
 
-export default Admin;
+</table>
+        {/* <Box3>
+        <ul className="idlabel" >ID
+        {data.map((item, index) => (
+          <li className="idlist" key={index} style={{fontSize: "24px"}}>
+            {item.ID}  
+            </li>
+        ))}
+       </ul>
+       </Box3> */}
+
+       {/* <Box4>
+       <ul className="Passwordlabel">
+        {data.map((item, index) => (
+          <li className="idlist" key={index} style={{fontSize: "24px"}}>
+            {item.PhoneNumber}  
+            </li>
+        ))}
+       </ul>
+       </Box4> */}
+        </Box>
+       {/* <Form.Label className="adlabel">ID H.P Name Permisson Edit-Permission </Form.Label> */}
+       
+       <Box2>
+       <Form.Group>
+        <Form.Label className="admin">Administer</Form.Label>
+       <Form.Control
+        autoFocus={true}
+        type="text" 
+        htmlSize={30} 
+        className="search" 
+        placeholder=" 이름 검색"
+       />
+       
+        </Form.Group>
+        </Box2>
+        
+    </div>
+  )
+}
+
+export default Admin
+
+
 
 const Box = styled.div`
   position: absolute;
@@ -151,14 +116,38 @@ const Box = styled.div`
   border-radius: 20px;
   display: flex;
   align-items: center;
-  overflow: hidden;
 `;
+
 
 const Box2 = styled.div`
   position: absolute;
   top: 10px;
   left: 150px;
   width: 40%;
+  display: flex;
+  align-items: center;
+`;
+
+
+
+const Box3 = styled.div`
+  position: absolute;
+  top: 70px;
+  left: 10px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+`;
+
+const Box4 = styled.div`
+  position: absolute;
+  top: 70px;
+  left: 400px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
 `;

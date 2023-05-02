@@ -321,6 +321,8 @@ const HealthStatus = ({componentData}) => {
     <div>
       <Desktop>
         <Big>
+        
+
           <ReactApexChart
             options={TotdonutData.options}
             series={TotdonutData.series}
@@ -447,4 +449,11 @@ const Small = styled.div`
   border-radius: 20px;
   display: flex;
   align-items: center;
+`;
+
+const Fontst = styled.div`
+  font-family: "Domine";
+  font-style: normal;
+  font-size: ${(props) =>props.size}px;
+  color: #000000;
 `;
