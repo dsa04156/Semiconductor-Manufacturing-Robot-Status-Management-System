@@ -5,31 +5,30 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../redux/reducer/authReducer";
-import { newactions } from '../../redux/reducer/Reducer'
+import { newactions } from "../../redux/reducer/Reducer";
 import { useSelector } from "react-redux";
 
 const SideBar = () => {
-
   const dispatch = useDispatch();
   const isMaster = useSelector((state) => state.auth.type === "Master");
   let num = useSelector((state) => state.red.num);
   // useEffect(() => {
   //   localStorage.setItem("num", num);
   // }, [num]);
-  
+
   const handleNavClick = (navIndex) => {
     dispatch(newactions.setNum(navIndex));
-  }
+  };
 
   return (
     <Side>
-      <NavLink to="/" onClick={() =>  handleNavClick(0) }>
+      <NavLink to="/" onClick={() => handleNavClick(0)}>
         <img src="image/logo.png" alt="" />
       </NavLink>
 
       <NavLink
         to="/"
-        onClick={() =>  handleNavClick(0) }
+        onClick={() => handleNavClick(0)}
         className={num === 0 ? "back_type" : "nav_item"}
       >
         <Menu>
@@ -42,7 +41,7 @@ const SideBar = () => {
 
       <NavLink
         to="/vm"
-        onClick={() =>  handleNavClick(1) }
+        onClick={() => handleNavClick(1)}
         className={num === 1 ? "back_type" : "nav_item"}
       >
         <Menu>
@@ -56,7 +55,7 @@ const SideBar = () => {
       {isMaster && (
         <NavLink
           to="/Admin"
-          onClick={() =>  handleNavClick(2) }
+          onClick={() => handleNavClick(2)}
           className={num === 2 ? "back_type" : "nav_item"}
         >
           <Menu>
@@ -67,6 +66,19 @@ const SideBar = () => {
           </Menu>
         </NavLink>
       )}
+
+      <NavLink
+        to="/Graphtest"
+        onClick={() => handleNavClick(3)}
+        className={num === 3 ? "back_type" : "nav_item"}
+      >
+        <Menu>
+          <div>
+            <Icon icon="mdi:human-female" width="35" />
+          </div>
+          <Font2> Graphtest</Font2>
+        </Menu>
+      </NavLink>
 
       <NavLink to="/">
         <Logout onClick={() => dispatch(authActions.logOut())}>
