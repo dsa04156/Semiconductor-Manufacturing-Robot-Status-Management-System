@@ -1,12 +1,20 @@
 package com.ssafy.wonik.controller;
 
 import com.ssafy.wonik.domain.dto.ComponentRootDto;
+import com.ssafy.wonik.domain.dto.GraphInputDto;
+import com.ssafy.wonik.domain.dto.GraphResponseDto;
+import com.ssafy.wonik.domain.dto.GraphRootDto;
 import com.ssafy.wonik.service.MachineService;
+import io.swagger.models.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -40,4 +48,23 @@ public class MachineController {
         return ResponseEntity.ok().body(componentRootDto);
     }
 
+    @PostMapping("/machine/graph")
+    public ResponseEntity<?> findGraph(@RequestBody GraphInputDto graphInputDto){
+        GraphResponseDto graphRootDto = machineService.findGraph(graphInputDto);
+        return ResponseEntity.ok().body(graphRootDto);
+    }
+//    @PostMapping("/machine/graph")
+//
+//    public ResponseEntity<?> findGraph(@RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+//                                       @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
+//        GraphInputDto graphInputDto = new GraphInputDto();
+//        graphInputDto.setMachineName("G_TEST");
+//        graphInputDto.setEndDate(endDate);
+//        graphInputDto.setModuleName("root-006");
+//        graphInputDto.setStartDate(startDate);
+//        graphInputDto.setComponentName("root-006-000");
+//
+//        HashMap<String, ArrayList> graphRootDto = machineService.findGraph(graphInputDto);
+//        return ResponseEntity.ok().body(graphRootDto);
+//    }
 }

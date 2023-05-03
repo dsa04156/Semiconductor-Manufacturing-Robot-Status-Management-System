@@ -5,13 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class ChildDto {
-    private String name;
-    private Double value;
-    private ArrayList<Object> child;
+@AllArgsConstructor
+public class GraphResponseDto {
+    private ArrayList<String> nameList;
+    private HashMap<String, ArrayList> data;
+
 }
