@@ -11,21 +11,20 @@ import HealthStatus from './HealthStatus';
 const ComponentList = ( { child } ) => {
     const [componentList, setComponentList] = useState([]);
 
-    console.log(child);
+
 
     useEffect(() => {
       setComponentList([...child]);
     }, [child]);
 
     useEffect(() => {
-      console.log(componentList);
     }, [componentList]);
 
     const [test, setTest] = useState()
 
     const data = useMemo(() => componentList, [componentList]);
 
-    console.log(test)
+
 
     return (
       <div>
