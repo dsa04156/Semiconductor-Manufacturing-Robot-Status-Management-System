@@ -66,7 +66,7 @@ const SideBar = () => {
       <NavLink
         to="/Graphtest"
         onClick={() => setnum(3)}
-        className={num === 1 ? "back_type" : "nav_item"}
+        className={num === 3 ? "back_type" : "nav_item"}
       >
         <Menu>
           <div>

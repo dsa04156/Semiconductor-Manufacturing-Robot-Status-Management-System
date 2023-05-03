@@ -2,24 +2,43 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import * as d3 from "d3";
 import api from "../../redux/api";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const Graphtest = () => {
   const svgRef = useRef(null);
   const [hoveredValue, setHoveredValue] = useState(null);
   const yScale = d3.scaleLinear().domain([0, 1]).range([300, 0]);
+  const [startDate, setStartDate] = useState(
+    new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  ); // 7일 전으로 가장 처음 start Default값을 세팅
 
+  const [endDate, setEndDate] = useState(new Date());
   const [data, setData] = useState([]);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [showCalendar2, setShowCalendar2] = useState(false);
+
+  const onChangeStartDate = (date) => {
+    setStartDate(date);
+  };
+  const onChangeEndDate = (date) => {
+    setEndDate(date);
+  };
 
   useEffect(() => {
     const graph_data = async () => {
       const res = await api.post("data/Machine/G_TEST");
       setData(res.data);
-      console.log(res.data); // 전체 노드
-      //  console.log(res.data[0].name); // 머신 이름
-      //  console.log(res.data[0].child); // 머신 바로 아래 모듈리스트 전부
-      // console.log(res.data[0].chile[0~8]) // 모듈리스트 바로 아래
-      //   console.log(res.data[0].child[0].child[0].value);
-      // console.log(res.data[0].child[0].child[0~3].name); 그래프 아래 띄울거
+      //res.data.name = 머신 이름
+      // res.data = 전체 노드
+      // res.data.chile[0~8] = 모듈 이름
+      // res.data.child[0].name = lastdata(root-000)
+      // res.data.child[1].name = root-001
+      console.log(res.data.child); // 전체 노드
+      //res.data.child[0].child[0~2] 파라미터
+
+      //console.log(res.data.child[0].child[0]);
+      //console.log(res.data.child[1]);
     };
     graph_data();
 
@@ -92,6 +111,77 @@ const Graphtest = () => {
 
   return (
     <div>
+      <PeriodBox>
+        {" "}
+        PERIOD{" "}
+        <CalendarIcon
+          src="image/calendar-icon.png"
+          onClick={() => {
+            setShowCalendar(!showCalendar);
+            console.log("clicked");
+          }}
+        />
+        {showCalendar && (
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => {
+              onChangeStartDate(date);
+              setShowCalendar(false);
+            }}
+            selectsStart
+            startDate={startDate}
+            showTimeSelect
+            timeFormat="HH:mm"
+            timeIntervals={1}
+            dateFormat="yyyy-MM-dd HH:mm"
+            inline
+            popperPlacement="bottom-end"
+          />
+        )}
+        {startDate.toLocaleString("ko-KR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+          pattern: " ",
+        })}
+        {"   "}~ {/* 아래는 EndDate */}
+        <CalendarIcon
+          src="image/calendar-icon.png"
+          onClick={() => {
+            setShowCalendar2(!showCalendar2);
+            console.log("clicked");
+          }}
+        />
+        {showCalendar2 && (
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => {
+              onChangeEndDate(date);
+              setShowCalendar2(false);
+            }}
+            selectsEnd
+            endDate={endDate}
+            showTimeSelect
+            timeFormat="HH:mm"
+            timeIntervals={1}
+            dateFormat="yyyy-MM-dd HH:mm"
+            inline
+            popperPlacement="bottom-end"
+          />
+        )}
+        {endDate.toLocaleString("ko-KR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+          pattern: " ",
+        })}
+      </PeriodBox>
       <Box>
         <svg ref={svgRef} width="900" height="550">
           {hoveredValue !== null && hoveredValue.value !== null && (
@@ -108,9 +198,11 @@ const Graphtest = () => {
           )}
         </svg>
         <CompoBox>
-          {data[0] &&
-            data[0].child &&
-            data[0].child[0].child[0].child.map((child, index) => {
+          {data && //데이터 전체
+            data.child && // 모듈 이름
+            data.child[1].child.map((child, index) => {
+              //0번째 모듈의 컴포넌트들
+              //실제 쓸때는 data.child[index].
               const colors = [
                 "#f44336",
                 "#e91e63",
@@ -152,12 +244,17 @@ const Graphtest = () => {
                     }}
                     onClick={
                       () => console.log(child.value) //여기에 그래프 출력 코드
+                      //axios api 보낸다
+                      //api에 담길것 시작시간, 종료시간, 컴포넌트 이름, 모듈 이름, 머신 이름
+                      // 시작 시간 : ~
+                      // 종료 시간 : ~
+                      // 컴포넌트 이름 :
                     }
                   >
                     {child.name}
                   </span>
-                  {index !== data[0].child[0].child[0].child.length - 1 && " "}
-                </React.Fragment>
+                  {index !== data.child[1].length - 1 && " "}
+                </React.Fragment> //res.data.child[0].child[0~2] 파라미터
               );
             })}
         </CompoBox>
@@ -185,15 +282,50 @@ const Box = styled.div`
 
 const CompoBox = styled.div`
   position: absolute;
-  top: 380px;
+  top: 450px;
   left: 30px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  width: 60%;
+  width: 80%;
   height: 10%;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   display: flex;
   align-items: center;
   overflow: hidden;
+`;
+
+const PeriodBox = styled.div`
+  position: absolute;
+  top: 15px;
+  left: 150px;
+  background: #ffffff;
+  // border: 1px solid rgba(0, 0, 0, 0.2);
+  // box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  width: 90%;
+  height: 28%;
+
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  z-index: 1;
+`;
+
+const CalendarIcon = styled.img`
+  width: 35px;
+  height: 35px;
+  margin-left: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+`;
+
+const DateInput = styled.input`
+  border: none;
+  outline: none;
+  width: 100%;
+  height: 100%;
+  font-size: 16px;
+  color: #212121;
+  background-color: transparent;
+  cursor: pointer;
 `;
