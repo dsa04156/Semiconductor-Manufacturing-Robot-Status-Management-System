@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import ReactApexChart from "react-apexcharts";
 import styled from "styled-components";
 
@@ -11,12 +11,16 @@ const HealthStatus = ({ componentData }) => {
       eval: data.eval,
     };
   });
+
+
   const unaccep_compodata = compodata.reduce((unaccep_count, data) => {
     if (data.eval === "unacceptable") {
       unaccep_count++;
     }
     return unaccep_count;
   }, 0);
+
+
   const unaccep_lables = ["unacceptable", "others"];
   const unaccep_colors = ["#FF5172", "#F2D8DF"];
 
@@ -26,6 +30,8 @@ const HealthStatus = ({ componentData }) => {
     }
     return unsat_count;
   }, 0);
+
+
   const unsat_lables = ["unsatisfactory", "others"];
   const unsat_colors = ["#FFEE32", "#F4E4C4"];
 
@@ -45,6 +51,8 @@ const HealthStatus = ({ componentData }) => {
     }
     return good_count;
   }, 0);
+
+  
   const good_lables = ["Good", "others"];
   const good_colors = ["#A5FF32", "#D9ECC8"];
 
@@ -67,7 +75,7 @@ const HealthStatus = ({ componentData }) => {
   const sat_data = [datas[2], totalcount - datas[2]];
   const good_data = [datas[3], totalcount - datas[3]];
 
-  console.log(unaccep_data)
+
   // const unaccep_lables = ["unacceptable", "others"];
   // const unaccep_colors = ["#FF5172", "#F2D8DF"];
 
@@ -82,6 +90,7 @@ const HealthStatus = ({ componentData }) => {
   // const good_data = [datas[0], sum - datas[0]];
   // const good_lables = ["Good", "others"];
   // const good_colors = ["#A5FF32", "#D9ECC8"];
+
 
   const TotdonutData = {
     series: datas,
@@ -116,6 +125,7 @@ const HealthStatus = ({ componentData }) => {
                 fontSize: "20px",
                 show: true,
                 color: "#ADB1B8",
+                
               },
             },
           },
@@ -126,7 +136,7 @@ const HealthStatus = ({ componentData }) => {
   };
 
   const unacceptdonutData = {
-    series: [unaccep_compodata],
+    series: unaccep_data,
     options: {
       chart: {
         type: "donut",
@@ -154,8 +164,14 @@ const HealthStatus = ({ componentData }) => {
                 label: "unacceptable",
                 fontSize: "16px",
                 color: "#ADB1B8",
+                formatter: function (w) {
+                  return unaccep_data[0];
+                },
               },
               value: {
+                formatter: function (val) {
+                  return val;
+                },
                 fontSize: "20px",
                 show: true,
                 color: "#ADB1B8",
@@ -288,6 +304,7 @@ const HealthStatus = ({ componentData }) => {
                 fontSize: "20px",
                 show: true,
                 color: "#ADB1B8",
+
               },
             },
           },
