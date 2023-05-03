@@ -92,7 +92,6 @@ public class MachineRepository {
         graphResponseDto.setNameList(nameList);
         graphResponseDto.setData(mainMap);
 
-        System.out.println(mainMap);
         return graphResponseDto;
 
     }
