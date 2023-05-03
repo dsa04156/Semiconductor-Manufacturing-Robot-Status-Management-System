@@ -1,4 +1,4 @@
-import React from "react";
+import React,{memo} from "react";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { useState, useEffect } from "react";
@@ -78,7 +78,7 @@ const SideBar = () => {
   );
 };
 
-export default SideBar;
+export default memo(SideBar);
 
 const Side = styled.div`
   display: flex;
