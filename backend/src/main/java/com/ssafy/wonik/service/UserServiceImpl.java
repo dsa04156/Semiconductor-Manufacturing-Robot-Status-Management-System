@@ -8,16 +8,22 @@ import com.ssafy.wonik.repository.UserReposistory;
 import com.ssafy.wonik.utils.JwtToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserReposistory userReposistory;
+
+    private final MongoTemplate mongoTemplate;
 
     private final BCryptPasswordEncoder encoder;
 
@@ -64,7 +70,26 @@ public class UserServiceImpl implements UserService {
         // Exception 안됐을시 토큰 발행
         String token = JwtToken.createToken(user.getEmail(), key, expiredTimeMs);
 
-        UserResponseDto userResponseDto = new UserResponseDto(token, user.getType());
+        UserResponseDto userResponseDto = new UserResponseDto(token, user.getType(), null);
+        if (userResponseDto.getType().equals("Master")) {
+            Set<String> collectionNames = mongoTemplate.getCollectionNames();
+            try {
+                collectionNames.remove("USER");
+                collectionNames.remove("temproles");
+                collectionNames.remove("tempusers");
+                collectionNames.remove("system.version");
+                collectionNames.remove("system.users");
+                userResponseDto.setCollectionNames(collectionNames);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }else{
+            Set<String> collectionNanme = new HashSet<>();
+            collectionNanme.add(userResponseDto.getType());
+            userResponseDto.setCollectionNames(collectionNanme);
+        }
+
+
         return userResponseDto;
     }
 
