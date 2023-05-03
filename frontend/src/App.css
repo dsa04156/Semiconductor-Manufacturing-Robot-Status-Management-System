@@ -61,16 +61,16 @@
   text-decoration: none;
 }
 
-.btn2 {
-  margin-left: 315px;
+.btn2{
+  margin-left : 315px; 
   text-decoration: none;
 }
 
 .btn3 {
   color: white;
 }
-.btn4 {
-  margin-left: 283px;
+.btn4{
+  margin-left : 283px;
   text-decoration: none;
 }
 .unacceptable_condition {
@@ -157,13 +157,13 @@
 
 table {
   width: 100%;
-  min-width: 800px; /* 예시값 */
+  min-width: 400px;
 }
 
 tbody {
   display: block;
   max-height: 600px; /* 적절한 높이 값을 지정하세요. */
-  overflow-y: scroll;
+  overflow-y: auto;
   position: relative;
 }
 

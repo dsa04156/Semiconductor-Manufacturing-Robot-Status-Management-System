@@ -12,6 +12,10 @@ const Admin = () => {
   const [permissionData, setPermissionData] = useState([]);
   const [defaultPermission, setDefaultPermission] = useState("Unknown");
 
+  const collectionJSON = localStorage.getItem('collectionNames')
+  const collectionNames = JSON.parse(collectionJSON)
+
+  console.log(collectionNames);
   useEffect(() => {
     const _dbTest = async () => {
       const res = await api.get("account/list");
@@ -19,7 +23,7 @@ const Admin = () => {
       console.log(res.data);
     };
     _dbTest();
-  }, []);
+  }, [data]);
 
   // 이름 검색 부분
   const handleSearch = (event) => {
@@ -97,10 +101,12 @@ const Admin = () => {
                           });
                         }}
                       >
+                        {/*로그인 시 장비 타입목록 받아와서 map으로 드롭다운 구현해야됨.*/}
                         <option value="-------">-------</option>
                         <option value="Unknown">Unknown</option>
-                        <option value="G-Client">G-Client</option>
-                        <option value="N-Client">N-Client</option>
+                        {collectionNames.map((data, index)=> (
+                        <option key={index}>{data}</option>
+                        ))}
                       </Form.Select>
                       <button
                         className="btn btn-primary"
