@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { authActions } from "../../redux/reducer/authReducer";
+import { newactions } from '../../redux/reducer/Reducer'
 import jwtDecode from "jwt-decode";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -33,6 +34,7 @@ const Login = () => {
         dispatch(authActions.settype( response.data.type ));
 
         dispatch(authActions.logIn({ data: data_ }));
+        dispatch(newactions.setNum(0));
 
       })
       .catch((error) => {
