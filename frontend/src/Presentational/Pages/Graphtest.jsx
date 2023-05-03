@@ -17,6 +17,24 @@ const Graphtest = () => {
   const [data, setData] = useState([]);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showCalendar2, setShowCalendar2] = useState(false);
+  const [data2, setData2] = useState([]);
+
+  const componentcall = async (componentName) => {
+    console.log(startDate);
+    console.log(endDate);
+    console.log(componentName);
+
+    const inputdata = {
+      componentName: componentName,
+      endDate: { endDate },
+      machineName: "A_TEST",
+      moduleName: "root-001",
+      startDate: { startDate },
+    };
+    const res2 = await api.post("data/machine/graph", inputdata);
+    setData2(res2.data2);
+    console.log(res2.data2);
+  };
 
   const onChangeStartDate = (date) => {
     setStartDate(date);
@@ -24,11 +42,14 @@ const Graphtest = () => {
   const onChangeEndDate = (date) => {
     setEndDate(date);
   };
-
+  const handleComponentCall = (componentName) => {
+    componentcall(componentName);
+  };
   useEffect(() => {
     const graph_data = async () => {
       const res = await api.post("data/Machine/G_TEST");
       setData(res.data);
+
       //res.data.name = 머신 이름
       // res.data = 전체 노드
       // res.data.chile[0~8] = 모듈 이름
@@ -41,8 +62,6 @@ const Graphtest = () => {
       //console.log(res.data.child[1]);
     };
     graph_data();
-
-    // },[]);
 
     // useEffect(() => {
     //   // D3 멀티 라인 차트 코드 가져오기
@@ -197,6 +216,7 @@ const Graphtest = () => {
             </text>
           )}
         </svg>
+        <ParamBox></ParamBox>
         <CompoBox>
           {data && //데이터 전체
             data.child && // 모듈 이름
@@ -242,14 +262,17 @@ const Graphtest = () => {
                       marginRight: "20px",
                       cursor: "pointer",
                     }}
-                    onClick={
-                      () => console.log(child.value) //여기에 그래프 출력 코드
-                      //axios api 보낸다
-                      //api에 담길것 시작시간, 종료시간, 컴포넌트 이름, 모듈 이름, 머신 이름
-                      // 시작 시간 : ~
-                      // 종료 시간 : ~
-                      // 컴포넌트 이름 :
-                    }
+                    onClick={() => {
+                      console.log(child.value);
+                      console.log(child.name);
+
+                      handleComponentCall(child.name);
+                    }} //여기에 그래프 출력 코드
+                    //axios api 보낸다
+                    //api에 담길것 시작시간, 종료시간, 컴포넌트 이름, 모듈 이름, 머신 이름
+                    // 시작 시간 : ~
+                    // 종료 시간 : ~
+                    // 컴포넌트 이름 :
                   >
                     {child.name}
                   </span>
@@ -283,6 +306,21 @@ const Box = styled.div`
 const CompoBox = styled.div`
   position: absolute;
   top: 450px;
+  left: 30px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  width: 80%;
+  height: 10%;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+`;
+
+const ParamBox = styled.div`
+  position: absolute;
+  top: 520px;
   left: 30px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
