@@ -3,12 +3,12 @@ import styled from "styled-components";
 import Form from "react-bootstrap/Form";
 import Conbox from "../Condition/Conbox";
 import ComponentList from "../../Component/MainPage/ComponentList";
+import Graphtest from "../../Pages/Graphtest";
 
 const Condition = ({ moduleData, machineData }) => {
   const [selectedChild, setSelectedChild] = useState([]);
   const [selectedMachine, setSelectedMachine] = useState([]);
   const [machineState, setMachineState] = useState("unacceptable");
-
 
   // let mstate = '';
 
@@ -65,6 +65,7 @@ const Condition = ({ moduleData, machineData }) => {
         </div>
         <div className="mt-4 d-flex justify-content-center align-items-center">
           <ComponentList child={selectedChild} />
+
           <Conbox mstate={machineState} width={200} fontsize={24} />
         </div>
       </Big>
