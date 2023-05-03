@@ -2,7 +2,6 @@ import HealthStatus from "../Component/MainPage/HealthStatus";
 import Condition from '../Component/MainPage/Condition';
 import SideBar from '../common/SideBar';
 import ComponentList from '../Component/MainPage/ComponentList';
-import { useMediaQuery } from "react-responsive";
 import react, { useState, useEffect} from 'react';
 import api from '../../redux/api';
 
@@ -22,13 +21,11 @@ const Mainpage = () => {
               }
             });
             setModuleData(newModuleData);
-            console.log(response.data);
           })
           .catch((error) => {
             console.log(error);
           })
         }, []);
-        console.log(moduleData);
         
   return (
     <div>
