@@ -4,6 +4,7 @@ import * as d3 from "d3";
 import api from "../../redux/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Condition from "../Component/MainPage/Condition";
 
 const Graphtest = () => {
   const svgRef = useRef(null);
@@ -17,23 +18,22 @@ const Graphtest = () => {
   const [data, setData] = useState([]);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showCalendar2, setShowCalendar2] = useState(false);
-  const [data2, setData2] = useState([]);
+  const [params, setparams] = useState([]);
 
   const componentcall = async (componentName) => {
-    console.log(startDate);
-    console.log(endDate);
-    console.log(componentName);
-
     const inputdata = {
       componentName: componentName,
-      endDate: { endDate },
+      endDate: endDate,
       machineName: "A_TEST",
       moduleName: "root-001",
-      startDate: { startDate },
+      startDate: startDate,
     };
+
     const res2 = await api.post("data/machine/graph", inputdata);
-    setData2(res2.data2);
-    console.log(res2.data2);
+    setparams(res2.data);
+    console.log("얏호");
+    console.log(params);
+    console.log(res2.data);
   };
 
   const onChangeStartDate = (date) => {
@@ -45,6 +45,7 @@ const Graphtest = () => {
   const handleComponentCall = (componentName) => {
     componentcall(componentName);
   };
+
   useEffect(() => {
     const graph_data = async () => {
       const res = await api.post("data/Machine/G_TEST");
@@ -55,7 +56,7 @@ const Graphtest = () => {
       // res.data.chile[0~8] = 모듈 이름
       // res.data.child[0].name = lastdata(root-000)
       // res.data.child[1].name = root-001
-      console.log(res.data.child); // 전체 노드
+      //console.log(res.data.child); // 전체 노드
       //res.data.child[0].child[0~2] 파라미터
 
       //console.log(res.data.child[0].child[0]);
