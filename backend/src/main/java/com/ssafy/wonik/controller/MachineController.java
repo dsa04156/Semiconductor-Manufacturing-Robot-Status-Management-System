@@ -30,21 +30,13 @@ public class MachineController {
         return ResponseEntity.ok().body(machineService.findAll());
     }
 
-//    @GetMapping("/machine/{}")
-//    public ResponseEntity<?> findMachine(machineName){
-//
-//    }
+
 
     @Operation(summary = "Machine 정보", description = "기기명 입력하기 현재는 G_TEST 만 입력가능")
     @PostMapping("/Machine/{machineName}")
     public ResponseEntity<?> findMachine(@PathVariable("machineName") String machineName){
-        System.out.println(machineName);
         ComponentRootDto componentRootDto = machineService.findMachine(machineName);
-//        System.out.println("11111111111");
-//        for(ComponentDto componentDto : list){
-//            System.out.println(componentDto.getChild());
-//        }
-        System.out.println(componentRootDto);
+
         return ResponseEntity.ok().body(componentRootDto);
     }
 
@@ -53,18 +45,5 @@ public class MachineController {
         GraphResponseDto graphRootDto = machineService.findGraph(graphInputDto);
         return ResponseEntity.ok().body(graphRootDto);
     }
-//    @PostMapping("/machine/graph")
-//
-//    public ResponseEntity<?> findGraph(@RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
-//                                       @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
-//        GraphInputDto graphInputDto = new GraphInputDto();
-//        graphInputDto.setMachineName("G_TEST");
-//        graphInputDto.setEndDate(endDate);
-//        graphInputDto.setModuleName("root-006");
-//        graphInputDto.setStartDate(startDate);
-//        graphInputDto.setComponentName("root-006-000");
-//
-//        HashMap<String, ArrayList> graphRootDto = machineService.findGraph(graphInputDto);
-//        return ResponseEntity.ok().body(graphRootDto);
-//    }
+
 }
