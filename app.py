@@ -14,6 +14,11 @@ while True:
     stdin, stdout, stderr = ssh.exec_command('inotifywait -q -m -e create "{}"'.format(watch_dir))
     for line in stdout:
         # 파일 생성 이벤트가 감지되면 이 부분에서 원하는 작업을 수행합니다.
-        print(12)
-        print(line.strip())
+        filename = line.strip().split()[-1]  # 파일 이름 추출
+        sftp = ssh.open_sftp()
+        remote_file_path = f"{watch_dir}/{filename}"
+        local_file_path = f"./{filename}"  # 로컬 디렉토리에 저장할 파일 경로
+        sftp.get(remote_file_path, local_file_path)  # 파일 가져오기
+        print("파일 가져왔다")
+        sftp.close()
     time.sleep(1)
