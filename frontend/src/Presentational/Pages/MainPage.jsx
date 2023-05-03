@@ -29,7 +29,6 @@ const Mainpage = () => {
         
   return (
     <div>
-      <SideBar/>
       {/* <HealthStatus /> */}
       {/* <Condition/> */}
       <Condition moduleData={moduleData} machineData={machineData}/>
