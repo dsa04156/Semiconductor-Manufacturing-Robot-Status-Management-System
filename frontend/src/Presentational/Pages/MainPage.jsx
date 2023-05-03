@@ -13,7 +13,7 @@ const Mainpage = () => {
     useEffect(() => {
         api.post("/data/Machine/G_TEST", JSON.stringify({}))
         .then((response) => {
-          setMachineData(response.data);
+            setMachineData([response.data]);
             const newModuleData = response.data.child.map(child => {
               return {
                 name: child.name,
@@ -35,7 +35,7 @@ const Mainpage = () => {
       <SideBar/>
       {/* <HealthStatus /> */}
       {/* <Condition/> */}
-      <Condition moduleData={moduleData} />
+      <Condition moduleData={moduleData} machineData={machineData}/>
       {/* <ComponentList/> */}
     </div>
   );

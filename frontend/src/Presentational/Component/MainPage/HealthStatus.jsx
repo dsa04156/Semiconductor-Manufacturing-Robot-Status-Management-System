@@ -18,28 +18,91 @@ const Mobile = ({ children }) => {
   return isMobile ? children : null;
 };
 
-const HealthStatus = () => {
-  const datas = [50, 40, 30, 10];
-  const labels = ["Good", "satisfactory", "unsatisfactory", "unacceptable"];
-  const colors = ["#A5FF32", "#30ADF3", "#FFEE32", "#FF5172"];
-
-  let sum = datas.reduce((a, b) => a + b, 0);
-
-  const unaccep_data = [datas[3], sum - datas[3]];
+const HealthStatus = ({componentData}) => {
+  console.log(componentData);
+  const compodata = componentData.map((data) => {
+    return {
+      name: data.name,
+      value: data.value,
+      eval: data.eval
+    };
+  });
+  const unaccep_compodata = compodata.reduce((unaccep_count, data) => {
+    if (data.eval === 'unacceptable' ) {
+      unaccep_count++;
+    }
+    return unaccep_count;
+  }, 0);
   const unaccep_lables = ["unacceptable", "others"];
   const unaccep_colors = ["#FF5172", "#F2D8DF"];
 
-  const unsat_data = [datas[2], sum - datas[2]];
+  const unsat_compodata = compodata.reduce((unsat_count, data) => {
+    if (data.eval === 'unsatisfactory'){
+      unsat_count++;
+    }
+    return unsat_count;
+  }, 0);
   const unsat_lables = ["unsatisfactory", "others"];
   const unsat_colors = ["#FFEE32", "#F4E4C4"];
+  
+  const sat_compodata = compodata.reduce((sat_count, data) => {
+    if (data.eval === 'satisfactory'){
+      sat_count++;
+    }
+    return sat_count;
+  }, 0);
 
-  const sat_data = [datas[1], sum - datas[1]];
   const sat_lables = ["satisfactory", "others"];
   const sat_colors = ["#30ADF3", "#C4E2F4"];
-
-  const good_data = [datas[0], sum - datas[0]];
+  
+  const good_compodata = compodata.reduce((good_count, data) => {
+    if (data.eval === 'Good'){
+      good_count++;
+    }
+    return good_count;
+  }, 0);
   const good_lables = ["Good", "others"];
   const good_colors = ["#A5FF32", "#D9ECC8"];
+
+  console.log(compodata);
+  
+  const datas = [
+    unaccep_compodata,
+    unsat_compodata,
+    sat_compodata,
+    good_compodata
+  ];
+  console.log(unaccep_compodata);
+  const labels = ["unacceptable", "unsatisfactory", "satisfactory", "Good"];
+  const colors = ["#FF5172", "#FFEE32", "#30ADF3", "#A5FF32"];
+
+  // let sum = datas.reduce((a, b) => a + b, 0);
+  let totalcount = componentData.reduce((acc, cur) => {
+    return acc+1;
+  }, 0);
+
+  console.log(totalcount);
+
+  const unaccep_data = [unaccep_compodata, totalcount - unaccep_compodata];
+  const unsat_data = [datas[1], totalcount - datas[1]];
+  const sat_data = [datas[2], totalcount - datas[2]];
+  const good_data = [datas[3], totalcount - datas[3]];
+  console.log(datas[0]);
+  console.log(totalcount - datas[0]);
+  // const unaccep_lables = ["unacceptable", "others"];
+  // const unaccep_colors = ["#FF5172", "#F2D8DF"];
+
+  // const unsat_data = [datas[2], sum - datas[2]];
+  // const unsat_lables = ["unsatisfactory", "others"];
+  // const unsat_colors = ["#FFEE32", "#F4E4C4"];
+
+  // const sat_data = [datas[1], sum - datas[1]];
+  // const sat_lables = ["satisfactory", "others"];
+  // const sat_colors = ["#30ADF3", "#C4E2F4"];
+
+  // const good_data = [datas[0], sum - datas[0]];
+  // const good_lables = ["Good", "others"];
+  // const good_colors = ["#A5FF32", "#D9ECC8"];
 
   const TotdonutData = {
     series: datas,
@@ -84,7 +147,7 @@ const HealthStatus = () => {
   };
 
   const unacceptdonutData = {
-    series: unaccep_data,
+    series: [unaccep_compodata],
     options: {
       chart: {
         type: "donut",
@@ -109,7 +172,7 @@ const HealthStatus = () => {
               total: {
                 showAlways: true,
                 show: true,
-                label: "Total",
+                label: "unacceptable",
                 fontSize: "16px",
                 color: "#ADB1B8",
               },
@@ -127,7 +190,7 @@ const HealthStatus = () => {
   };
 
   const unsatdonutData = {
-    series: unsat_data,
+    series: [unsat_compodata],
     options: {
       chart: {
         type: "donut",
@@ -152,7 +215,7 @@ const HealthStatus = () => {
               total: {
                 showAlways: true,
                 show: true,
-                label: "Total",
+                label: "unsatisfactory",
                 fontSize: "16px",
                 color: "#ADB1B8",
               },
@@ -170,7 +233,7 @@ const HealthStatus = () => {
   };
 
   const satdonutData = {
-    series: sat_data,
+    series: [sat_compodata],
     options: {
       chart: {
         type: "donut",
@@ -195,7 +258,7 @@ const HealthStatus = () => {
               total: {
                 showAlways: true,
                 show: true,
-                label: "Total",
+                label: "satisfactory",
                 fontSize: "16px",
                 color: "#ADB1B8",
               },
@@ -213,7 +276,7 @@ const HealthStatus = () => {
   };
 
   const gooddonutData = {
-    series: good_data,
+    series: [good_compodata],
     options: {
       chart: {
         type: "donut",
@@ -238,7 +301,7 @@ const HealthStatus = () => {
               total: {
                 showAlways: true,
                 show: true,
-                label: "Total",
+                label: "Good",
                 fontSize: "16px",
                 color: "#ADB1B8",
               },
@@ -263,47 +326,55 @@ const HealthStatus = () => {
             series={TotdonutData.series}
             type="donut"
             width={180}
+
+
           />
           <ReactApexChart
             options={unacceptdonutData.options}
             series={unacceptdonutData.series}
             type="donut"
             width={180}
+
           />
           <ReactApexChart
             options={unsatdonutData.options}
             series={unsatdonutData.series}
             type="donut"
             width={180}
+
           />
           <ReactApexChart
             options={satdonutData.options}
             series={satdonutData.series}
             type="donut"
             width={180}
+
           />
           <ReactApexChart
             options={gooddonutData.options}
             series={gooddonutData.series}
             type="donut"
             width={180}
+
           />
         </Big>
       </Desktop>
 
       <Tablet>
         <Mid>
-          <ReactApexChart
+        <ReactApexChart
             options={TotdonutData.options}
             series={TotdonutData.series}
             type="donut"
             width={180}
+
           />
           <ReactApexChart
             options={unacceptdonutData.options}
             series={unacceptdonutData.series}
             type="donut"
             width={180}
+
           />
           <ReactApexChart
             options={unsatdonutData.options}
@@ -316,17 +387,19 @@ const HealthStatus = () => {
 
       <Mobile>
         <Small>
-          <ReactApexChart
+        <ReactApexChart
             options={TotdonutData.options}
             series={TotdonutData.series}
             type="donut"
             width={200}
+
           />
           <ReactApexChart
             options={unacceptdonutData.options}
             series={unacceptdonutData.series}
             type="donut"
             width={200}
+
           />
         </Small>
       </Mobile>
@@ -338,8 +411,8 @@ export default HealthStatus;
 
 const Big = styled.div`
   position: absolute;
-  top: 30px;
-  left: 150px;
+  top: 0px;
+  left: -920px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
   width: 900px;
