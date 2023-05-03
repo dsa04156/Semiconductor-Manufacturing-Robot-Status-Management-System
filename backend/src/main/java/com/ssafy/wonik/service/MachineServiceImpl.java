@@ -1,13 +1,13 @@
 package com.ssafy.wonik.service;
 
-import com.ssafy.wonik.domain.dto.ComponentRootDto;
-import com.ssafy.wonik.domain.dto.GraphInputDto;
-import com.ssafy.wonik.domain.dto.GraphRootDto;
+import com.ssafy.wonik.domain.dto.*;
 import com.ssafy.wonik.domain.entity.Machine;
 import com.ssafy.wonik.repository.MachineRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -31,8 +31,9 @@ public class MachineServiceImpl implements MachineService{
     }
 
     @Override
-    public GraphRootDto findGraph(GraphInputDto graphInputDto) {
-        List<GraphRootDto> list = machineRepository.findGraph(graphInputDto);
-        return list;
+    public GraphResponseDto  findGraph(GraphInputDto graphInputDto) {
+        GraphResponseDto graphData = machineRepository.findGraph(graphInputDto);
+//        GraphRootDto graphRootDto = new GraphRootDto(graphInputDto.getComponentName(), graphData);
+        return graphData;
     }
 }
