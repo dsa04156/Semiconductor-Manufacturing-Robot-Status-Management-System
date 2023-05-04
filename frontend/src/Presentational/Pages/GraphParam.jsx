@@ -28,6 +28,28 @@ const GraphParam = ({ nameList, handleParamsCall }) => {
     "#607d8b",
   ];
 
+  const [nameColors, setNameColors] = useState([]);
+
+  const getColorForName = (name, index) => {
+    const nameIndex = nameList.indexOf(name);
+    return nameIndex !== -1
+      ? nameColors[nameIndex]
+      : colors[index % colors.length];
+  };
+
+  useEffect(() => {
+    if (handleParamsCall) {
+      handleParamsCall(getColorForName);
+    }
+  }, [handleParamsCall, getColorForName]);
+
+  useEffect(() => {
+    const newNameColors = nameList.map(
+      () => colors[Math.floor(Math.random() * colors.length)]
+    );
+    setNameColors(newNameColors);
+  }, [nameList]);
+
   return (
     <div>
       <ParamBox>
@@ -40,22 +62,21 @@ const GraphParam = ({ nameList, handleParamsCall }) => {
                 alignItems: "center",
                 cursor: "pointer",
               }}
-              onClick={() => handleParamsCall(name)}
+              onClick={() => handleParamsCall(name, getColorForName)}
             >
               <span
                 style={{
                   display: "inline-block",
                   width: "10px",
                   height: "10px",
-                  backgroundColor:
-                    colors[Math.floor(Math.random() * colors.length)],
+                  backgroundColor: nameColors[index],
                   marginRight: "10px",
                   marginLeft: "15px",
                 }}
               />
               <span
                 style={{
-                  color: colors[Math.floor(Math.random() * colors.length)],
+                  color: nameColors[index],
                 }}
               >
                 {" " + name}
