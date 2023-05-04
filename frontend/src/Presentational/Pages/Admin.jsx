@@ -23,7 +23,7 @@ const Admin = () => {
       console.log(res.data);
     };
     _dbTest();
-  }, [data]);
+  }, []);
 
   // 이름 검색 부분
   const handleSearch = (event) => {
@@ -40,17 +40,19 @@ const Admin = () => {
   //권한 변경 부분
   const handleApply = async (event, email, type) => {
     event.preventDefault();
-    try {
-      const res = await api.put("account/typeUpdate", {
-        email: email,
-        type: type,
-      });
-      console.log(res.data);
-      alert(res.data);
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
+      try {
+        const res = await api.put("account/typeUpdate", {
+          email: email,
+          type: type,
+        });
+        console.log(res.data);
+        alert(res.data);
+        const res2 = await api.get("account/list");
+        setData(res2.data);
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
   };
 
   return (
@@ -101,7 +103,7 @@ const Admin = () => {
                           });
                         }}
                       >
-                        {/*로그인 시 장비 타입목록 받아와서 map으로 드롭다운 구현해야됨.*/}
+                        {/*로그인 시 장비 타입목록 받아와서 map으로 드롭다운 구현*/}
                         <option value="-------">-------</option>
                         <option value="Unknown">Unknown</option>
                         {collectionNames.map((data, index)=> (
