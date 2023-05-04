@@ -16,9 +16,12 @@ const Conbox = ({ mstate ,width,fontsize}) => {
     else if (mstate === "satisfactory") {
       setcolor("#30ADF3")
     }
-    else {
+    else{
       setcolor("#A5FF32")
     }
+    // else {
+    //   setcolor("#bbbbbb")
+    // }
 
   },[mstate])
 
