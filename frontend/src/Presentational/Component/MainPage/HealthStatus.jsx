@@ -292,7 +292,7 @@ const GLabel = styled.div`
 const TValue = styled.div`
   position: absolute;
   top:100px;
-  left :85px;
+  left :80px;
   font-size: 20px;
   color: #ADB1B8;
 `;
