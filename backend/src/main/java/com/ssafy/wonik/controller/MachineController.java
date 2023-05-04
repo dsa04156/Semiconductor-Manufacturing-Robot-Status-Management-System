@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000", "http://k8s101.p.ssafy.io:3000"}, allowCredentials = "true")
 @RequestMapping("/data")
 public class MachineController {
     private final MachineService machineService;
