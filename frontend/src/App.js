@@ -30,6 +30,7 @@ function App() {
     if (token) {
       const data_ = jwtDecode(token);
       dispatch(authActions.logIn({data:data_}))
+      
     }
   },[dispatch])
   return (
@@ -41,7 +42,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/main" element={<Mainpage />} />
         <Route path="/vm" element={<VirtualMetrology />} />
-
+       
         <Route path="/Admin" element={<Admin />} />
         <Route path="/changepw" element={ <Changepw/>} />
         <Route path="/Graphtest" element={<Graphtest/>} />
