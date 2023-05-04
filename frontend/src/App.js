@@ -30,6 +30,7 @@ function App() {
     if (token) {
       const data_ = jwtDecode(token);
       dispatch(authActions.logIn({data:data_}))
+      
     }
   },[dispatch])
   return (

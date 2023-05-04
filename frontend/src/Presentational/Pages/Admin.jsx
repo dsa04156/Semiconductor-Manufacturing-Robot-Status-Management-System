@@ -12,6 +12,10 @@ const Admin = () => {
   const [permissionData, setPermissionData] = useState([]);
   const [defaultPermission, setDefaultPermission] = useState("Unknown");
 
+  const collectionJSON = localStorage.getItem('collectionNames')
+  const collectionNames = JSON.parse(collectionJSON)
+
+  console.log(collectionNames);
   useEffect(() => {
     const _dbTest = async () => {
       const res = await api.get("account/list");
@@ -27,26 +31,34 @@ const Admin = () => {
   };
 
   const filteredData = data.filter((item) => {
-    if (item && item.name) {
+    if (item && item.name && item.type) {
       return item.name.toLowerCase().includes(searchTerm.toLowerCase());
     }
     return false;
+  }).sort((a, b) => {
+    if (a.type === "UnKnown") return -1;
+    if (b.type === "UnKnown") return 1;
+    if (a.type > b.type) return 1;
+    if (a.type < b.type) return -1;
+    return 0;
   });
 
   //권한 변경 부분
   const handleApply = async (event, email, type) => {
     event.preventDefault();
-    try {
-      const res = await api.put("account/typeUpdate", {
-        email: email,
-        type: type,
-      });
-      console.log(res.data);
-      alert(res.data);
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
+      try {
+        const res = await api.put("account/typeUpdate", {
+          email: email,
+          type: type,
+        });
+        console.log(res.data);
+        alert(res.data);
+        const res2 = await api.get("account/list");
+        setData(res2.data);
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
   };
 
   return (
@@ -97,10 +109,12 @@ const Admin = () => {
                           });
                         }}
                       >
+                        {/*로그인 시 장비 타입목록 받아와서 map으로 드롭다운 구현*/}
                         <option value="-------">-------</option>
                         <option value="Unknown">Unknown</option>
-                        <option value="G-Client">G-Client</option>
-                        <option value="N-Client">N-Client</option>
+                        {collectionNames.map((data, index)=> (
+                        <option key={index}>{data}</option>
+                        ))}
                       </Form.Select>
                       <button
                         className="btn btn-primary"

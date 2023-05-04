@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { NavLink } from 'react-router-dom';
 import EvalStatus from './EvalStatus';
 
 function CreateTable({ setTest, data, test }) {
@@ -9,9 +8,10 @@ function CreateTable({ setTest, data, test }) {
   const idxHandler = (idx) => {
     setSelected(idx);
     setTest(idx);
+    console.log(selected);
   }
 
-  const dataTable = data.map((elem, idx) => {
+  const dataTable = data?.map((elem, idx) => {
     if (elem.value < 0){
       elem.eval = "unacceptable";
     }
@@ -27,7 +27,7 @@ function CreateTable({ setTest, data, test }) {
     
     return (
       <tr className='tableBody' key={idx}>
-        <td><input type="radio" checked={idx === selected} onChange={() => idxHandler(idx)} /></td>
+        <td style={{ width: '30px' }}><input type="radio" checked={idx === selected} onChange={() => idxHandler(idx)}/></td>
         <td>{elem.name}</td>
         <td>
           <EvalStatus evalValue={elem.eval}/>
@@ -36,14 +36,14 @@ function CreateTable({ setTest, data, test }) {
       </tr>
     );
   });
-
+  
   // Render the UI for your table
   return (
     <Styles>
       <table className="table">
         <thead>
           <tr className='tableHeader'>
-            <td></td>
+            <td style={{ width: '30px' }}></td>
             <td>Component</td>
             <td>Status</td>
             <td>AssetScore</td>
@@ -67,12 +67,12 @@ const Styles = styled.div`
 
     td {
       text-align: center;
-      /* padding: 12px; */
+      font-size: 12px;
     }
 
     .tableHeader {
       font-weight: bold;
-      background-color: #f2f2f2;
+      background-color: #ffffff;
     }
 
     .tableBody {

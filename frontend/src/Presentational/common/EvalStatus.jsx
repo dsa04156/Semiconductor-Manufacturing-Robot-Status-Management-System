@@ -33,7 +33,6 @@ const EvalStatus = ( { evalValue } ) => {
         display: inline-block;
         width: 100px;
         border-radius: 20px;
-        /* padding: 5px; */
     `;
   
     return <StyledStatus>{evalValue}</StyledStatus>;
