@@ -6,23 +6,35 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Condition from "../Component/MainPage/Condition";
 
-const Period = () => {
-  const [startDate, setStartDate] = useState(
-    new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+const Period = ({
+  startDate: initialStartDate,
+  endDate: initialEndDate,
+  onChangeStartDate,
+  onChangeEndDate,
+}) => {
+  const [localStartDate, setLocalStartDate] = useState(
+    initialStartDate || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   ); // 7일 전으로 가장 처음 start Default값을 세팅
 
-  const [endDate, setEndDate] = useState(new Date());
+  const [localEndDate, setLocalEndDate] = useState(
+    initialEndDate || new Date()
+  );
 
   const [showCalendar, setShowCalendar] = useState(false);
   const [showCalendar2, setShowCalendar2] = useState(false);
 
-  const onChangeStartDate = (date) => {
-    setStartDate(date);
+  const handleStartDateChange = (date) => {
+    setLocalStartDate(date);
+    if (onChangeStartDate) {
+      onChangeStartDate(date);
+    }
   };
-  const onChangeEndDate = (date) => {
-    setEndDate(date);
+  const handleEndDateChange = (date) => {
+    setLocalEndDate(date);
+    if (onChangeEndDate) {
+      onChangeEndDate(date);
+    }
   };
-
   return (
     <PeriodBox>
       {" "}
@@ -36,13 +48,13 @@ const Period = () => {
       />
       {showCalendar && (
         <DatePicker
-          selected={startDate}
+          selected={localStartDate}
           onChange={(date) => {
-            onChangeStartDate(date);
+            handleStartDateChange(date);
             setShowCalendar(false);
           }}
           selectsStart
-          startDate={startDate}
+          startDate={localStartDate}
           showTimeSelect
           timeFormat="HH:mm"
           timeIntervals={1}
@@ -51,7 +63,7 @@ const Period = () => {
           popperPlacement="bottom-end"
         />
       )}
-      {startDate.toLocaleString("ko-KR", {
+      {localStartDate.toLocaleString("ko-KR", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
@@ -70,13 +82,13 @@ const Period = () => {
       />
       {showCalendar2 && (
         <DatePicker
-          selected={endDate}
+          selected={localEndDate}
           onChange={(date) => {
-            onChangeEndDate(date);
+            handleEndDateChange(date);
             setShowCalendar2(false);
           }}
           selectsEnd
-          endDate={endDate}
+          endDate={localEndDate}
           showTimeSelect
           timeFormat="HH:mm"
           timeIntervals={1}
@@ -85,7 +97,7 @@ const Period = () => {
           popperPlacement="bottom-end"
         />
       )}
-      {endDate.toLocaleString("ko-KR", {
+      {localEndDate.toLocaleString("ko-KR", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",

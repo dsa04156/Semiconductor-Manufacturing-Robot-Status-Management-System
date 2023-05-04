@@ -8,7 +8,7 @@ import Condition from "../Component/MainPage/Condition";
 import GraphParam from "./GraphParam";
 import Period from "./Period";
 
-const Graph = ({ data, xRange, yRange }) => {
+const Graph = ({ data, xRange, yRange, strokeColor }) => {
   const ref = useRef();
 
   useEffect(() => {
@@ -17,45 +17,66 @@ const Graph = ({ data, xRange, yRange }) => {
       const width = 600 - margin.left - margin.right;
       const height = 400 - margin.top - margin.bottom;
 
-      const svg = d3
-        .select(ref.current)
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+      let svg = d3.select(ref.current).select("svg");
 
-      const xScale = d3.scaleLinear().domain([0, xRange]).range([0, width]);
+      if (svg.empty()) {
+        svg = d3
+          .select(ref.current)
+          .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        const xScale = d3
+          .scaleLinear()
+          .domain([0, data.length - 1])
+          .range([0, width]);
+
+        const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
+        const graphGroup = svg.append("g");
+
+        // x축 그리기
+        graphGroup
+          .append("g")
+          .attr("class", "x-axis")
+          .attr("transform", `translate(0, ${height})`)
+          .call(d3.axisBottom(xScale));
+
+        // y축 그리기
+        graphGroup
+          .append("g")
+          .attr("class", "y-axis")
+          .call(d3.axisLeft(yScale));
+      }
+
+      const xScale = d3
+        .scaleLinear()
+        .domain([0, data.length - 1])
+        .range([0, width]);
+
       const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
-
-      // x축 그리기
-      svg
-        .append("g")
-        .attr("class", "x-axis") // x-axis 클래스 추가
-        .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(xScale));
-
-      // y축 그리기
-      svg.append("g").call(d3.axisLeft(yScale));
+      const graphGroup = svg.select("g");
 
       const line = d3
         .line()
         .x((d, i) => xScale(i))
         .y((d) => yScale(d.value));
 
-      svg
-        .append("path")
-        .datum(data)
+      graphGroup
+        .selectAll(".data-line")
+        .data([data])
+        .join("path")
+        .attr("class", "data-line")
         .attr("fill", "none")
-        .attr("stroke", "steelblue")
+        .attr("stroke", strokeColor)
         .attr("stroke-width", 1.5)
         .attr("d", line);
 
-      // Update the xScale domain and range to match the new data length
       xScale.domain([0, data.length]).range([0, width]);
       svg.select(".x-axis").call(d3.axisBottom(xScale));
     }
-  }, [data]);
+  }, [data, strokeColor]);
 
   return <div ref={ref}></div>;
 };
@@ -66,10 +87,23 @@ const Graphtest = () => {
   );
   const [endDate, setEndDate] = useState(new Date());
   const [data, setData] = useState([]);
-  const [params, setparams] = useState([]);
-  const [selectedParam, setSelectedParam] = useState("");
+  const [params, setparams] = useState({ data: {}, nameList: [], child: [] });
 
-  const handleParamsCall = (name) => {
+  const [selectedParam, setSelectedParam] = useState("");
+  const [componentData, setComponentData] = useState([]);
+  const colors = [
+    "#4E79A7",
+    "#F28E2B",
+    "#E15759",
+    "#76B7B2",
+    "#59A14F",
+    "#EDC948",
+    "#B07AA1",
+    "#FF9DA7",
+    "#9C755F",
+    "#BAB0AC",
+  ];
+  const handleParamsCall = (name, getColorForName) => {
     setSelectedParam(name);
 
     if (params.data[name]) {
@@ -78,8 +112,36 @@ const Graphtest = () => {
       console.log(JSON.stringify(params.data[name]));
 
       setData(params.data[name]);
+
+      // 선택한 name의 인덱스를 찾아 해당하는 nameColors의 색상을 strokeColor에 저장
+      const color = getColorForName(name);
+      if (color) {
+        setStrokeColor(color);
+      }
     }
   };
+  const [nameColors, setNameColors] = useState([]);
+
+  const [strokeColor, setStrokeColor] = useState("steelblue");
+
+  const [componentColors, setComponentColors] = useState([]);
+
+  useEffect(() => {
+    // 색상 배열의 길이가 params.nameList의 길이와 같지 않다면 색상 배열을 업데이트
+    if (nameColors.length !== params.nameList.length) {
+      const newColors = params.nameList.map(
+        () => colors[Math.floor(Math.random() * colors.length)]
+      );
+      setNameColors(newColors);
+    }
+  }, [params.nameList, colors]);
+
+  useEffect(() => {
+    const newComponentColors = componentData.map(
+      () => colors[Math.floor(Math.random() * colors.length)]
+    );
+    setComponentColors(newComponentColors);
+  }, [componentData]);
 
   // 그래프 생성을 위한 x, y range 값
   const xRange =
@@ -97,68 +159,56 @@ const Graphtest = () => {
     };
 
     const res2 = await api.post("data/machine/graph", inputdata);
-    setparams(res2.data);
+    setparams({ ...res2.data, child: data.child });
     console.log(res2.data.nameList);
   };
 
   const handleComponentCall = (componentName) => {
     componentcall(componentName);
   };
-
+  const handleComponentClick = (event, componentName) => {
+    event.stopPropagation(); // 이벤트 버블링을 중지
+    handleComponentCall(componentName);
+  };
   useEffect(() => {
     const graph_data = async () => {
-      const res = await api.post("data/Machine/G_TEST");
-      setData(res.data);
+      const res = await api.post("data/Machine/A_TEST");
+      setComponentData(res.data.child[1].child);
     };
     graph_data();
   }, []);
 
   return (
     <div>
-      <Period></Period>
+      <Period
+        startDate={startDate}
+        endDate={endDate}
+        onChangeStartDate={setStartDate}
+        onChangeEndDate={setEndDate}
+      />
       <Box>
-        <Graph data={data} xRange={xRange} yRange={yRange} />
+        <Graph
+          data={data}
+          xRange={xRange}
+          yRange={yRange}
+          strokeColor={strokeColor}
+        />
 
         <GraphParam
           nameList={params.nameList}
           handleParamsCall={handleParamsCall}
         ></GraphParam>
         <CompoBox>
-          {data && //데이터 전체
-            data.child && // 모듈 이름
-            data.child[1].child.map((child, index) => {
-              //0번째 모듈의 컴포넌트들
-              //실제 쓸때는 data.child[index].
-              const colors = [
-                "#f44336",
-                "#e91e63",
-                "#9c27b0",
-                "#673ab7",
-                "#3f51b5",
-                "#2196f3",
-                "#03a9f4",
-                "#00bcd4",
-                "#009688",
-                "#4caf50",
-                "#8bc34a",
-                "#cddc39",
-                "#ffeb3b",
-                "#ffc107",
-                "#ff9800",
-                "#ff5722",
-                "#795548",
-                "#9e9e9e",
-                "#607d8b",
-              ];
-              const randomIndex = Math.floor(Math.random() * colors.length);
+          {componentData &&
+            componentData.map((child, index) => {
               const boxStyle = {
-                backgroundColor: colors[randomIndex],
+                backgroundColor: componentColors[index],
                 display: "inline-block",
                 width: "10px",
                 height: "10px",
                 marginRight: "5px",
               };
-              const textStyle = { color: colors[randomIndex] };
+              const textStyle = { color: componentColors[index] };
               return (
                 <React.Fragment key={index}>
                   <span style={{ ...boxStyle, marginLeft: "15px" }}></span>
@@ -168,22 +218,14 @@ const Graphtest = () => {
                       marginRight: "20px",
                       cursor: "pointer",
                     }}
-                    onClick={() => {
-                      // console.log(child.value);
-                      // console.log(child.name);
-
-                      handleComponentCall(child.name);
-                    }} //여기에 그래프 출력 코드
-                    //axios api 보낸다
-                    //api에 담길것 시작시간, 종료시간, 컴포넌트 이름, 모듈 이름, 머신 이름
-                    // 시작 시간 : ~
-                    // 종료 시간 : ~
-                    // 컴포넌트 이름 :
+                    onClick={(event) => {
+                      handleComponentClick(event, child.name);
+                    }}
                   >
                     {child.name}
                   </span>
-                  {index !== data.child[1].length - 1 && " "}
-                </React.Fragment> //res.data.child[0].child[0~2] 파라미터
+                  {data.child && index !== data.child[1].length - 1 && " "}
+                </React.Fragment>
               );
             })}
         </CompoBox>
