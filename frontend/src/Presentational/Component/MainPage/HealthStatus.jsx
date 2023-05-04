@@ -1,4 +1,4 @@
-import React,{useEffect} from "react";
+import React from "react";
 import ReactApexChart from "react-apexcharts";
 import styled from "styled-components";
 
@@ -11,14 +11,13 @@ const HealthStatus = ({componentData}) => {
       eval: data.eval
     };
   });
+
   const unaccep_compodata = compodata.reduce((unaccep_count, data) => {
     if (data.eval === 'unacceptable' ) {
       unaccep_count++;
     }
     return unaccep_count;
   }, 0);
-
-
   const unaccep_lables = ["unacceptable", "others"];
   const unaccep_colors = ["#FF5172", "#F2D8DF"];
 
@@ -28,8 +27,6 @@ const HealthStatus = ({componentData}) => {
     }
     return unsat_count;
   }, 0);
-
-
   const unsat_lables = ["unsatisfactory", "others"];
   const unsat_colors = ["#FFEE32", "#F4E4C4"];
   
@@ -48,8 +45,6 @@ const HealthStatus = ({componentData}) => {
     }
     return good_count;
   }, 0);
-
-  
   const good_lables = ["Good", "others"];
   const good_colors = ["#A5FF32", "#D9ECC8"];
   
@@ -91,7 +86,6 @@ const HealthStatus = ({componentData}) => {
   // const good_lables = ["Good", "others"];
   // const good_colors = ["#A5FF32", "#D9ECC8"];
 
-
   const TotdonutData = {
     series: datas,
     options: {
@@ -125,7 +119,6 @@ const HealthStatus = ({componentData}) => {
                 fontSize: "20px",
                 show: true,
                 color: "#ADB1B8",
-                
               },
             },
           },
@@ -136,7 +129,7 @@ const HealthStatus = ({componentData}) => {
   };
 
   const unacceptdonutData = {
-    series: unaccep_data,
+    series: [unaccep_compodata],
     options: {
       chart: {
         type: "donut",
@@ -164,14 +157,8 @@ const HealthStatus = ({componentData}) => {
                 label: "unacceptable",
                 fontSize: "16px",
                 color: "#ADB1B8",
-                formatter: function (w) {
-                  return unaccep_data[0];
-                },
               },
               value: {
-                formatter: function (val) {
-                  return val;
-                },
                 fontSize: "20px",
                 show: true,
                 color: "#ADB1B8",
@@ -304,7 +291,6 @@ const HealthStatus = ({componentData}) => {
                 fontSize: "20px",
                 show: true,
                 color: "#ADB1B8",
-
               },
             },
           },
@@ -317,6 +303,10 @@ const HealthStatus = ({componentData}) => {
   return (
     <div>
         <Big>
+          <div style={{ margin: "15px 0px 0 40px", fontSize: '20px'}}>
+            Health Status
+          </div>
+          <HealthStatusTitle>
           <ReactApexChart
             options={TotdonutData.options}
             series={TotdonutData.series}
@@ -352,7 +342,7 @@ const HealthStatus = ({componentData}) => {
             type="donut"
             width={180}
 
-          />
+          /></HealthStatusTitle>
         </Big>
     </div>
   );
@@ -370,6 +360,8 @@ const Big = styled.div`
   height: 200px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
-  display: flex;
   align-items: center;
+`;
+const HealthStatusTitle = styled.div`
+  display: flex;
 `;
