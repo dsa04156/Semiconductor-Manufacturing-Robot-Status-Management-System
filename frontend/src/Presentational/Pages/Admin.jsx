@@ -31,10 +31,16 @@ const Admin = () => {
   };
 
   const filteredData = data.filter((item) => {
-    if (item && item.name) {
+    if (item && item.name && item.type) {
       return item.name.toLowerCase().includes(searchTerm.toLowerCase());
     }
     return false;
+  }).sort((a, b) => {
+    if (a.type === "UnKnown") return -1;
+    if (b.type === "UnKnown") return 1;
+    if (a.type > b.type) return 1;
+    if (a.type < b.type) return -1;
+    return 0;
   });
 
   //권한 변경 부분
