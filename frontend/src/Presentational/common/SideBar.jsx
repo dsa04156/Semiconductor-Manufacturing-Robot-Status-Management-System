@@ -1,7 +1,6 @@
 import React,{memo} from "react";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
-import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../redux/reducer/authReducer";
@@ -12,9 +11,6 @@ const SideBar = () => {
   const dispatch = useDispatch();
   const isMaster = useSelector((state) => state.auth.type === "Master");
   let num = useSelector((state) => state.red.num);
-  // useEffect(() => {
-  //   localStorage.setItem("num", num);
-  // }, [num]);
 
   const handleNavClick = (navIndex) => {
     dispatch(newactions.setNum(navIndex));
