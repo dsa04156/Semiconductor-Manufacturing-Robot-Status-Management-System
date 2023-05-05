@@ -36,7 +36,7 @@ public class SseController {
 
     @GetMapping("/test")
     public HttpStatus Test(@RequestBody String machine) {
-        sseEmitters.send(machine);
+     //   sseEmitters.send(machine);
         return HttpStatus.OK;
     }
 }
