@@ -1,5 +1,6 @@
 package com.ssafy.wonik.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.wonik.utils.SseEmitters;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,6 +12,7 @@ import java.io.IOException;
 
 
 @RestController
+@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @RequestMapping("/sse")
 public class SseController {
 
@@ -35,8 +37,8 @@ public class SseController {
     }
 
     @GetMapping("/test")
-    public HttpStatus Test(@RequestBody String machine) {
-     //   sseEmitters.send(machine);
+    public HttpStatus Test(@RequestBody String machine) throws JsonProcessingException {
+        sseEmitters.send(machine);
         return HttpStatus.OK;
     }
 }
