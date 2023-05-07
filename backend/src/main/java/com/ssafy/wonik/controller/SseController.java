@@ -38,9 +38,10 @@ public class SseController {
         return ResponseEntity.ok(emitter);
     }
 
-    @GetMapping("/test")
-    public HttpStatus Test(@RequestBody String machine) throws JsonProcessingException {
-       sseEmitters.send(machine);
+    @GetMapping("/test/{machine}")
+    public HttpStatus Test(@PathVariable String machine) throws JsonProcessingException {
+        System.out.println(machine);
+        sseEmitters.send(machine);
         return HttpStatus.OK;
     }
 }
