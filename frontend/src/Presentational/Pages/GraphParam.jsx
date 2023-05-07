@@ -8,6 +8,23 @@ import Condition from "../Component/MainPage/Condition";
 const GraphParam = ({ nameList, handleParamsCall }) => {
   const [activeNames, setActiveNames] = useState(new Set());
 
+  const toggleName = (name, color) => {
+    setActiveNames((prevActiveNames) => {
+      const newActiveNames = new Set([...prevActiveNames]);
+      if (newActiveNames.has(name)) {
+        newActiveNames.delete(name);
+      } else {
+        newActiveNames.add(name);
+      }
+      return newActiveNames;
+    });
+    handleParamsCall(name, color);
+  };
+
+  const isNameActive = (name) => {
+    return activeNames.has(name);
+  };
+
   const colors = [
     "#f44336",
     "#e91e63",
@@ -31,6 +48,7 @@ const GraphParam = ({ nameList, handleParamsCall }) => {
   ];
 
   const [nameColors, setNameColors] = useState([]);
+  const [usedColors, setUsedColors] = useState(new Set());
 
   const getColorForName = (name, index) => {
     const nameIndex = nameList.indexOf(name);
@@ -46,9 +64,14 @@ const GraphParam = ({ nameList, handleParamsCall }) => {
   }, [handleParamsCall, getColorForName]);
 
   useEffect(() => {
-    const newNameColors = nameList.map(
-      () => colors[Math.floor(Math.random() * colors.length)]
-    );
+    const newNameColors = nameList.map(() => {
+      let newColor;
+      do {
+        newColor = colors[Math.floor(Math.random() * colors.length)];
+      } while (usedColors.has(newColor));
+      setUsedColors((prevUsedColors) => new Set([...prevUsedColors, newColor]));
+      return newColor;
+    });
     setNameColors(newNameColors);
   }, [nameList]);
 
@@ -56,35 +79,39 @@ const GraphParam = ({ nameList, handleParamsCall }) => {
     <div>
       <ParamBox>
         {nameList &&
-          nameList.map((name, index) => (
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                cursor: "pointer",
-              }}
-              onClick={() => handleParamsCall(name, getColorForName)}
-            >
-              <span
+          nameList.map((name, index) => {
+            const isActive = isNameActive(name);
+            return (
+              <div
+                key={index}
                 style={{
-                  display: "inline-block",
-                  width: "10px",
-                  height: "10px",
-                  backgroundColor: nameColors[index],
-                  marginRight: "10px",
-                  marginLeft: "15px",
+                  display: "flex",
+                  alignItems: "center",
+                  cursor: "pointer",
                 }}
-              />
-              <span
-                style={{
-                  color: nameColors[index],
-                }}
+                onClick={() => toggleName(name, getColorForName)}
               >
-                {" " + name}
-              </span>
-            </div>
-          ))}
+                <span
+                  style={{
+                    display: "inline-block",
+                    width: "10px",
+                    height: "10px",
+                    backgroundColor: nameColors[index],
+                    marginRight: "10px",
+                    marginLeft: "15px",
+                  }}
+                />
+                <span
+                  style={{
+                    color: nameColors[index],
+                    textDecoration: isActive ? "none" : "line-through",
+                  }}
+                >
+                  {" " + name}
+                </span>
+              </div>
+            );
+          })}
       </ParamBox>
     </div>
   );
