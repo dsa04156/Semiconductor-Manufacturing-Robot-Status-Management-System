@@ -1,6 +1,7 @@
 package com.ssafy.wonik.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.wonik.domain.dto.ComponentRootDto;
 import com.ssafy.wonik.service.MachineService;
@@ -42,7 +43,7 @@ public class SseEmitters {
     public void send(String machine) throws JsonProcessingException {
         ComponentRootDto componentRootDto = machineService.findMachine(machine);
         String json = new ObjectMapper().writeValueAsString(componentRootDto); // ComponentRootDto를 JSON 문자열로 변환
-
+        System.out.println("new data");
         emitters.forEach(emitter -> {
                     try {
                         SseEmitter.SseEventBuilder event = SseEmitter.event()
@@ -52,6 +53,7 @@ public class SseEmitters {
                         HttpHeaders headers = new HttpHeaders();
                         headers.setContentType(MediaType.APPLICATION_JSON); // Content-Type 헤더를 application/json으로 설정
                         emitter.send(event.reconnectTime(5000L).build(), headers.getContentType()); // SseEmitter 객체에 HttpHeaders 객체 설정
+                        System.out.println("send new data");
                     } catch (IOException e){
                         throw new RuntimeException();
                     }
