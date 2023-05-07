@@ -40,7 +40,7 @@ public class SseController {
 
     @GetMapping("/test")
     public HttpStatus Test(@RequestBody String machine) throws JsonProcessingException {
-//        sseEmitters.send(machine);
+       sseEmitters.send(machine);
         return HttpStatus.OK;
     }
 }
