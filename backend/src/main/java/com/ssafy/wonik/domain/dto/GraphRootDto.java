@@ -7,9 +7,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class ComponentDto {
-    private String name;
-    private Double value;
-    private List<ComponentChildDto> child;
+public class GraphRootDto {
+    private String componentName;
+    private List<GraphDto> graphData;
 }
-
