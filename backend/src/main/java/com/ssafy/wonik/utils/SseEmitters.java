@@ -46,12 +46,15 @@ public class SseEmitters {
         System.out.println("new data");
         emitters.forEach(emitter -> {
                     try {
+                        System.out.println("send data1");
                         SseEmitter.SseEventBuilder event = SseEmitter.event()
                                 .name(machine)
                                 .data(json)
                                 .id(String.valueOf(System.currentTimeMillis()));
+                        System.out.println("sned data2");
                         HttpHeaders headers = new HttpHeaders();
                         headers.setContentType(MediaType.APPLICATION_JSON); // Content-Type 헤더를 application/json으로 설정
+                        System.out.println("send data3");
                         emitter.send(event.reconnectTime(5000L).build(), headers.getContentType()); // SseEmitter 객체에 HttpHeaders 객체 설정
                         System.out.println("send new data");
                     } catch (IOException e){
