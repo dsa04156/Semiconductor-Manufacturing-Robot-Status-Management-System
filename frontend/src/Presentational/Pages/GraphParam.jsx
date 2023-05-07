@@ -6,6 +6,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import Condition from "../Component/MainPage/Condition";
 
 const GraphParam = ({ nameList, handleParamsCall }) => {
+  const [activeNames, setActiveNames] = useState(new Set());
+
   const colors = [
     "#f44336",
     "#e91e63",

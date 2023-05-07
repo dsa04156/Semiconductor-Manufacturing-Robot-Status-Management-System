@@ -74,13 +74,13 @@ const Graph = ({ data, xRange, yRange, strokeColor }) => {
         .attr("d", line)
         .attr("fill", "none")
         .attr("stroke", strokeColor)
-        .attr("stroke-width", 1.5)
+        .attr("stroke-width", 3)
         .on("mouseover", () => {
-          d3.select(".line").attr("stroke-width", 4); // 마우스가 올라갔을 때 선의 굵기를 3으로 변경
+          d3.select(".line").attr("stroke-width", 5); // 마우스가 올라갔을 때 선의 굵기를 3으로 변경
           d3.selectAll(".circle-dot").attr("r", 10); // 마우스가 올라갔을 때 원의 반지름을 5로 변경
         })
         .on("mouseout", () => {
-          d3.select(".line").attr("stroke-width", 1.5); // 마우스가 벗어났을 때 선의 굵기를 1.5로 변경
+          d3.select(".line").attr("stroke-width", 3); // 마우스가 벗어났을 때 선의 굵기를 1.5로 변경
           d3.selectAll(".circle-dot").attr("r", 7); // 마우스가 벗어났을 때 원의 반지름을 3으로 변경
         });
 
@@ -96,6 +96,9 @@ const Graph = ({ data, xRange, yRange, strokeColor }) => {
         .attr("fill", strokeColor)
 
         .on("mouseover", (event, d) => {
+          d3.select(".line").attr("stroke-width", 5); // 마우스가 올라갔을 때 선의 굵기를 3으로 변경
+          d3.selectAll(".circle-dot").attr("r", 10); // 마우스가 올라갔을 때 원의 반지름을 5로 변경
+
           setTooltip({
             show: true,
             x: event.pageX,
@@ -112,6 +115,8 @@ const Graph = ({ data, xRange, yRange, strokeColor }) => {
 
         .on("mouseout", () => {
           setTooltip({ ...tooltip, show: false });
+          d3.select(".line").attr("stroke-width", 3); // 마우스가 벗어났을 때 선의 굵기를 1.5로 변경
+          d3.selectAll(".circle-dot").attr("r", 7); // 마우스가 벗어났을 때 원의 반지름을 3으로 변경
         });
 
       xScale.domain([0, data.length]).range([0, width]);
