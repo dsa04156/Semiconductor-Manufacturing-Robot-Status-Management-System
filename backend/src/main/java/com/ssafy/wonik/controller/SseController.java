@@ -27,9 +27,11 @@ public class SseController {
         SseEmitter emitter = new SseEmitter();
         sseEmitters.add(emitter);
         try {
+            System.out.println("SSE connect");
             emitter.send(SseEmitter.event()
                     .name("connect")
                     .data("connected!"));
+            System.out.println("SSE send");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
