@@ -8,13 +8,13 @@ import Condition from "../Component/MainPage/Condition";
 import GraphParam from "./GraphParam";
 import Period from "./Period";
 
-const Graph = ({ data, xRange, yRange, strokeColor }) => {
+const Graph = ({ lines, xRange, yRange }) => {
   const ref = useRef();
   const [tooltip, setTooltip] = useState({ show: false, x: 0, y: 0, date: "" });
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    if (data.length > 0) {
+    if (lines.length > 0) {
       const margin = { top: 10, right: 10, bottom: 30, left: 30 };
       const width = 600 - margin.left - margin.right;
       const height = 400 - margin.top - margin.bottom;
@@ -32,7 +32,7 @@ const Graph = ({ data, xRange, yRange, strokeColor }) => {
 
         const xScale = d3
           .scaleLinear()
-          .domain([0, data.length - 1])
+          .domain([0, lines[0].data.length - 1])
           .range([0, width]);
 
         const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
@@ -54,7 +54,7 @@ const Graph = ({ data, xRange, yRange, strokeColor }) => {
 
       const xScale = d3
         .scaleLinear()
-        .domain([0, data.length - 1])
+        .domain([0, lines[0].data.length - 1])
         .range([0, width]);
 
       const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
@@ -67,13 +67,13 @@ const Graph = ({ data, xRange, yRange, strokeColor }) => {
         .y((d) => yScale(d.value));
 
       graphGroup
-        .selectAll(".line")
-        .data([data])
+        .selectAll(".line-path")
+        .data(lines)
         .join("path")
-        .classed("line", true)
-        .attr("d", line)
+        .classed("line-path", true)
+        .attr("d", (lineData) => line(lineData.data))
         .attr("fill", "none")
-        .attr("stroke", strokeColor)
+        .attr("stroke", (lineData) => lineData.strokeColor)
         .attr("stroke-width", 3)
         .on("mouseover", () => {
           d3.select(".line").attr("stroke-width", 5); // 마우스가 올라갔을 때 선의 굵기를 3으로 변경
@@ -85,28 +85,39 @@ const Graph = ({ data, xRange, yRange, strokeColor }) => {
         });
 
       graphGroup
+        .selectAll(".circle-group")
+        .data(lines)
+        .join("g")
+        .classed("circle-group", true)
         .selectAll("circle")
-        .data(data)
+        .data((lineData) => lineData.data)
         .join("circle")
-        .attr("class", "circle-dot")
+        .classed("circle-dot", true) // 이 클래스를 추가
         .attr("cx", (d, i) => xScale(i))
         .attr("cy", (d) => yScale(d.value))
-
         .attr("r", 7)
-        .attr("fill", strokeColor)
+        .attr("fill", (d, i, nodes) => {
+          // 부모 노드인 circle-group의 데이터에서 strokeColor 가져오기
+          const parentData = d3.select(nodes[i].parentNode).datum();
+          return parentData.strokeColor;
+        })
 
         .on("mouseover", (event, d) => {
           d3.select(".line").attr("stroke-width", 5); // 마우스가 올라갔을 때 선의 굵기를 3으로 변경
           d3.selectAll(".circle-dot").attr("r", 10); // 마우스가 올라갔을 때 원의 반지름을 5로 변경
+
+          const parentData = d3.select(event.target.parentNode).datum();
 
           setTooltip({
             show: true,
             x: event.pageX,
             y: event.pageY,
             date: "Date : " + d.date,
-            value: "\n\nValue : " + d.value,
+            value: "Value : " + d.value,
+            name: "Name : " + parentData.name,
           });
         })
+
         .on("mousemove", (event) => {
           const x = event.pageX - ref.current.getBoundingClientRect().left;
           const y = event.pageY - ref.current.getBoundingClientRect().top;
@@ -118,16 +129,14 @@ const Graph = ({ data, xRange, yRange, strokeColor }) => {
           d3.select(".line").attr("stroke-width", 3); // 마우스가 벗어났을 때 선의 굵기를 1.5로 변경
           d3.selectAll(".circle-dot").attr("r", 7); // 마우스가 벗어났을 때 원의 반지름을 3으로 변경
         });
-
-      xScale.domain([0, data.length]).range([0, width]);
-      svg.select(".x-axis").call(d3.axisBottom(xScale));
     }
-  }, [data, strokeColor]);
+  }, [lines, xRange, yRange]);
 
   return (
     <div ref={ref}>
       {tooltip.show && (
         <Tooltip style={{ left: tooltipPosition.x, top: tooltipPosition.y }}>
+          <div>{tooltip.name}</div>
           <div>{tooltip.date}</div>
           <div>{tooltip.value}</div>
         </Tooltip>
@@ -137,6 +146,7 @@ const Graph = ({ data, xRange, yRange, strokeColor }) => {
 };
 
 const Graphtest = () => {
+  const [lines, setLines] = useState([]);
   const [startDate, setStartDate] = useState(
     new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   );
@@ -159,22 +169,45 @@ const Graphtest = () => {
     "#BAB0AC",
   ];
   const handleParamsCall = (name, getColorForName) => {
-    setSelectedParam(name);
+    const existingLineIndex = lines.findIndex((line) => line.name === name);
 
-    if (params.data[name]) {
-      console.log("찾았다 : ");
-      console.log(params.data[name].length);
-      console.log(JSON.stringify(params.data[name]));
+    if (existingLineIndex !== -1) {
+      // 이미 활성화된 라인이라면 제거
+      setLines((prevLines) => {
+        const updatedLines = prevLines.filter(
+          (_, index) => index !== existingLineIndex
+        );
 
-      setData(params.data[name]);
+        if (updatedLines.length === 0) {
+          setSelectedParam("");
+        } else {
+          setSelectedParam((prevSelectedParam) =>
+            prevSelectedParam === name ? "" : prevSelectedParam
+          );
+        }
 
-      // 선택한 name의 인덱스를 찾아 해당하는 nameColors의 색상을 strokeColor에 저장
-      const color = getColorForName(name);
-      if (color) {
-        setStrokeColor(color);
+        return updatedLines;
+      });
+    } else {
+      // 아직 활성화되지 않은 라인이라면 추가
+      if (params.data[name]) {
+        const newLine = {
+          name,
+          data: params.data[name],
+          strokeColor: getColorForName(name),
+        };
+        setLines((prevLines) => [...prevLines, newLine]);
+        setSelectedParam(name);
+        setData(params.data[name]);
+
+        const color = getColorForName(name);
+        if (color) {
+          setStrokeColor(color);
+        }
       }
     }
   };
+
   const [nameColors, setNameColors] = useState([]);
 
   const [strokeColor, setStrokeColor] = useState("steelblue");
@@ -215,7 +248,7 @@ const Graphtest = () => {
 
     const res2 = await api.post("data/machine/graph", inputdata);
     setparams({ ...res2.data, child: data.child });
-    console.log(res2.data.nameList);
+    console.log(res2);
   };
 
   const handleComponentCall = (componentName) => {
@@ -228,7 +261,9 @@ const Graphtest = () => {
   useEffect(() => {
     const graph_data = async () => {
       const res = await api.post("data/Machine/A_TEST");
+      //어떤 Machine 선택해서 post 쏠지도 이부분
       setComponentData(res.data.child[1].child);
+      //이부분이 컴포넌트 리스트 출력부
     };
     graph_data();
   }, []);
@@ -243,10 +278,9 @@ const Graphtest = () => {
       />
       <Box>
         <Graph
-          data={data}
+          lines={lines} // 수정된 prop 전달
           xRange={xRange}
           yRange={yRange}
-          strokeColor={strokeColor}
         />
 
         <GraphParam
@@ -290,7 +324,6 @@ const Graphtest = () => {
 };
 
 export default Graphtest;
-
 const Box = styled.div`
   position: absolute;
   top: 200px;
@@ -302,10 +335,11 @@ const Box = styled.div`
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   display: flex;
+  flex-direction: column; // Flexbox의 방향을 column으로 설정
+  justify-content: space-between; // 컴포넌트 사이에 공간을 균일하게 배분
   align-items: center;
   overflow: hidden;
 `;
-
 const CompoBox = styled.div`
   position: absolute;
   top: 450px;
