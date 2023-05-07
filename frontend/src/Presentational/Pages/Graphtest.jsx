@@ -10,6 +10,8 @@ import Period from "./Period";
 
 const Graph = ({ data, xRange, yRange, strokeColor }) => {
   const ref = useRef();
+  const [tooltip, setTooltip] = useState({ show: false, x: 0, y: 0, date: "" });
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     if (data.length > 0) {
@@ -60,25 +62,73 @@ const Graph = ({ data, xRange, yRange, strokeColor }) => {
 
       const line = d3
         .line()
+        .defined((d) => d.value !== null && d.value !== undefined)
         .x((d, i) => xScale(i))
         .y((d) => yScale(d.value));
 
       graphGroup
-        .selectAll(".data-line")
+        .selectAll(".line")
         .data([data])
         .join("path")
-        .attr("class", "data-line")
+        .classed("line", true)
+        .attr("d", line)
         .attr("fill", "none")
         .attr("stroke", strokeColor)
         .attr("stroke-width", 1.5)
-        .attr("d", line);
+        .on("mouseover", () => {
+          d3.select(".line").attr("stroke-width", 4); // 마우스가 올라갔을 때 선의 굵기를 3으로 변경
+          d3.selectAll(".circle-dot").attr("r", 10); // 마우스가 올라갔을 때 원의 반지름을 5로 변경
+        })
+        .on("mouseout", () => {
+          d3.select(".line").attr("stroke-width", 1.5); // 마우스가 벗어났을 때 선의 굵기를 1.5로 변경
+          d3.selectAll(".circle-dot").attr("r", 7); // 마우스가 벗어났을 때 원의 반지름을 3으로 변경
+        });
+
+      graphGroup
+        .selectAll("circle")
+        .data(data)
+        .join("circle")
+        .attr("class", "circle-dot")
+        .attr("cx", (d, i) => xScale(i))
+        .attr("cy", (d) => yScale(d.value))
+
+        .attr("r", 7)
+        .attr("fill", strokeColor)
+
+        .on("mouseover", (event, d) => {
+          setTooltip({
+            show: true,
+            x: event.pageX,
+            y: event.pageY,
+            date: "Date : " + d.date,
+            value: "\n\nValue : " + d.value,
+          });
+        })
+        .on("mousemove", (event) => {
+          const x = event.pageX - ref.current.getBoundingClientRect().left;
+          const y = event.pageY - ref.current.getBoundingClientRect().top;
+          setTooltipPosition({ x, y });
+        })
+
+        .on("mouseout", () => {
+          setTooltip({ ...tooltip, show: false });
+        });
 
       xScale.domain([0, data.length]).range([0, width]);
       svg.select(".x-axis").call(d3.axisBottom(xScale));
     }
   }, [data, strokeColor]);
 
-  return <div ref={ref}></div>;
+  return (
+    <div ref={ref}>
+      {tooltip.show && (
+        <Tooltip style={{ left: tooltipPosition.x, top: tooltipPosition.y }}>
+          <div>{tooltip.date}</div>
+          <div>{tooltip.value}</div>
+        </Tooltip>
+      )}
+    </div>
+  );
 };
 
 const Graphtest = () => {
@@ -264,4 +314,15 @@ const CompoBox = styled.div`
   display: flex;
   align-items: center;
   overflow: hidden;
+`;
+const Tooltip = styled.div`
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 12px;
+  pointer-events: none;
+  left: ${(props) => props.x}px;
+  top: ${(props) => props.y}px;
 `;
