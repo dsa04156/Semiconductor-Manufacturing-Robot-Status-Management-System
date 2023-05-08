@@ -1,5 +1,6 @@
 package com.ssafy.wonik.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.wonik.utils.SseEmitters;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,6 +12,7 @@ import java.io.IOException;
 
 
 @RestController
+@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @RequestMapping("/sse")
 public class SseController {
 
@@ -25,17 +27,20 @@ public class SseController {
         SseEmitter emitter = new SseEmitter();
         sseEmitters.add(emitter);
         try {
+            System.out.println("SSE connect");
             emitter.send(SseEmitter.event()
                     .name("connect")
                     .data("connected!"));
+            System.out.println("SSE send");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return ResponseEntity.ok(emitter);
     }
 
-    @GetMapping("/test")
-    public HttpStatus Test(@RequestBody String machine) {
+    @GetMapping("/test/{machine}")
+    public HttpStatus Test(@PathVariable String machine) throws JsonProcessingException {
+        System.out.println(machine);
         sseEmitters.send(machine);
         return HttpStatus.OK;
     }

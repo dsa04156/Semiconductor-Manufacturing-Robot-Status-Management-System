@@ -24,9 +24,7 @@ public class MachineServiceImpl implements MachineService{
     @Override
     public ComponentRootDto findMachine(String machineName) {
         List<ComponentRootDto> list = machineRepository.findMachine(machineName);
-        System.out.println(list);
         ComponentRootDto componentRootDto = list.get(0);
-        System.out.println(componentRootDto);
         return componentRootDto;
     }
 

@@ -1,16 +1,20 @@
 package com.ssafy.wonik.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.wonik.domain.dto.ComponentRootDto;
 import com.ssafy.wonik.service.MachineService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 @Slf4j
@@ -36,16 +40,41 @@ public class SseEmitters {
         return emitter;
     }
 
-    public void send(String machine){
+    public void send(String machine) throws JsonProcessingException {
         ComponentRootDto componentRootDto = machineService.findMachine(machine);
-        emitters.forEach(emitter -> {
+//        String json = new ObjectMapper().writeValueAsString(componentRootDto); // ComponentRootDto를 JSON 문자열로 변환
+//        emitters.forEach(emitter -> {
+//                    try {
+//                        System.out.println("send data1");
+//                        SseEmitter.SseEventBuilder event = SseEmitter.event()
+//                                .name(machine)
+//                                .data(json)
+//                                .id(String.valueOf(System.currentTimeMillis()));
+//                        System.out.println("sned data2");
+//                        HttpHeaders headers = new HttpHeaders();
+//                        headers.setContentType(MediaType.APPLICATION_JSON); // Content-Type 헤더를 application/json으로 설정
+//                        System.out.println("send data3");
+//                        emitter.send(event.reconnectTime(5000L).build(), headers.getContentType()); // SseEmitter 객체에 HttpHeaders 객체 설정
+//                        System.out.println("send new data");
+//                    } catch (IOException e){
+//                        throw new RuntimeException();
+//                    }
+        emitters.forEach(sseEmitter -> {
             try {
-                emitter.send(SseEmitter.event()
-                        .name(machine)
-                        .data(componentRootDto));
-            } catch (IOException e){
-                throw new RuntimeException();
+                sseEmitter.send(SseEmitter.event()
+                        .name("machine")
+                        .data(machine));
+        } catch (IOException e) {
+                throw new RuntimeException(e);
             }
+//        emitters.forEach(emitter -> {
+//            try {
+//                emitter.send(SseEmitter.event()
+//                        .name(machine)
+//                        .data(componentRootDto));
+//            } catch (IOException e){
+//                throw new RuntimeException();
+//            }
         });
     }
 
