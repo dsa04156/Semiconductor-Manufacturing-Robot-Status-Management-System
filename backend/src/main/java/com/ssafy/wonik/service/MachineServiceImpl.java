@@ -31,7 +31,22 @@ public class MachineServiceImpl implements MachineService{
     @Override
     public GraphResponseDto  findGraph(GraphInputDto graphInputDto) {
         GraphResponseDto graphData = machineRepository.findGraph(graphInputDto);
-//        GraphRootDto graphRootDto = new GraphRootDto(graphInputDto.getComponentName(), graphData);
         return graphData;
+    }
+
+    @Override
+    public List<MachineToModuleDto> findRecentModuleData(String machineName) {
+        return machineRepository.findRecentModuleData(machineName);
+    }
+
+    @Override
+    public List<ResultDataDto> findGraphData(GraphInputDto graphInputDto) {
+        List<ResultDataDto> resultDataDto = machineRepository.findGraphData(graphInputDto);
+        return resultDataDto;
+    }
+
+    @Override
+    public List<MachineToModuleDto> findRecentComponentData(ModuleToComponentInputDto moduleToComponentInputDto) {
+        return machineRepository.findRecentComponentData(moduleToComponentInputDto);
     }
 }

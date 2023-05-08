@@ -1,9 +1,6 @@
 package com.ssafy.wonik.service;
 
-import com.ssafy.wonik.domain.dto.ComponentRootDto;
-import com.ssafy.wonik.domain.dto.GraphInputDto;
-import com.ssafy.wonik.domain.dto.GraphResponseDto;
-import com.ssafy.wonik.domain.dto.GraphRootDto;
+import com.ssafy.wonik.domain.dto.*;
 import com.ssafy.wonik.domain.entity.Machine;
 
 import java.util.ArrayList;
@@ -16,4 +13,10 @@ public interface MachineService {
     ComponentRootDto findMachine(String machineName);
 
     GraphResponseDto findGraph(GraphInputDto graphInputDto);
+
+    List<MachineToModuleDto> findRecentModuleData(String machineName);
+
+    List<ResultDataDto> findGraphData(GraphInputDto graphInputDto);
+
+    List<MachineToModuleDto> findRecentComponentData(ModuleToComponentInputDto moduleToComponentInputDto);
 }
