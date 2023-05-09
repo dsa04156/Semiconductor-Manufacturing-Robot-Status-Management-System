@@ -9,16 +9,20 @@ import GraphParam from "./GraphParam";
 import Period from "./Period";
 import { debounce } from "lodash";
 
-const Graph = ({ lines, xRange, yRange }) => {
+const Graph = ({ lines, xRange, yRange, startDate, endDate }) => {
   const ref = useRef();
+  const xScaleRef = useRef();
+  const widthRef = useRef();
+
   const [tooltip, setTooltip] = useState({ show: false, x: 0, y: 0, date: "" });
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [activeLines, setActiveLines] = useState([]);
 
   useEffect(() => {
     const margin = { top: 10, right: 10, bottom: 30, left: 30 };
     const width = 600 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
-
+    widthRef.current = width;
     let svg = d3.select(ref.current).select("svg");
 
     if (svg.empty()) {
@@ -32,9 +36,15 @@ const Graph = ({ lines, xRange, yRange }) => {
 
       const xScale = d3
         .scaleLinear()
-        .domain([0, lines.length > 0 ? lines[0].data.length - 1 : 0])
+        .domain([
+          0,
+          lines.length > 0 && lines[0].data.length > 0
+            ? lines[0].data.length - 1
+            : 0,
+        ])
         .range([0, width]);
 
+      xScaleRef.current = xScale;
       const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
       const graphGroup = svg.append("g");
 
@@ -43,20 +53,42 @@ const Graph = ({ lines, xRange, yRange }) => {
         .append("g")
         .attr("class", "x-axis")
         .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(xScale));
+        .call(
+          d3
+            .axisBottom(xScale)
+            .ticks(lines.length > 0 ? lines[0].data.length - 1 : 0)
+            .tickFormat((d) => {
+              return d + 1;
+            })
+        );
 
       // y축 그리기
       graphGroup.append("g").attr("class", "y-axis").call(d3.axisLeft(yScale));
     }
+
     if (lines.length > 0) {
       const xScale = d3
         .scaleLinear()
         .domain([0, lines[0].data.length - 1])
         .range([0, width]);
 
+      xScaleRef.current = xScale;
       const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
       const graphGroup = svg.select("g");
 
+      // x축 그리기
+      graphGroup
+        .append("g")
+        .attr("class", "x-axis")
+        .attr("transform", `translate(0, ${height})`)
+        .call(
+          d3
+            .axisBottom(xScale)
+            .ticks(lines.length > 0 ? lines[0].data.length - 1 : 0)
+            .tickFormat((d) => {
+              return d + 1; // 이 부분을 수정하여 tickFormat이 1부터 시작하도록 변경했습니다.
+            })
+        );
       const line = d3
         .line()
         .defined((d) => d.value !== null && d.value !== undefined)
@@ -72,15 +104,41 @@ const Graph = ({ lines, xRange, yRange }) => {
         .attr("fill", "none")
         .attr("stroke", (lineData) => lineData.strokeColor)
         .attr("stroke-width", 3)
-        .on("mouseover", function () {
+        .on("mouseover", function (event, lineData) {
+          setActiveLines([...activeLines, lineData]);
           d3.select(this).attr("stroke-width", 8).raise();
           d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 10);
+          updateXAxisTicks(activeLines.length + 1);
         })
-        .on("mouseout", function () {
+        .on("mouseout", function (event, lineData) {
+          setActiveLines(
+            activeLines.filter((activeLine) => activeLine !== lineData)
+          );
+
+          if (activeLines.length === 0) {
+            updateXAxisTicks(lines.length > 0 ? lines[0].data.length - 1 : 0);
+          } else {
+            updateXAxisTicks(activeLines.length);
+          }
           d3.select(this).attr("stroke-width", 3);
           d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 7);
         });
-
+      function updateXAxisTicks(activeLinesCount) {
+        const graphGroup = d3.select(ref.current).select("svg").select("g");
+        graphGroup.select(".x-axis").call(
+          d3
+            .axisBottom(xScaleRef.current)
+            .ticks(activeLinesCount > 0 ? activeLinesCount - 1 : 0)
+            .tickFormat(activeLinesCount > 0 ? (d) => d + 1 : null)
+        );
+      }
+      const ticks = activeLines.length > 0 ? lines[0].data.length - 1 : 0;
+      graphGroup.select(".x-axis").call(
+        d3
+          .axisBottom(xScale)
+          .ticks(ticks)
+          .tickFormat(ticks ? (d) => d + 1 : null)
+      );
       graphGroup
         .selectAll(".circle-group")
         .data(lines)
@@ -132,7 +190,7 @@ const Graph = ({ lines, xRange, yRange }) => {
       graphGroup.selectAll(".line-path").remove();
       graphGroup.selectAll(".circle-group").remove();
     }
-  }, [lines, xRange, yRange]);
+  }, [lines, xRange, yRange, startDate, endDate, activeLines]);
 
   return (
     <div ref={ref}>
@@ -171,6 +229,16 @@ const Graphtest = () => {
     "#9C755F",
     "#BAB0AC",
   ];
+
+  useEffect(() => {
+    if (selectedParam) {
+      handleComponentCall(selectedParam);
+    } else {
+      // startDate와 endDate가 변경되었을 때, 그래프를 초기 상태로 되돌리기 위해 lines를 빈 배열로 설정
+      setLines([]);
+    }
+  }, [startDate, endDate]);
+
   const handleParamsCall = (name, getColorForName) => {
     const existingLineIndex = lines.findIndex((line) => line.name === name);
 
@@ -305,6 +373,8 @@ const Graphtest = () => {
           lines={lines}
           xRange={xRange}
           yRange={yRange}
+          startDate={startDate}
+          endDate={endDate}
         />
 
         <GraphParam
