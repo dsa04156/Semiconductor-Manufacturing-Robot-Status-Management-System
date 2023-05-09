@@ -64,16 +64,20 @@ const GraphParam = ({ nameList, handleParamsCall }) => {
   }, [handleParamsCall, getColorForName]);
 
   useEffect(() => {
-    const newNameColors = nameList.map(() => {
-      let newColor;
-      do {
-        newColor = colors[Math.floor(Math.random() * colors.length)];
-      } while (usedColors.has(newColor));
-      setUsedColors((prevUsedColors) => new Set([...prevUsedColors, newColor]));
-      return newColor;
-    });
-    setNameColors(newNameColors);
-  }, [nameList]);
+    if (nameColors.length !== nameList.length) {
+      const newNameColors = nameList.map(() => {
+        let newColor;
+        do {
+          newColor = colors[Math.floor(Math.random() * colors.length)];
+        } while (usedColors.has(newColor));
+        setUsedColors(
+          (prevUsedColors) => new Set([...prevUsedColors, newColor])
+        );
+        return newColor;
+      });
+      setNameColors(newNameColors);
+    }
+  }, [nameList, usedColors]);
 
   return (
     <div>
