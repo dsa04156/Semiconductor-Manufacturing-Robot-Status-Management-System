@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Condition from "../Component/MainPage/Condition";
 import GraphParam from "./GraphParam";
 import Period from "./Period";
+import { debounce } from "lodash";
 
 const Graph = ({ lines, xRange, yRange }) => {
   const ref = useRef();
@@ -14,44 +15,40 @@ const Graph = ({ lines, xRange, yRange }) => {
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
+    const margin = { top: 10, right: 10, bottom: 30, left: 30 };
+    const width = 600 - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    let svg = d3.select(ref.current).select("svg");
+
+    if (svg.empty()) {
+      svg = d3
+        .select(ref.current)
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      const xScale = d3
+        .scaleLinear()
+        .domain([0, lines.length > 0 ? lines[0].data.length - 1 : 0])
+        .range([0, width]);
+
+      const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
+      const graphGroup = svg.append("g");
+
+      // x축 그리기
+      graphGroup
+        .append("g")
+        .attr("class", "x-axis")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(xScale));
+
+      // y축 그리기
+      graphGroup.append("g").attr("class", "y-axis").call(d3.axisLeft(yScale));
+    }
     if (lines.length > 0) {
-      const margin = { top: 10, right: 10, bottom: 30, left: 30 };
-      const width = 600 - margin.left - margin.right;
-      const height = 400 - margin.top - margin.bottom;
-
-      let svg = d3.select(ref.current).select("svg");
-
-      if (svg.empty()) {
-        svg = d3
-          .select(ref.current)
-          .append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-          .attr("transform", `translate(${margin.left},${margin.top})`);
-
-        const xScale = d3
-          .scaleLinear()
-          .domain([0, lines[0].data.length - 1])
-          .range([0, width]);
-
-        const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
-        const graphGroup = svg.append("g");
-
-        // x축 그리기
-        graphGroup
-          .append("g")
-          .attr("class", "x-axis")
-          .attr("transform", `translate(0, ${height})`)
-          .call(d3.axisBottom(xScale));
-
-        // y축 그리기
-        graphGroup
-          .append("g")
-          .attr("class", "y-axis")
-          .call(d3.axisLeft(yScale));
-      }
-
       const xScale = d3
         .scaleLinear()
         .domain([0, lines[0].data.length - 1])
@@ -75,13 +72,13 @@ const Graph = ({ lines, xRange, yRange }) => {
         .attr("fill", "none")
         .attr("stroke", (lineData) => lineData.strokeColor)
         .attr("stroke-width", 3)
-        .on("mouseover", () => {
-          d3.select(".line").attr("stroke-width", 5); // 마우스가 올라갔을 때 선의 굵기를 3으로 변경
-          d3.selectAll(".circle-dot").attr("r", 10); // 마우스가 올라갔을 때 원의 반지름을 5로 변경
+        .on("mouseover", function () {
+          d3.select(this).attr("stroke-width", 8).raise();
+          d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 10);
         })
-        .on("mouseout", () => {
-          d3.select(".line").attr("stroke-width", 3); // 마우스가 벗어났을 때 선의 굵기를 1.5로 변경
-          d3.selectAll(".circle-dot").attr("r", 7); // 마우스가 벗어났을 때 원의 반지름을 3으로 변경
+        .on("mouseout", function () {
+          d3.select(this).attr("stroke-width", 3);
+          d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 7);
         });
 
       graphGroup
@@ -92,21 +89,20 @@ const Graph = ({ lines, xRange, yRange }) => {
         .selectAll("circle")
         .data((lineData) => lineData.data)
         .join("circle")
-        .classed("circle-dot", true) // 이 클래스를 추가
+        .classed("circle-dot", true)
         .attr("cx", (d, i) => xScale(i))
         .attr("cy", (d) => yScale(d.value))
         .attr("r", 7)
         .attr("fill", (d, i, nodes) => {
-          // 부모 노드인 circle-group의 데이터에서 strokeColor 가져오기
           const parentData = d3.select(nodes[i].parentNode).datum();
           return parentData.strokeColor;
         })
-
-        .on("mouseover", (event, d) => {
-          d3.select(".line").attr("stroke-width", 5); // 마우스가 올라갔을 때 선의 굵기를 3으로 변경
-          d3.selectAll(".circle-dot").attr("r", 10); // 마우스가 올라갔을 때 원의 반지름을 5로 변경
-
-          const parentData = d3.select(event.target.parentNode).datum();
+        .on("mouseover", function (event, d) {
+          const parentData = d3.select(this.parentNode).datum();
+          d3.select(this.parentNode)
+            .select(".line-path")
+            .attr("stroke-width", 8);
+          d3.select(this).attr("r", 10);
 
           setTooltip({
             show: true,
@@ -123,12 +119,18 @@ const Graph = ({ lines, xRange, yRange }) => {
           const y = event.pageY - ref.current.getBoundingClientRect().top;
           setTooltipPosition({ x, y });
         })
-
-        .on("mouseout", () => {
+        .on("mouseout", function () {
           setTooltip({ ...tooltip, show: false });
-          d3.select(".line").attr("stroke-width", 3); // 마우스가 벗어났을 때 선의 굵기를 1.5로 변경
-          d3.selectAll(".circle-dot").attr("r", 7); // 마우스가 벗어났을 때 원의 반지름을 3으로 변경
+          d3.select(this.parentNode)
+            .select(".line-path")
+            .attr("stroke-width", 3);
+          d3.select(this).attr("r", 7);
         });
+    } else {
+      // lines가 빈 배열일 때 기존 그래프를 삭제합니다.
+      const graphGroup = svg.select("g");
+      graphGroup.selectAll(".line-path").remove();
+      graphGroup.selectAll(".circle-group").remove();
     }
   }, [lines, xRange, yRange]);
 
@@ -145,6 +147,7 @@ const Graph = ({ lines, xRange, yRange }) => {
   );
 };
 
+const MemoizedGraph = React.memo(Graph);
 const Graphtest = () => {
   const [lines, setLines] = useState([]);
   const [startDate, setStartDate] = useState(
@@ -173,21 +176,20 @@ const Graphtest = () => {
 
     if (existingLineIndex !== -1) {
       // 이미 활성화된 라인이라면 제거
-      setLines((prevLines) => {
-        const updatedLines = prevLines.filter(
-          (_, index) => index !== existingLineIndex
-        );
-
-        if (updatedLines.length === 0) {
-          setSelectedParam("");
-        } else {
-          setSelectedParam((prevSelectedParam) =>
-            prevSelectedParam === name ? "" : prevSelectedParam
+      if (lines.length > 1) {
+        setLines((prevLines) => {
+          const updatedLines = prevLines.filter(
+            (_, index) => index !== existingLineIndex
           );
-        }
+          setSelectedParam(name);
 
-        return updatedLines;
-      });
+          return updatedLines;
+        });
+      } else {
+        // 활성화된 그래프가 단 하나만 남았을 때, 선택된 그래프를 비활성화하도록 수정
+        setLines([]);
+        setSelectedParam("");
+      }
     } else {
       // 아직 활성화되지 않은 라인이라면 추가
       if (params.data[name]) {
@@ -213,6 +215,23 @@ const Graphtest = () => {
   const [strokeColor, setStrokeColor] = useState("steelblue");
 
   const [componentColors, setComponentColors] = useState([]);
+  const [usedColors, setUsedColors] = useState(new Set());
+
+  useEffect(() => {
+    if (componentColors.length !== componentData.length) {
+      const newComponentColors = componentData.map(() => {
+        let newColor;
+        do {
+          newColor = colors[Math.floor(Math.random() * colors.length)];
+        } while (usedColors.has(newColor));
+        setUsedColors(
+          (prevUsedColors) => new Set([...prevUsedColors, newColor])
+        );
+        return newColor;
+      });
+      setComponentColors(newComponentColors);
+    }
+  }, [componentData, usedColors]);
 
   useEffect(() => {
     // 색상 배열의 길이가 params.nameList의 길이와 같지 않다면 색상 배열을 업데이트
@@ -248,16 +267,21 @@ const Graphtest = () => {
 
     const res2 = await api.post("data/machine/graph", inputdata);
     setparams({ ...res2.data, child: data.child });
-    console.log(res2);
+    //console.log(res2);
   };
 
   const handleComponentCall = (componentName) => {
     componentcall(componentName);
   };
+
   const handleComponentClick = (event, componentName) => {
     event.stopPropagation(); // 이벤트 버블링을 중지
     handleComponentCall(componentName);
   };
+
+  const debouncedHandleComponentClick = debounce((event, componentName) => {
+    handleComponentClick(event, componentName);
+  }, 300);
   useEffect(() => {
     const graph_data = async () => {
       const res = await api.post("data/Machine/A_TEST");
@@ -277,8 +301,8 @@ const Graphtest = () => {
         onChangeEndDate={setEndDate}
       />
       <Box>
-        <Graph
-          lines={lines} // 수정된 prop 전달
+        <MemoizedGraph //성능 개선을 위한 React.Memo 사용
+          lines={lines}
           xRange={xRange}
           yRange={yRange}
         />
@@ -287,7 +311,16 @@ const Graphtest = () => {
           nameList={params.nameList}
           handleParamsCall={handleParamsCall}
         ></GraphParam>
-        <CompoBox>
+        <CompoBox
+          onClick={(event) => {
+            const componentName = event.target.getAttribute(
+              "data-component-name"
+            );
+            if (componentName) {
+              debouncedHandleComponentClick(event, componentName);
+            }
+          }}
+        >
           {componentData &&
             componentData.map((child, index) => {
               const boxStyle = {
@@ -307,13 +340,10 @@ const Graphtest = () => {
                       marginRight: "20px",
                       cursor: "pointer",
                     }}
-                    onClick={(event) => {
-                      handleComponentClick(event, child.name);
-                    }}
+                    data-component-name={child.name}
                   >
                     {child.name}
                   </span>
-                  {data.child && index !== data.child[1].length - 1 && " "}
                 </React.Fragment>
               );
             })}
@@ -324,6 +354,7 @@ const Graphtest = () => {
 };
 
 export default Graphtest;
+
 const Box = styled.div`
   position: absolute;
   top: 200px;
