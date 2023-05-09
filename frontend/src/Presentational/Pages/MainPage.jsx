@@ -4,6 +4,7 @@ import react, { useState } from 'react';
 
 const Mainpage = () => {
   const [moduleChild, setModuleChild] = useState([])
+  console.log(moduleChild)
         
   return (
     <div>
