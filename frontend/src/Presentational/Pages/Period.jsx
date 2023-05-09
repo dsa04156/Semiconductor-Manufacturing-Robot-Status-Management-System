@@ -119,12 +119,12 @@ const PeriodBox = styled.div`
   // border: 1px solid rgba(0, 0, 0, 0.2);
   // box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   width: 60%;
-  height: 18%;
+  height: 28%;
 
   display: flex;
   align-items: center;
   overflow: hidden;
-  z-index: 1;
+  z-index: 4;
 `;
 
 const CalendarIcon = styled.img`
