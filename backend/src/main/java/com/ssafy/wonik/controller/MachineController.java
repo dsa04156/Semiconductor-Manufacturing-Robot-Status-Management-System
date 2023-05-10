@@ -40,6 +40,7 @@ public class MachineController {
 
     @PostMapping("/machine/graph")
     public ResponseEntity<?> findGraph(@RequestBody GraphInputDto graphInputDto) {
+        System.out.println(graphInputDto.toStirng());
         StopWatch sw = new StopWatch();
         sw.start();
         GraphResponseDto graphRootDto = machineService.findGraph(graphInputDto);
@@ -76,7 +77,6 @@ public class MachineController {
         StopWatch sw = new StopWatch();
         sw.start();
         List<ResultDataDto> resultDataDto = machineService.findGraphData(graphInputDto);
-        System.out.println(resultDataDto.toString());
         sw.stop();
         System.out.println(sw.getTotalTimeSeconds());
         return ResponseEntity.ok().body(resultDataDto);
