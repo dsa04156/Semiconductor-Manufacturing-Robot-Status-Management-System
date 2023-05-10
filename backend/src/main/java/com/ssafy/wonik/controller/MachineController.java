@@ -40,7 +40,7 @@ public class MachineController {
 
     @PostMapping("/machine/graph")
     public ResponseEntity<?> findGraph(@RequestBody GraphInputDto graphInputDto) {
-        System.out.println(graphInputDto.toStirng());
+        System.out.println(graphInputDto.toString());
         StopWatch sw = new StopWatch();
         sw.start();
         GraphResponseDto graphRootDto = machineService.findGraph(graphInputDto);
