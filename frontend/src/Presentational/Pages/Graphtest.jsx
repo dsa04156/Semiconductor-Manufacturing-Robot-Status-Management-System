@@ -132,6 +132,167 @@ const Graph = ({ lines, xRange, yRange, startDate, endDate }) => {
             .tickFormat(activeLinesCount > 0 ? (d) => d + 1 : null)
         );
       }
+      function applyEventListeners() {
+        svg
+          .selectAll(".line-path")
+          .on("mouseover", function (event, lineData) {
+            setActiveLines([...activeLines, lineData]);
+            d3.select(this).attr("stroke-width", 8).raise();
+            d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 10);
+            updateXAxisTicks(activeLines.length + 1);
+          })
+          .on("mouseout", function (event, lineData) {
+            setActiveLines(
+              activeLines.filter((activeLine) => activeLine !== lineData)
+            );
+
+            if (activeLines.length === 0) {
+              updateXAxisTicks(lines.length > 0 ? lines[0].data.length - 1 : 0);
+            } else {
+              updateXAxisTicks(activeLines.length);
+            }
+            d3.select(this).attr("stroke-width", 3);
+            d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 7);
+          });
+
+        svg
+          .selectAll(".circle-dot")
+          .on("mouseover", function (event, d) {
+            const parentData = d3.select(this.parentNode).datum();
+            d3.select(this.parentNode)
+              .select(".line-path")
+              .attr("stroke-width", 8);
+            d3.select(this).attr("r", 10);
+
+            setTooltip({
+              show: true,
+              x: event.pageX,
+              y: event.pageY,
+              date: "Date : " + d.date,
+              value: "Value : " + d.value,
+              name: "Name : " + parentData.name,
+            });
+          })
+          .on("mousemove", (event) => {
+            const x = event.pageX - ref.current.getBoundingClientRect().left;
+            const y = event.pageY - ref.current.getBoundingClientRect().top;
+            setTooltipPosition({ x, y });
+          })
+          .on("mouseout", function () {
+            setTooltip({ ...tooltip, show: false });
+            d3.select(this.parentNode)
+              .select(".line-path")
+              .attr("stroke-width", 3);
+            d3.select(this).attr("r", 7);
+          });
+      }
+      svg
+        .append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "none")
+        .attr("pointer-events", "all")
+        .style("pointer-events", "none")
+        .lower();
+
+      const circleGroup = graphGroup
+        .selectAll(".circle-group")
+        .data(lines)
+        .join("g")
+        .classed("circle-group", true);
+
+      circleGroup
+        .selectAll("circle")
+        .data((lineData) => lineData.data)
+        .join("circle")
+        .classed("circle-dot", true);
+
+      const lineGenerator = d3
+        .line()
+        .x((d, i) => xScale(i))
+        .y((d) => yScale(d.y));
+      const zoom = d3.zoom().scaleExtent([1, 8]).on("zoom", zoomed);
+      svg.call(zoom);
+
+      function zoomed(event) {
+        // 현재 줌 변환을 얻습니다.
+        const transform = event.transform;
+
+        // 스케일을 업데이트하고, 경로를 다시 그립니다.
+        const updatedXScale = transform.rescaleX(xScale);
+        const updatedYScale = transform.rescaleY(yScale);
+
+        // 수정된 line generator를 사용하여 줌 변환에 따른 선의 위치를 업데이트합니다.
+        const updatedLine = d3
+          .line()
+          .defined((d) => d.value !== null && d.value !== undefined)
+          .x((d, i) => updatedXScale(i))
+          .y((d) => updatedYScale(d.value));
+
+        // line들의 위치를 업데이트합니다.
+        svg
+          .selectAll(".line-path")
+          .attr("d", (lineData) => updatedLine(lineData.data))
+          .on("mouseover", function (event, lineData) {
+            setActiveLines([...activeLines, lineData]);
+            d3.select(this).attr("stroke-width", 8).raise();
+            d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 10);
+            updateXAxisTicks(activeLines.length + 1);
+          })
+          .on("mouseout", function (event, lineData) {
+            setActiveLines(
+              activeLines.filter((activeLine) => activeLine !== lineData)
+            );
+
+            if (activeLines.length === 0) {
+              updateXAxisTicks(lines.length > 0 ? lines[0].data.length - 1 : 0);
+            } else {
+              updateXAxisTicks(activeLines.length);
+            }
+            d3.select(this).attr("stroke-width", 3);
+            d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 7);
+          });
+
+        // 원들의 위치를 업데이트합니다.
+        svg
+          .selectAll(".circle-dot")
+          .attr("cx", (d, i) => updatedXScale(i))
+          .attr("cy", (d) => updatedYScale(d.value))
+          .on("mouseover", function (event, d) {
+            const parentData = d3.select(this.parentNode).datum();
+            d3.select(this.parentNode)
+              .select(".line-path")
+              .attr("stroke-width", 8);
+            d3.select(this).attr("r", 10);
+
+            setTooltip({
+              show: true,
+              x: event.pageX,
+              y: event.pageY,
+              date: "Date : " + d.date,
+              value: "Value : " + d.value,
+              name: "Name : " + parentData.name,
+            });
+          })
+
+          .on("mousemove", (event) => {
+            const x = event.pageX - ref.current.getBoundingClientRect().left;
+            const y = event.pageY - ref.current.getBoundingClientRect().top;
+            setTooltipPosition({ x, y });
+          })
+          .on("mouseout", function () {
+            setTooltip({ ...tooltip, show: false });
+            d3.select(this.parentNode)
+              .select(".line-path")
+              .attr("stroke-width", 3);
+            d3.select(this).attr("r", 7);
+          });
+
+        // x축과 y축 업데이트
+        graphGroup.select(".x-axis").call(d3.axisBottom(updatedXScale));
+        graphGroup.select(".y-axis").call(d3.axisLeft(updatedYScale));
+      }
+
       const ticks = activeLines.length > 0 ? lines[0].data.length - 1 : 0;
       graphGroup.select(".x-axis").call(
         d3
@@ -184,6 +345,7 @@ const Graph = ({ lines, xRange, yRange, startDate, endDate }) => {
             .attr("stroke-width", 3);
           d3.select(this).attr("r", 7);
         });
+      applyEventListeners();
     } else {
       // lines가 빈 배열일 때 기존 그래프를 삭제합니다.
       const graphGroup = svg.select("g");
@@ -356,6 +518,8 @@ const Graphtest = () => {
       //어떤 Machine 선택해서 post 쏠지도 이부분
       setComponentData(res.data.child[1].child);
       //이부분이 컴포넌트 리스트 출력부
+      console.log("여기야");
+      console.log(componentData);
     };
     graph_data();
   }, []);
