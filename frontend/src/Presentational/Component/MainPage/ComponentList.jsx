@@ -3,9 +3,12 @@ import styled from "styled-components";
 import CreateTable from '../../common/CreateTable';
 import HealthStatus from './HealthStatus';
 
-const ComponentList = ( { child } ) => {
+const ComponentList = ( { child, setSelectComponentData } ) => {
 
-    const [test, setTest] = useState()
+    const [test, setTest] = useState() //component list idx 값 저장
+    console.log(test);
+    console.log(child);
+    setSelectComponentData(child[test]);
 
     return (
       <div>
@@ -15,6 +18,7 @@ const ComponentList = ( { child } ) => {
             setTest={setTest}
             data={child}
             test={test}
+            child={child}
           />
         </Small>
           <HealthStatus componentData={child}/>

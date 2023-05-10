@@ -113,13 +113,13 @@ const Period = ({
 export default Period;
 const PeriodBox = styled.div`
   position: absolute;
-  top: 15px;
-  left: 730px;
+  top: 240px;
+  left: 600px;
   background: #ffffff;
   // border: 1px solid rgba(0, 0, 0, 0.2);
   // box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  width: 60%;
-  height: 28%;
+  width: 30%;
+  height: 5%;
 
   display: flex;
   align-items: center;

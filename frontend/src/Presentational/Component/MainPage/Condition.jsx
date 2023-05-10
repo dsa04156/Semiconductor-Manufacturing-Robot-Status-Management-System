@@ -342,7 +342,7 @@ import Form from 'react-bootstrap/Form';
 import Conbox from '../Condition/Conbox';
 import api from '../../../redux/api';
 
-const Condition = ({ setModuleChild }) => {
+const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleName }) => {
   const [machineData, setMachineData] = useState({});
   const [moduleData, setModuleData] = useState([]);
   const [componentData, setComponentData] = useState([]);
@@ -405,6 +405,7 @@ const Condition = ({ setModuleChild }) => {
           }
           setModuleData(modulelist);
           console.log('--------------------', currentModuleName);
+
           api
           .post(`data/machine/module?machineName=root&moduleName=${currentModuleName}`, JSON.stringify({}))
           .then((response) => {
@@ -447,6 +448,7 @@ const Condition = ({ setModuleChild }) => {
   const handleChangeMachine = (event) => {
     const selectMachineName = event.target.value;
     setCurrentMachineName(selectMachineName);
+    setSelectedMachineName(selectMachineName);
 
     api
       .post(`/data/root`, JSON.stringify({})) // 추후 root 자리에 변수 넣어서 변경. 현재는 root로 그냥 테스트.
@@ -480,11 +482,13 @@ const Condition = ({ setModuleChild }) => {
     const selectModuleName = event.target.value;
     console.log("클릭", selectModuleName);
     setCurrentModuleName(selectModuleName);
+    setSelectedModuleName(selectModuleName);
 
     api
     .post(`data/machine/module?machineName=root&moduleName=${selectModuleName}`, JSON.stringify({}))
     .then((response) => {
       setModuleChild(response.data);
+      console.log(response.data)
     })
   };
 

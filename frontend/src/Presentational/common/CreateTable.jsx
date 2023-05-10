@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import EvalStatus from './EvalStatus';
 
-function CreateTable({ setTest, data, test }) {
+function CreateTable({ setTest, data, test, child }) {
   const [selected, setSelected] = useState(test);
+  const [selectedComponentData, setSelectedComponentData] = useState();
+
+  useEffect(() => {
+    console.log(selected);
+  }, [selected]);
 
   const idxHandler = (idx) => {
     setSelected(idx);
     setTest(idx);
-    console.log(selected);
+    console.log(selected); //idx 값
+  }
+
+  const idxClickHandler = () => {
+    setSelectedComponentData(child[selected]);
   }
 
   const dataTable = data?.map((elem, idx) => {
@@ -27,7 +36,7 @@ function CreateTable({ setTest, data, test }) {
     
     return (
       <tr className='tableBody' key={idx}>
-        <td style={{ width: '30px' }}><input type="radio" checked={idx === selected} onChange={() => idxHandler(idx)}/></td>
+        <td style={{ width: '30px' }}><input type="radio" checked={idx === selected} onChange={() => idxHandler(idx)} onClick={idxClickHandler}/></td>
         <td>{elem.name}</td>
         <td>
           <EvalStatus evalValue={elem.eval}/>
