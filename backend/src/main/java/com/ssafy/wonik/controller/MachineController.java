@@ -72,9 +72,11 @@ public class MachineController {
     // component 이름으로 graph 찾기
     @PostMapping("/graph")
     public ResponseEntity<?> findGraphData(@RequestBody GraphInputDto graphInputDto){
+        System.out.println(graphInputDto.toString());
         StopWatch sw = new StopWatch();
         sw.start();
         List<ResultDataDto> resultDataDto = machineService.findGraphData(graphInputDto);
+        System.out.println(resultDataDto.toString());
         sw.stop();
         System.out.println(sw.getTotalTimeSeconds());
         return ResponseEntity.ok().body(resultDataDto);
