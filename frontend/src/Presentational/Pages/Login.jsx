@@ -29,6 +29,7 @@ const Login = () => {
     api
       .post("/account/login", JSON.stringify({ email, password }))
       .then((response) => {
+        console.log(response.data);
         const collotionJSON = JSON.stringify(response.data.collectionNames)
         localStorage.setItem("accessToken", response.data.token);
         localStorage.setItem("collectionNames", collotionJSON);

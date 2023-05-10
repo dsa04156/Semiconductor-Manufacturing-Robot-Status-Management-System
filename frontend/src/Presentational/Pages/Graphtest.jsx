@@ -9,7 +9,7 @@ import GraphParam from "./GraphParam";
 import Period from "./Period";
 import { debounce } from "lodash";
 
-const Graph = ({ lines, xRange, yRange, startDate, endDate }) => {
+const Graph = ({ lines, xRange, yRange }) => {
   const ref = useRef();
   const xScaleRef = useRef();
   const widthRef = useRef();
@@ -65,7 +65,6 @@ const Graph = ({ lines, xRange, yRange, startDate, endDate }) => {
       // y축 그리기
       graphGroup.append("g").attr("class", "y-axis").call(d3.axisLeft(yScale));
     }
-
     if (lines.length > 0) {
       const xScale = d3
         .scaleLinear()
@@ -86,9 +85,10 @@ const Graph = ({ lines, xRange, yRange, startDate, endDate }) => {
             .axisBottom(xScale)
             .ticks(lines.length > 0 ? lines[0].data.length - 1 : 0)
             .tickFormat((d) => {
-              return d + 1; // 이 부분을 수정하여 tickFormat이 1부터 시작하도록 변경했습니다.
+              return d + 1;
             })
         );
+
       const line = d3
         .line()
         .defined((d) => d.value !== null && d.value !== undefined)
@@ -132,174 +132,7 @@ const Graph = ({ lines, xRange, yRange, startDate, endDate }) => {
             .tickFormat(activeLinesCount > 0 ? (d) => d + 1 : null)
         );
       }
-      function applyEventListeners() {
-        svg
-          .selectAll(".line-path")
-          .on("mouseover", function (event, lineData) {
-            setActiveLines([...activeLines, lineData]);
-            d3.select(this).attr("stroke-width", 8).raise();
-            d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 10);
-            updateXAxisTicks(activeLines.length + 1);
-          })
-          .on("mouseout", function (event, lineData) {
-            setActiveLines(
-              activeLines.filter((activeLine) => activeLine !== lineData)
-            );
 
-            if (activeLines.length === 0) {
-              updateXAxisTicks(lines.length > 0 ? lines[0].data.length - 1 : 0);
-            } else {
-              updateXAxisTicks(activeLines.length);
-            }
-            d3.select(this).attr("stroke-width", 3);
-            d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 7);
-          });
-
-        svg
-          .selectAll(".circle-dot")
-          .on("mouseover", function (event, d) {
-            const parentData = d3.select(this.parentNode).datum();
-            d3.select(this.parentNode)
-              .select(".line-path")
-              .attr("stroke-width", 8);
-            d3.select(this).attr("r", 10);
-
-            setTooltip({
-              show: true,
-              x: event.pageX,
-              y: event.pageY,
-              date: "Date : " + d.date,
-              value: "Value : " + d.value,
-              name: "Name : " + parentData.name,
-            });
-          })
-          .on("mousemove", (event) => {
-            const x = event.pageX - ref.current.getBoundingClientRect().left;
-            const y = event.pageY - ref.current.getBoundingClientRect().top;
-            setTooltipPosition({ x, y });
-          })
-          .on("mouseout", function () {
-            setTooltip({ ...tooltip, show: false });
-            d3.select(this.parentNode)
-              .select(".line-path")
-              .attr("stroke-width", 3);
-            d3.select(this).attr("r", 7);
-          });
-      }
-      svg
-        .append("rect")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("fill", "none")
-        .attr("pointer-events", "all")
-        .style("pointer-events", "none")
-        .lower();
-
-      const circleGroup = graphGroup
-        .selectAll(".circle-group")
-        .data(lines)
-        .join("g")
-        .classed("circle-group", true);
-
-      circleGroup
-        .selectAll("circle")
-        .data((lineData) => lineData.data)
-        .join("circle")
-        .classed("circle-dot", true);
-
-      const lineGenerator = d3
-        .line()
-        .x((d, i) => xScale(i))
-        .y((d) => yScale(d.y));
-      const zoom = d3.zoom().scaleExtent([1, 8]).on("zoom", zoomed);
-      svg.call(zoom);
-
-      function zoomed(event) {
-        // 현재 줌 변환을 얻습니다.
-        const transform = event.transform;
-
-        // 스케일을 업데이트하고, 경로를 다시 그립니다.
-        const updatedXScale = transform.rescaleX(xScale);
-        const updatedYScale = transform.rescaleY(yScale);
-
-        // 수정된 line generator를 사용하여 줌 변환에 따른 선의 위치를 업데이트합니다.
-        const updatedLine = d3
-          .line()
-          .defined((d) => d.value !== null && d.value !== undefined)
-          .x((d, i) => updatedXScale(i))
-          .y((d) => updatedYScale(d.value));
-
-        // line들의 위치를 업데이트합니다.
-        svg
-          .selectAll(".line-path")
-          .attr("d", (lineData) => updatedLine(lineData.data))
-          .on("mouseover", function (event, lineData) {
-            setActiveLines([...activeLines, lineData]);
-            d3.select(this).attr("stroke-width", 8).raise();
-            d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 10);
-            updateXAxisTicks(activeLines.length + 1);
-          })
-          .on("mouseout", function (event, lineData) {
-            setActiveLines(
-              activeLines.filter((activeLine) => activeLine !== lineData)
-            );
-
-            if (activeLines.length === 0) {
-              updateXAxisTicks(lines.length > 0 ? lines[0].data.length - 1 : 0);
-            } else {
-              updateXAxisTicks(activeLines.length);
-            }
-            d3.select(this).attr("stroke-width", 3);
-            d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 7);
-          });
-
-        // 원들의 위치를 업데이트합니다.
-        svg
-          .selectAll(".circle-dot")
-          .attr("cx", (d, i) => updatedXScale(i))
-          .attr("cy", (d) => updatedYScale(d.value))
-          .on("mouseover", function (event, d) {
-            const parentData = d3.select(this.parentNode).datum();
-            d3.select(this.parentNode)
-              .select(".line-path")
-              .attr("stroke-width", 8);
-            d3.select(this).attr("r", 10);
-
-            setTooltip({
-              show: true,
-              x: event.pageX,
-              y: event.pageY,
-              date: "Date : " + d.date,
-              value: "Value : " + d.value,
-              name: "Name : " + parentData.name,
-            });
-          })
-
-          .on("mousemove", (event) => {
-            const x = event.pageX - ref.current.getBoundingClientRect().left;
-            const y = event.pageY - ref.current.getBoundingClientRect().top;
-            setTooltipPosition({ x, y });
-          })
-          .on("mouseout", function () {
-            setTooltip({ ...tooltip, show: false });
-            d3.select(this.parentNode)
-              .select(".line-path")
-              .attr("stroke-width", 3);
-            d3.select(this).attr("r", 7);
-          });
-
-        // x축과 y축 업데이트
-        graphGroup.select(".x-axis").call(d3.axisBottom(updatedXScale));
-        graphGroup.select(".y-axis").call(d3.axisLeft(updatedYScale));
-      }
-
-      const ticks = activeLines.length > 0 ? lines[0].data.length - 1 : 0;
-      graphGroup.select(".x-axis").call(
-        d3
-          .axisBottom(xScale)
-          .ticks(ticks)
-          .tickFormat(ticks ? (d) => d + 1 : null)
-      );
       graphGroup
         .selectAll(".circle-group")
         .data(lines)
@@ -345,14 +178,13 @@ const Graph = ({ lines, xRange, yRange, startDate, endDate }) => {
             .attr("stroke-width", 3);
           d3.select(this).attr("r", 7);
         });
-      applyEventListeners();
     } else {
       // lines가 빈 배열일 때 기존 그래프를 삭제합니다.
       const graphGroup = svg.select("g");
       graphGroup.selectAll(".line-path").remove();
       graphGroup.selectAll(".circle-group").remove();
     }
-  }, [lines, xRange, yRange, startDate, endDate, activeLines]);
+  }, [lines, xRange, yRange]);
 
   return (
     <div ref={ref}>
@@ -368,14 +200,38 @@ const Graph = ({ lines, xRange, yRange, startDate, endDate }) => {
 };
 
 const MemoizedGraph = React.memo(Graph);
-const Graphtest = () => {
+const Graphtest = ({
+  selectedcompoData,
+  selectedMachineName,
+  selectedModuleName,
+}) => {
+  // console.log(selectedMachineName);
+  // console.log(selectedModuleName);
+  // console.log(selectedcompoData);
+
   const [lines, setLines] = useState([]);
   const [startDate, setStartDate] = useState(
     new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   );
   const [endDate, setEndDate] = useState(new Date());
   const [data, setData] = useState([]);
-  const [params, setparams] = useState({ data: {}, nameList: [], child: [] });
+  const [params, setparams] = useState({ data: [], nameList: [] });
+  const setParamsFromResponse = (responseData) => {
+    if (!responseData || responseData.length === 0) {
+      setparams({ data: {}, nameList: [] });
+      return;
+    }
+
+    const data = responseData.reduce((accumulator, currentValue) => {
+      accumulator[currentValue.name] = currentValue.data;
+      return accumulator;
+    }, {});
+    const nameList = responseData.map((item) => item.name);
+
+    setparams({ data, nameList });
+    console.log("얏호");
+    console.log(nameList);
+  };
 
   const [selectedParam, setSelectedParam] = useState("");
   const [componentData, setComponentData] = useState([]);
@@ -391,16 +247,6 @@ const Graphtest = () => {
     "#9C755F",
     "#BAB0AC",
   ];
-
-  useEffect(() => {
-    if (selectedParam) {
-      handleComponentCall(selectedParam);
-    } else {
-      // startDate와 endDate가 변경되었을 때, 그래프를 초기 상태로 되돌리기 위해 lines를 빈 배열로 설정
-      setLines([]);
-    }
-  }, [startDate, endDate]);
-
   const handleParamsCall = (name, getColorForName) => {
     const existingLineIndex = lines.findIndex((line) => line.name === name);
 
@@ -487,42 +333,57 @@ const Graphtest = () => {
   const yRange = 1;
 
   const componentcall = async (componentName) => {
+    // const inputdata = {
+    //   componentName: selectedcompoData.name,
+    //   endDate: endDate,
+    //   machineName: selectedMachineName,
+    //   moduleName: selectedModuleName,
+    //   startDate: startDate,
+    // };
+
     const inputdata = {
-      componentName: componentName,
-      endDate: endDate,
-      machineName: "A_TEST",
-      moduleName: "root-001",
-      startDate: startDate,
+      componentName: "root-000-000",
+      endDate: "2023-05-10T04:43:53.326Z",
+      machineName: "TT_TEST",
+      moduleName: "root-000",
+      startDate: "2023-05-03T04:43:53.326Z",
     };
 
-    const res2 = await api.post("data/machine/graph", inputdata);
-    setparams({ ...res2.data, child: data.child });
-    //console.log(res2);
+    const res2 = await api.post("data/Graph", inputdata);
+
+    console.log(res2);
+    console.log(res2.data);
+
+    setParamsFromResponse(res2.data);
+    console.log("setparams 콘솔");
+    console.log(res2);
+    console.log(res2.data);
   };
 
   const handleComponentCall = (componentName) => {
     componentcall(componentName);
   };
 
-  const handleComponentClick = (event, componentName) => {
-    event.stopPropagation(); // 이벤트 버블링을 중지
+  const handleComponentClick = (componentName) => {
+    // event.stopPropagation(); // 이벤트 버블링을 중지
     handleComponentCall(componentName);
   };
 
-  const debouncedHandleComponentClick = debounce((event, componentName) => {
-    handleComponentClick(event, componentName);
+  const debouncedHandleComponentClick = debounce((componentName) => {
+    handleComponentClick(componentName);
   }, 300);
+
   useEffect(() => {
-    const graph_data = async () => {
-      const res = await api.post("data/Machine/A_TEST");
-      //어떤 Machine 선택해서 post 쏠지도 이부분
-      setComponentData(res.data.child[1].child);
-      //이부분이 컴포넌트 리스트 출력부
-      console.log("여기야");
-      console.log(componentData);
-    };
-    graph_data();
-  }, []);
+    console.log("hiahi");
+    console.log(data);
+  }, [data]);
+
+  useEffect(() => {
+    if (selectedcompoData) {
+      debouncedHandleComponentClick(selectedcompoData.name);
+      console.log("debounce 콘솔 @@@@@@@@@@@@@@@@@@@@@");
+    }
+  }, [selectedcompoData?.name]);
 
   return (
     <div>
@@ -537,51 +398,12 @@ const Graphtest = () => {
           lines={lines}
           xRange={xRange}
           yRange={yRange}
-          startDate={startDate}
-          endDate={endDate}
         />
 
         <GraphParam
           nameList={params.nameList}
           handleParamsCall={handleParamsCall}
         ></GraphParam>
-        <CompoBox
-          onClick={(event) => {
-            const componentName = event.target.getAttribute(
-              "data-component-name"
-            );
-            if (componentName) {
-              debouncedHandleComponentClick(event, componentName);
-            }
-          }}
-        >
-          {componentData &&
-            componentData.map((child, index) => {
-              const boxStyle = {
-                backgroundColor: componentColors[index],
-                display: "inline-block",
-                width: "10px",
-                height: "10px",
-                marginRight: "5px",
-              };
-              const textStyle = { color: componentColors[index] };
-              return (
-                <React.Fragment key={index}>
-                  <span style={{ ...boxStyle, marginLeft: "15px" }}></span>
-                  <span
-                    style={{
-                      ...textStyle,
-                      marginRight: "20px",
-                      cursor: "pointer",
-                    }}
-                    data-component-name={child.name}
-                  >
-                    {child.name}
-                  </span>
-                </React.Fragment>
-              );
-            })}
-        </CompoBox>
       </Box>
     </div>
   );
@@ -591,12 +413,12 @@ export default Graphtest;
 
 const Box = styled.div`
   position: absolute;
-  top: 200px;
-  left: 150px;
+  top: 260px;
+  left: 600px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  width: 80%;
-  height: 70%;
+  width: 58%;
+  height: 62%;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   display: flex;
@@ -607,7 +429,7 @@ const Box = styled.div`
 `;
 const CompoBox = styled.div`
   position: absolute;
-  top: 450px;
+  top: 400px;
   left: 30px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
