@@ -414,14 +414,18 @@ import { debounce } from "lodash";
 const Graph = ({ lines, xRange, yRange }) => {
 
   const ref = useRef();
+  const xScaleRef = useRef();
+  const widthRef = useRef();
+
   const [tooltip, setTooltip] = useState({ show: false, x: 0, y: 0, date: "" });
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [activeLines, setActiveLines] = useState([]);
 
   useEffect(() => {
     const margin = { top: 10, right: 10, bottom: 30, left: 30 };
     const width = 600 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
-
+    widthRef.current = width;
     let svg = d3.select(ref.current).select("svg");
 
     if (svg.empty()) {
@@ -435,9 +439,15 @@ const Graph = ({ lines, xRange, yRange }) => {
 
       const xScale = d3
         .scaleLinear()
-        .domain([0, lines.length > 0 ? lines[0].data.length - 1 : 0])
+        .domain([
+          0,
+          lines.length > 0 && lines[0].data.length > 0
+            ? lines[0].data.length - 1
+            : 0,
+        ])
         .range([0, width]);
 
+      xScaleRef.current = xScale;
       const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
       const graphGroup = svg.append("g");
 
@@ -446,7 +456,14 @@ const Graph = ({ lines, xRange, yRange }) => {
         .append("g")
         .attr("class", "x-axis")
         .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(xScale));
+        .call(
+          d3
+            .axisBottom(xScale)
+            .ticks(lines.length > 0 ? lines[0].data.length - 1 : 0)
+            .tickFormat((d) => {
+              return d + 1;
+            })
+        );
 
       // y축 그리기
       graphGroup.append("g").attr("class", "y-axis").call(d3.axisLeft(yScale));
@@ -457,8 +474,23 @@ const Graph = ({ lines, xRange, yRange }) => {
         .domain([0, lines[0].data.length - 1])
         .range([0, width]);
 
+      xScaleRef.current = xScale;
       const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
       const graphGroup = svg.select("g");
+
+      // x축 그리기
+      graphGroup
+        .append("g")
+        .attr("class", "x-axis")
+        .attr("transform", `translate(0, ${height})`)
+        .call(
+          d3
+            .axisBottom(xScale)
+            .ticks(lines.length > 0 ? lines[0].data.length - 1 : 0)
+            .tickFormat((d) => {
+              return d + 1;
+            })
+        );
 
       const line = d3
         .line()
@@ -475,14 +507,34 @@ const Graph = ({ lines, xRange, yRange }) => {
         .attr("fill", "none")
         .attr("stroke", (lineData) => lineData.strokeColor)
         .attr("stroke-width", 3)
-        .on("mouseover", function () {
+        .on("mouseover", function (event, lineData) {
+          setActiveLines([...activeLines, lineData]);
           d3.select(this).attr("stroke-width", 8).raise();
           d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 10);
+          updateXAxisTicks(activeLines.length + 1);
         })
-        .on("mouseout", function () {
+        .on("mouseout", function (event, lineData) {
+          setActiveLines(
+            activeLines.filter((activeLine) => activeLine !== lineData)
+          );
+
+          if (activeLines.length === 0) {
+            updateXAxisTicks(lines.length > 0 ? lines[0].data.length - 1 : 0);
+          } else {
+            updateXAxisTicks(activeLines.length);
+          }
           d3.select(this).attr("stroke-width", 3);
           d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 7);
         });
+      function updateXAxisTicks(activeLinesCount) {
+        const graphGroup = d3.select(ref.current).select("svg").select("g");
+        graphGroup.select(".x-axis").call(
+          d3
+            .axisBottom(xScaleRef.current)
+            .ticks(activeLinesCount > 0 ? activeLinesCount - 1 : 0)
+            .tickFormat(activeLinesCount > 0 ? (d) => d + 1 : null)
+        );
+      }
 
       graphGroup
         .selectAll(".circle-group")
@@ -551,18 +603,38 @@ const Graph = ({ lines, xRange, yRange }) => {
 };
 
 const MemoizedGraph = React.memo(Graph);
-const Graphtest = ( { selectedcompoData, selectedMachineName, selectedModuleName } ) => {
-  console.log(selectedMachineName);
-  console.log(selectedModuleName);
-  console.log(selectedcompoData);
-  
+const Graphtest = ({
+  selectedcompoData,
+  selectedMachineName,
+  selectedModuleName,
+}) => {
+  // console.log(selectedMachineName);
+  // console.log(selectedModuleName);
+  // console.log(selectedcompoData);
+
   const [lines, setLines] = useState([]);
   const [startDate, setStartDate] = useState(
     new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   );
   const [endDate, setEndDate] = useState(new Date());
   const [data, setData] = useState([]);
-  const [params, setparams] = useState({ data: {}, nameList: [], child: [] });
+  const [params, setparams] = useState({ data: [], nameList: [] });
+  const setParamsFromResponse = (responseData) => {
+    if (!responseData || responseData.length === 0) {
+      setparams({ data: {}, nameList: [] });
+      return;
+    }
+
+    const data = responseData.reduce((accumulator, currentValue) => {
+      accumulator[currentValue.name] = currentValue.data;
+      return accumulator;
+    }, {});
+    const nameList = responseData.map((item) => item.name);
+
+    setparams({ data, nameList });
+    console.log("얏호");
+    console.log(nameList);
+  };
 
   const [selectedParam, setSelectedParam] = useState("");
   const [componentData, setComponentData] = useState([]);
@@ -664,18 +736,30 @@ const Graphtest = ( { selectedcompoData, selectedMachineName, selectedModuleName
   const yRange = 1;
 
   const componentcall = async (componentName) => {
+    // const inputdata = {
+    //   componentName: selectedcompoData.name,
+    //   endDate: endDate,
+    //   machineName: selectedMachineName,
+    //   moduleName: selectedModuleName,
+    //   startDate: startDate,
+    // };
+
     const inputdata = {
-      componentName: selectedcompoData.name,
-      endDate: endDate,
-      machineName: selectedMachineName,
-      moduleName: selectedModuleName,
-      startDate: startDate,
+      componentName: "root-000-000",
+      endDate: "2023-05-10T04:43:53.326Z",
+      machineName: "TT_TEST",
+      moduleName: "root-000",
+      startDate: "2023-05-03T04:43:53.326Z",
     };
 
-    const res2 = await api.post("data/machine/graph", inputdata);
-    setparams({ ...res2.data, child: data.child });
-    console.log(params);
-    console.log('setparams 콘솔')
+    const res2 = await api.post("data/Graph", inputdata);
+
+    console.log(res2);
+    console.log(res2.data);
+
+    setParamsFromResponse(res2.data);
+    console.log("setparams 콘솔");
+    console.log(res2);
     console.log(res2.data);
   };
 
@@ -683,20 +767,26 @@ const Graphtest = ( { selectedcompoData, selectedMachineName, selectedModuleName
     componentcall(componentName);
   };
 
-  const handleComponentClick = (event, componentName) => {
+  const handleComponentClick = (componentName) => {
     // event.stopPropagation(); // 이벤트 버블링을 중지
     handleComponentCall(componentName);
   };
 
-  const debouncedHandleComponentClick = debounce((event, componentName) => {
-    handleComponentClick(event, componentName);
+  const debouncedHandleComponentClick = debounce((componentName) => {
+    handleComponentClick(componentName);
   }, 300);
-  
-  if (selectedcompoData){
-    console.log(selectedcompoData.name)
-    debouncedHandleComponentClick(true, selectedcompoData.name);
-    console.log('debounce 콘솔 @@@@@@@@@@@@@@@@@@@@@')
-  }
+
+  useEffect(() => {
+    console.log("hiahi");
+    console.log(data);
+  }, [data]);
+
+  useEffect(() => {
+    if (selectedcompoData) {
+      debouncedHandleComponentClick(selectedcompoData.name);
+      console.log("debounce 콘솔 @@@@@@@@@@@@@@@@@@@@@");
+    }
+  }, [selectedcompoData?.name]);
 
   return (
     <div>
