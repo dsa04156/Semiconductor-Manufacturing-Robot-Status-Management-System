@@ -113,18 +113,23 @@ const Period = ({
 export default Period;
 const PeriodBox = styled.div`
   position: absolute;
-  top: 240px;
-  left: 600px;
+  top: 20px;
+  left: 200px;
   background: #ffffff;
   // border: 1px solid rgba(0, 0, 0, 0.2);
   // box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  width: 30%;
-  height: 5%;
+  width: 70%;
+  height: 10%;
 
   display: flex;
   align-items: center;
-  overflow: hidden;
+  overflow: auto;
   z-index: 4;
+
+  .react-datepicker {
+    display: flex;
+    display: row;
+  }
 `;
 
 const CalendarIcon = styled.img`

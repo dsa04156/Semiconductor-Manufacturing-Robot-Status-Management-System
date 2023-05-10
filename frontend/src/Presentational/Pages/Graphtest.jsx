@@ -641,7 +641,7 @@ const Graphtest = ( { selectedcompoData, selectedMachineName, selectedModuleName
   }, [componentData, usedColors]);
 
   useEffect(() => {
-    // 색상 배열의 길이가 params.nameList의 길이와 같지 않다면 색상 배열을 업데이트
+    //색상 배열의 길이가 params.nameList의 길이와 같지 않다면 색상 배열을 업데이트
     if (nameColors.length !== params.nameList.length) {
       const newColors = params.nameList.map(
         () => colors[Math.floor(Math.random() * colors.length)]
@@ -674,6 +674,7 @@ const Graphtest = ( { selectedcompoData, selectedMachineName, selectedModuleName
 
     const res2 = await api.post("data/machine/graph", inputdata);
     setparams({ ...res2.data, child: data.child });
+    console.log(params);
     console.log('setparams 콘솔')
     console.log(res2.data);
   };
@@ -699,13 +700,13 @@ const Graphtest = ( { selectedcompoData, selectedMachineName, selectedModuleName
 
   return (
     <div>
+      <Box>
       <Period
         startDate={startDate}
         endDate={endDate}
         onChangeStartDate={setStartDate}
         onChangeEndDate={setEndDate}
       />
-      <Box>
         <MemoizedGraph //성능 개선을 위한 React.Memo 사용
           lines={lines}
           xRange={xRange}

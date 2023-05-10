@@ -336,7 +336,7 @@
 
 // API 분리 후
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Form from 'react-bootstrap/Form';
 import Conbox from '../Condition/Conbox';
@@ -353,6 +353,8 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
   
   const collectionJSON = localStorage.getItem('collectionNames');
   const collectionNames = JSON.parse(collectionJSON);
+
+  const secondSelect = useRef();
 
   useEffect(() => {
     const eventSource = new EventSource(
@@ -447,7 +449,10 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
 
   const handleChangeMachine = (event) => {
     const selectMachineName = event.target.value;
+    console.log(secondSelect.current.value)
     setCurrentMachineName(selectMachineName);
+    setModuleChild([]);     // 장비 드롭다운에서 다른 장비 선택 시 컴포넌트 리스트 출력 되는 것 초기화.
+    secondSelect.current.value = ""  // 장비 드롭다운에서 다른 장비 선택 시 모듈 드롭다운 초기화
     setSelectedMachineName(selectMachineName);
 
     api
@@ -517,6 +522,7 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
             defaultValue=""
             style={{ margin: '0 0 0 20px' }}
             onChange={handleChangeModule}
+            ref={secondSelect}
           >
             <option value="" disabled>
               ---------
