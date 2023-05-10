@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import * as d3 from "d3";
 import api from "../../redux/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Condition from "../Component/MainPage/Condition";
+import { createPopper } from "@popperjs/core";
 
 const Period = ({
   startDate: initialStartDate,
@@ -14,14 +14,14 @@ const Period = ({
 }) => {
   const [localStartDate, setLocalStartDate] = useState(
     initialStartDate || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  ); // 7일 전으로 가장 처음 start Default값을 세팅
+  );
 
   const [localEndDate, setLocalEndDate] = useState(
     initialEndDate || new Date()
   );
 
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [showCalendar2, setShowCalendar2] = useState(false);
+  const [startDateOpen, setStartDateOpen] = useState(false);
+  const [endDateOpen, setEndDateOpen] = useState(false);
 
   const handleStartDateChange = (date) => {
     setLocalStartDate(date);
@@ -37,99 +37,98 @@ const Period = ({
   };
   return (
     <PeriodBox>
-      {" "}
-      PERIOD{" "}
+      PUMP6
+      <br></br>
+      {" PERIOD "}
       <CalendarIcon
-        src="image/calendar-icon.png"
-        onClick={() => {
-          setShowCalendar(!showCalendar);
-          console.log("clicked");
-        }}
+        src="image/Calendar-icon.png"
+        onClick={() => setStartDateOpen(!startDateOpen)}
       />
-      {showCalendar && (
+      <DatePickerContainer>
         <DatePicker
           selected={localStartDate}
           onChange={(date) => {
             handleStartDateChange(date);
-            setShowCalendar(false);
           }}
           selectsStart
           startDate={localStartDate}
+          open={startDateOpen}
+          onCalendarClose={() => setStartDateOpen(false)}
+          onBlur={() => setStartDateOpen(false)}
           showTimeSelect
           timeFormat="HH:mm"
           timeIntervals={1}
           dateFormat="yyyy-MM-dd HH:mm"
-          inline
-          popperPlacement="bottom-end"
+          popperProps={{
+            modifiers: [
+              {
+                name: "flip",
+                enabled: false,
+              },
+              {
+                name: "preventOverflow",
+                options: {
+                  enabled: true,
+                  escapeWithReference: false,
+                  boundary: "viewport",
+                },
+              },
+            ],
+          }}
         />
-      )}
-      {localStartDate.toLocaleString("ko-KR", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-        pattern: " ",
-      })}
-      {"   "}~ {/* 아래는 EndDate */}
+      </DatePickerContainer>
+      {"   "}~{"  "}
       <CalendarIcon
-        src="image/calendar-icon.png"
-        onClick={() => {
-          setShowCalendar2(!showCalendar2);
-          console.log("clicked");
-        }}
+        src="image/Calendar-icon.png"
+        onClick={() => setEndDateOpen(!endDateOpen)}
       />
-      {showCalendar2 && (
+      <DatePickerContainer>
         <DatePicker
           selected={localEndDate}
           onChange={(date) => {
             handleEndDateChange(date);
-            setShowCalendar2(false);
           }}
           selectsEnd
           endDate={localEndDate}
+          open={endDateOpen}
+          onCalendarClose={() => setEndDateOpen(false)}
+          onBlur={() => setEndDateOpen(false)}
           showTimeSelect
           timeFormat="HH:mm"
           timeIntervals={1}
           dateFormat="yyyy-MM-dd HH:mm"
-          inline
-          popperPlacement="bottom-end"
+          popperProps={{
+            modifiers: [
+              {
+                name: "flip",
+                enabled: false,
+              },
+              {
+                name: "preventOverflow",
+                options: {
+                  enabled: true,
+                  escapeWithReference: false,
+                  boundary: "viewport",
+                },
+              },
+            ],
+          }}
         />
-      )}
-      {localEndDate.toLocaleString("ko-KR", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-        pattern: " ",
-      })}
+      </DatePickerContainer>
     </PeriodBox>
   );
 };
 
 export default Period;
-const PeriodBox = styled.div`
-  position: absolute;
-  top: 20px;
-  left: 200px;
-  background: #ffffff;
-  // border: 1px solid rgba(0, 0, 0, 0.2);
-  // box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  width: 70%;
-  height: 10%;
 
+const PeriodBox = styled.div`
+  position: relative;
+  top: 250px;
+  left: 600px;
   display: flex;
   align-items: center;
-  overflow: auto;
-  z-index: 4;
-
-  .react-datepicker {
-    display: flex;
-    display: row;
-  }
+  overflow: visible;
+  z-index: 1;
 `;
 
 const CalendarIcon = styled.img`
@@ -140,13 +139,6 @@ const CalendarIcon = styled.img`
   cursor: pointer;
 `;
 
-const DateInput = styled.input`
-  border: none;
-  outline: none;
-  width: 100%;
-  height: 100%;
-  font-size: 16px;
-  color: #212121;
-  background-color: transparent;
-  cursor: pointer;
+const DatePickerContainer = styled.div`
+  overflow: visible;
 `;

@@ -1,29 +1,23 @@
-import React, {useState, useMemo} from 'react';
+import React, { useState, useMemo } from "react";
 import styled from "styled-components";
-import CreateTable from '../../common/CreateTable';
-import HealthStatus from './HealthStatus';
+import CreateTable from "../../common/CreateTable";
+import HealthStatus from "./HealthStatus";
 
-const ComponentList = ( { child, setSelectComponentData } ) => {
+const ComponentList = ({ child, setSelectComponentData }) => {
+  const [test, setTest] = useState(); //component list idx 값 저장
+  console.log(test);
+  console.log(child);
+  setSelectComponentData(child[test]);
 
-    const [test, setTest] = useState() //component list idx 값 저장
-    console.log(test);
-    console.log(child);
-    setSelectComponentData(child[test]);
-
-    return (
-      <div>
-        <Small>
-          <div style={{ margin: '10px 0px 10px 20px' }}>ComponentList</div>
-          <CreateTable
-            setTest={setTest}
-            data={child}
-            test={test}
-            child={child}
-          />
-        </Small>
-          <HealthStatus componentData={child}/>
-      </div>
-    );
+  return (
+    <div>
+      <Small>
+        <div style={{ margin: "10px 0px 10px 20px" }}>ComponentList</div>
+        <CreateTable setTest={setTest} data={child} test={test} child={child} />
+      </Small>
+      <HealthStatus componentData={child} />
+    </div>
+  );
 };
 
 export default ComponentList;

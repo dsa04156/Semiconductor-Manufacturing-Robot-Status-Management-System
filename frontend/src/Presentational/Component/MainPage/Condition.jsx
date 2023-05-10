@@ -366,63 +366,64 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
       console.log(e);
     };
 
-    eventSource.addEventListener('connect', (event) => {
+    eventSource.addEventListener("connect", (event) => {
       const { data: received } = event;
-      console.log('connect', received);
+      console.log("connect", received);
       console.log(event.data);
     });
 
-    eventSource.addEventListener('machine', (event) => {
-      const newMachineData = event.data
-      console.log(newMachineData);
-      console.log(newMachineData, currentMachineName);
-      console.log(currentModuleName);
+    eventSource.addEventListener("machine", (event) => {
+      const newMachineData = event.data;
+      //   console.log(newMachineData);
+      //  console.log(newMachineData, currentMachineName);
+      //   console.log(currentModuleName);
 
-      if(newMachineData == currentMachineName){
-        console.log('장비 갱신 콘솔은 됨');
+      if (newMachineData == currentMachineName) {
+        //  console.log('장비 갱신 콘솔은 됨');
 
         api
-        .post(`/data/root`, JSON.stringify({})) // 추후 root 자리에 변수 넣어서 변경. 현재는 root로 그냥 테스트.
-        .then((response) => {
-          console.log(response.data);
-          const modulelist = []; // 모듈인 애들 담아 놓는 리스트.
-          for (const a of response.data){
-            console.log(a);
-            if (a.name === 'root'){
-              setMachineData(a);
-              const value = a.value;
-              if (value < 0) {
-                setStatus((a) => 'unacceptable');
-              } else if (value < 0.03) {
-                setStatus((a) => 'unsatisfactory');
-              } else if (value < 0.48) {
-                setStatus((a) => 'satisfactory');
-              } else {
-                setStatus((a) => 'Good');
-              }
-            }
-            else {
-              modulelist.push(a);
-            }
-          }
-          setModuleData(modulelist);
-          console.log('--------------------', currentModuleName);
-
-          api
-          .post(`data/machine/module?machineName=root&moduleName=${currentModuleName}`, JSON.stringify({}))
+          .post(`/data/root`, JSON.stringify({})) // 추후 root 자리에 변수 넣어서 변경. 현재는 root로 그냥 테스트.
           .then((response) => {
             console.log(response.data);
-            setModuleChild(response.data);
+            const modulelist = []; // 모듈인 애들 담아 놓는 리스트.
+            for (const a of response.data) {
+              //    console.log(a);
+              if (a.name === "root") {
+                setMachineData(a);
+                const value = a.value;
+                if (value < 0) {
+                  setStatus((a) => "unacceptable");
+                } else if (value < 0.03) {
+                  setStatus((a) => "unsatisfactory");
+                } else if (value < 0.48) {
+                  setStatus((a) => "satisfactory");
+                } else {
+                  setStatus((a) => "Good");
+                }
+              } else {
+                modulelist.push(a);
+              }
+            }
+            setModuleData(modulelist);
+            //   console.log('--------------------', currentModuleName);
+
+            api
+              .post(
+                `data/machine/module?machineName=root&moduleName=${currentModuleName}`,
+                JSON.stringify({})
+              )
+              .then((response) => {
+                //     console.log(response.data);
+                setModuleChild(response.data);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           })
-          .catch((err) => {
-            console.log(err);
-          })
-          
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-        console.log("여기 끝")
+          .catch((error) => {
+            console.log(error);
+          });
+        //    console.log("여기 끝")
         // api
         // .post(`data/machine/module?machineName=root&moduleName=${currentModuleName}`, JSON.stringify({}))
         // .then((response) => {
@@ -444,7 +445,6 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
     return () => {
       eventSource.close();
     };
-
   }, [machineData, currentModuleName]);
 
   const handleChangeMachine = (event) => {
@@ -458,24 +458,23 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
     api
       .post(`/data/root`, JSON.stringify({})) // 추후 root 자리에 변수 넣어서 변경. 현재는 root로 그냥 테스트.
       .then((response) => {
-        console.log(response.data);
+        //    console.log(response.data);
         const modulelist = []; // 모듈인 애들 담아 놓는 리스트.
-        for (const a of response.data){
-          console.log(a);
-          if (a.name === 'root'){
+        for (const a of response.data) {
+          //    console.log(a);
+          if (a.name === "root") {
             setMachineData(a);
             const value = a.value;
             if (value < 0) {
-              setStatus((a) => 'unacceptable');
+              setStatus((a) => "unacceptable");
             } else if (value < 0.03) {
-              setStatus((a) => 'unsatisfactory');
+              setStatus((a) => "unsatisfactory");
             } else if (value < 0.48) {
-              setStatus((a) => 'satisfactory');
+              setStatus((a) => "satisfactory");
             } else {
-              setStatus((a) => 'Good');
+              setStatus((a) => "Good");
             }
-          }
-          else {
+          } else {
             modulelist.push(a);
           }
         }
@@ -490,11 +489,14 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
     setSelectedModuleName(selectModuleName);
 
     api
-    .post(`data/machine/module?machineName=root&moduleName=${selectModuleName}`, JSON.stringify({}))
-    .then((response) => {
-      setModuleChild(response.data);
-      console.log(response.data)
-    })
+      .post(
+        `data/machine/module?machineName=root&moduleName=${selectModuleName}`,
+        JSON.stringify({})
+      )
+      .then((response) => {
+        setModuleChild(response.data);
+        console.log(response.data);
+      });
   };
 
   return (
