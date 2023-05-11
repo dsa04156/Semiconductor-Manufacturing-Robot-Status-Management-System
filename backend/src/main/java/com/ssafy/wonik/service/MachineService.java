@@ -8,11 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface MachineService {
-    List<Machine> findAll();
-
-    ComponentRootDto findMachine(String machineName);
-
-    GraphResponseDto findGraph(GraphInputDto graphInputDto);
 
     List<MachineToModuleDto> findRecentModuleData(String machineName);
 

@@ -24,38 +24,17 @@ import java.util.List;
 public class MachineController {
     private final MachineService machineService;
 
-    @GetMapping("/findall")
-    public ResponseEntity<?> findAll() {
-
-        return ResponseEntity.ok().body(machineService.findAll());
-    }
-
-    @Operation(summary = "Machine 정보", description = "기기명 입력하기 현재는 G_TEST 만 입력가능")
-    @PostMapping("/Machine/{machineName}")
-    public ResponseEntity<?> findMachine(@PathVariable("machineName") String machineName) {
-        ComponentRootDto componentRootDto = machineService.findMachine(machineName);
-
-        return ResponseEntity.ok().body(componentRootDto);
-    }
-
-    @PostMapping("/machine/graph")
-    public ResponseEntity<?> findGraph(@RequestBody GraphInputDto graphInputDto) {
-        System.out.println(graphInputDto.toString());
-        StopWatch sw = new StopWatch();
-        sw.start();
-        GraphResponseDto graphRootDto = machineService.findGraph(graphInputDto);
-        sw.stop();
-        System.out.println(sw.getTotalTimeSeconds());
-        return ResponseEntity.ok().body(graphRootDto);
-    }
-
 
     // ----------------------------- TEST 2 -------------------
     // machine이름으로 module찾기
     @PostMapping("/{machineName}")
     @Operation()
     public ResponseEntity<?> findRecentModuleData(@PathVariable("machineName") String machineName) {
+        StopWatch sw = new StopWatch();
+        sw.start();
         List<MachineToModuleDto> machineToModuleDto = machineService.findRecentModuleData(machineName);
+        sw.stop();
+        System.out.println(sw.getTotalTimeSeconds());
 
         return ResponseEntity.ok().body(machineToModuleDto);
     }
@@ -63,7 +42,11 @@ public class MachineController {
     @PostMapping("/machine/module")
     @Operation()
     public ResponseEntity<?> findRecentComponentData(ModuleToComponentInputDto moduleToComponentInputDto){
+        StopWatch sw = new StopWatch();
+        sw.start();
         List<MachineToModuleDto> machineToModuleDto = machineService.findRecentComponentData(moduleToComponentInputDto);
+        sw.stop();
+        System.out.println(sw.getTotalTimeSeconds());
 
         return ResponseEntity.ok().body(machineToModuleDto);
     }

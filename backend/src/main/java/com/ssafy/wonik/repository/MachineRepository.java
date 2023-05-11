@@ -29,84 +29,8 @@ public class MachineRepository {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public List<Machine> findAll() {
-        return mongoTemplate.findAll(Machine.class);
-    }
-
-    public List<ComponentRootDto> findMachine(String machineName) {
-        SortOperation sortByDateDesc = Aggregation.sort(Sort.Direction.DESC, "date");
-        Aggregation aggregation = newAggregation(
-                sortByDateDesc,
-                Aggregation.limit(1)
-        );
-
-        AggregationResults<ComponentRootDto> result = mongoTemplate.aggregate(
-                aggregation, machineName, ComponentRootDto.class);
-
-        return result.getMappedResults();
-    }
-
-    public GraphResponseDto findGraph(GraphInputDto graphInputDto) {
-//        name: 이름, value: HashMap<String,Object>;
-        GraphResponseDto graphResponseDto = new GraphResponseDto();
-        ArrayList<String> nameList = new ArrayList<>();
-        HashMap<String, ArrayList> mainMap = new HashMap<>();
-        HashMap<String, Object> valueMap = new HashMap<>();
-        Query query = new Query();
-        query.addCriteria(Criteria.where("date").gte((graphInputDto.getStartDate())).lt(graphInputDto.getEndDate()));
-        List<Machine> allData = mongoTemplate.find(query, Machine.class, graphInputDto.getMachineName());
-
-        for (Machine machine : allData) {
-            LocalDateTime date = machine.getDate();
-            ArrayList<ComponentRootDto> moduleData = machine.getChild();
-
-            for (int i = 0; i < moduleData.size(); i++) {
-                if (graphInputDto.getModuleName().equals(moduleData.get(i).getName())) {
-                    List<ComponentDto> componentData = moduleData.get(i).getChild();
-
-                    for (int j = 0; j < componentData.size(); j++){
-                        if(graphInputDto.getComponentName().equals(componentData.get(j).getName())){
-                            List<ComponentChildDto> graphData = componentData.get(j).getChild();
-                            GraphDataDto componentDataDto = new GraphDataDto(date, componentData.get(j).getValue());
-                            if(mainMap.containsKey(componentData.get(j).getName())){
-                                mainMap.get(componentData.get(j).getName()).add(componentDataDto);
-                            }
-                            else {
-                                ArrayList<GraphDataDto> inputValue = new ArrayList<>();
-                                inputValue.add(componentDataDto);
-                                mainMap.put(componentData.get(j).getName(), inputValue);
-                                nameList.add(componentData.get(j).getName());
-                            }
-                            for (int k = 0; k < graphData.size(); k++){
-                                String name = graphData.get(k).getName();
-                                GraphDataDto graphDataDto = new GraphDataDto(date, graphData.get(k).getValue());
-
-                                if(mainMap.containsKey(name)){
-                                    mainMap.get(name).add(graphDataDto);
-                                }
-                                else{
-                                    ArrayList<GraphDataDto> inputValue = new ArrayList<>();
-                                    nameList.add(name);
-                                    inputValue.add(graphDataDto);
-                                    mainMap.put(name, inputValue);
-                                }
-                            }
-                        }
-
-                    }
-                }
-
-            }
-        }
-        graphResponseDto.setNameList(nameList);
-        graphResponseDto.setData(mainMap);
-
-        return graphResponseDto;
-
-    }
-
     public List<MachineToModuleDto> findRecentModuleData(String machineName) {
-        MongoCollection<Document> collection = mongoTemplate.getCollection("machine_A");
+        MongoCollection<Document> collection = mongoTemplate.getCollection(machineName);
 
         Document latestDateDoc = collection.find().sort(new Document("date", -1)).first();
         Date latestDate = latestDateDoc.getDate("date");
@@ -134,7 +58,7 @@ public class MachineRepository {
     }
 
     public List<MachineToModuleDto> findRecentComponentData(ModuleToComponentInputDto moduleToComponentInputDto) {
-        MongoCollection<Document> collection = mongoTemplate.getCollection("machine_A");
+        MongoCollection<Document> collection = mongoTemplate.getCollection(moduleToComponentInputDto.getMachineName());
 
         Document latestDateDoc = collection.find().sort(new Document("date", -1)).first();
         Date latestDate = latestDateDoc.getDate("date");
@@ -161,16 +85,6 @@ public class MachineRepository {
 
     public List<ResultDataDto> findGraphData(GraphInputDto graphInputDto) {
         MatchOperation match = match(
-//                Criteria.where("parent").is(graphInputDto.getComponentName()).andOperator(
-//                Criteria.where("date").gte(graphInputDto.getStartDate()),
-//                Criteria.where("date").lt(graphInputDto.getEndDate()))
-
-                // name은 안찾는거 date - parent 순
-//                Criteria.where("date").gte(graphInputDto.getStartDate())
-//                        .lt(graphInputDto.getEndDate())
-//                        .and("parent").is(graphInputDto.getComponentName())
-
-//                 name도 찾는거 date-parent 순
         new Criteria().andOperator(
                         Criteria.where("date").gte(graphInputDto.getStartDate()),
                         Criteria.where("date").lt(graphInputDto.getEndDate())
@@ -190,7 +104,7 @@ public class MachineRepository {
 
         Aggregation aggregation = newAggregation(match, group).withOptions(Aggregation.newAggregationOptions().allowDiskUse(true).build());
         AggregationResults<ResultDataDto> result =
-                mongoTemplate.aggregate(aggregation, "machine_A", ResultDataDto.class);
+                mongoTemplate.aggregate(aggregation, graphInputDto.getMachineName(), ResultDataDto.class);
 
         return result.getMappedResults();
     }

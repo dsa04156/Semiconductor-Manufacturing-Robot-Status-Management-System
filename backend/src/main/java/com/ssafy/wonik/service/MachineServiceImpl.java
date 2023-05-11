@@ -16,23 +16,6 @@ public class MachineServiceImpl implements MachineService{
 
     private final MachineRepository machineRepository;
 
-    @Override
-    public List<Machine> findAll() {
-        return machineRepository.findAll();
-    }
-
-    @Override
-    public ComponentRootDto findMachine(String machineName) {
-        List<ComponentRootDto> list = machineRepository.findMachine(machineName);
-        ComponentRootDto componentRootDto = list.get(0);
-        return componentRootDto;
-    }
-
-    @Override
-    public GraphResponseDto  findGraph(GraphInputDto graphInputDto) {
-        GraphResponseDto graphData = machineRepository.findGraph(graphInputDto);
-        return graphData;
-    }
 
     @Override
     public List<MachineToModuleDto> findRecentModuleData(String machineName) {
