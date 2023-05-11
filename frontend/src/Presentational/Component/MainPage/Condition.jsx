@@ -547,12 +547,12 @@ export default Condition;
 
 const Big = styled.div`
   position: absolute;
-  top: 30px;
+  top: 20px;
   left: 1070px;
-  background: #122c45;
+  background: linear-gradient(90deg, #0051C4 0%, #002962 100%);
   border: 1px solid rgba(0, 0, 0, 0.2);
   width: 429px;
-  height: 200px;
+  height: 210px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
 `;
