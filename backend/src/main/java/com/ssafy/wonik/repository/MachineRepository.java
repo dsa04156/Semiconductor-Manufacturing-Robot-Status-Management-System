@@ -106,7 +106,7 @@ public class MachineRepository {
     }
 
     public List<MachineToModuleDto> findRecentModuleData(String machineName) {
-        MongoCollection<Document> collection = mongoTemplate.getCollection("TT_TEST");
+        MongoCollection<Document> collection = mongoTemplate.getCollection("machine_A");
 
         Document latestDateDoc = collection.find().sort(new Document("date", -1)).first();
         Date latestDate = latestDateDoc.getDate("date");
@@ -134,7 +134,7 @@ public class MachineRepository {
     }
 
     public List<MachineToModuleDto> findRecentComponentData(ModuleToComponentInputDto moduleToComponentInputDto) {
-        MongoCollection<Document> collection = mongoTemplate.getCollection("TT_TEST");
+        MongoCollection<Document> collection = mongoTemplate.getCollection("machine_A");
 
         Document latestDateDoc = collection.find().sort(new Document("date", -1)).first();
         Date latestDate = latestDateDoc.getDate("date");
@@ -190,7 +190,7 @@ public class MachineRepository {
 
         Aggregation aggregation = newAggregation(match, group).withOptions(Aggregation.newAggregationOptions().allowDiskUse(true).build());
         AggregationResults<ResultDataDto> result =
-                mongoTemplate.aggregate(aggregation, "TT_TEST", ResultDataDto.class);
+                mongoTemplate.aggregate(aggregation, "machine_A", ResultDataDto.class);
 
         return result.getMappedResults();
     }
