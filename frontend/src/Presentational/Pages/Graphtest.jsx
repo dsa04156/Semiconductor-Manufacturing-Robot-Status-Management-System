@@ -412,7 +412,6 @@ import Period from "./Period";
 import { debounce } from "lodash";
 
 const Graph = ({ lines, xRange, yRange }) => {
-
   const ref = useRef();
   const xScaleRef = useRef();
   const widthRef = useRef();
@@ -422,6 +421,7 @@ const Graph = ({ lines, xRange, yRange }) => {
   const [activeLines, setActiveLines] = useState([]);
 
   useEffect(() => {
+    const startTime = performance.now();
     const margin = { top: 10, right: 10, bottom: 30, left: 30 };
     const width = 600 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
@@ -452,18 +452,18 @@ const Graph = ({ lines, xRange, yRange }) => {
       const graphGroup = svg.append("g");
 
       // x축 그리기
-      graphGroup
-        .append("g")
-        .attr("class", "x-axis")
-        .attr("transform", `translate(0, ${height})`)
-        .call(
-          d3
-            .axisBottom(xScale)
-            .ticks(lines.length > 0 ? lines[0].data.length - 1 : 0)
-            .tickFormat((d) => {
-              return d + 1;
-            })
-        );
+      // graphGroup
+      //   .append("g")
+      //   .attr("class", "x-axis")
+      //   .attr("transform", `translate(0, ${height})`)
+      //   .call(
+      //     d3
+      //       .axisBottom(xScale)
+      //       .ticks(lines.length > 0 ? lines[0].data.length - 1 : 0)
+      //       .tickFormat((d) => {
+      //         return d + 1;
+      //       })
+      //   );
 
       // y축 그리기
       graphGroup.append("g").attr("class", "y-axis").call(d3.axisLeft(yScale));
@@ -486,12 +486,21 @@ const Graph = ({ lines, xRange, yRange }) => {
         .call(
           d3
             .axisBottom(xScale)
-            .ticks(lines.length > 0 ? lines[0].data.length - 1 : 0)
+            .ticks(getTickNumber(lines)) // 데이터의 양에 따라 눈금의 수를 동적으로 조정
             .tickFormat((d) => {
               return d + 1;
             })
         );
 
+      // 데이터의 양에 따라 눈금의 수를 동적으로 조정하는 함수
+      function getTickNumber(lines) {
+        let numDataPoints = lines.length > 0 ? lines[0].data.length - 1 : 0;
+        if (numDataPoints >= 30) {
+          return 4;
+        } else {
+          return numDataPoints;
+        }
+      }
       const line = d3
         .line()
         .defined((d) => d.value !== null && d.value !== undefined)
@@ -587,6 +596,10 @@ const Graph = ({ lines, xRange, yRange }) => {
       graphGroup.selectAll(".line-path").remove();
       graphGroup.selectAll(".circle-group").remove();
     }
+    const endTime = performance.now();
+    const elapsedTime = endTime - startTime; // 그래프를 그리는데 걸린 시간 (밀리초)
+
+    console.log(`그래프를 그리는데 ${elapsedTime}밀리초가 소요되었습니다.`);
   }, [lines, xRange, yRange]);
 
   return (
@@ -632,8 +645,8 @@ const Graphtest = ({
     const nameList = responseData.map((item) => item.name);
 
     setparams({ data, nameList });
-    console.log("얏호");
-    console.log(nameList);
+    // console.log("얏호");
+    // console.log(nameList);
   };
 
   const [selectedParam, setSelectedParam] = useState("");
@@ -654,7 +667,7 @@ const Graphtest = ({
     const existingLineIndex = lines.findIndex((line) => line.name === name);
 
     if (existingLineIndex !== -1) {
-      // 이미 활성화된 라인이라면 제거
+      // 이미 활성화된 라인이라면 라인을 제거
       if (lines.length > 1) {
         setLines((prevLines) => {
           const updatedLines = prevLines.filter(
@@ -713,7 +726,7 @@ const Graphtest = ({
   }, [componentData, usedColors]);
 
   useEffect(() => {
-    //색상 배열의 길이가 params.nameList의 길이와 같지 않다면 색상 배열을 업데이트
+    // 색상 배열의 길이가 params.nameList의 길이와 같지 않다면 색상 배열을 업데이트
     if (nameColors.length !== params.nameList.length) {
       const newColors = params.nameList.map(
         () => colors[Math.floor(Math.random() * colors.length)]
@@ -736,24 +749,16 @@ const Graphtest = ({
   const yRange = 1;
 
   const componentcall = async (componentName) => {
-    // const inputdata = {
-    //   componentName: selectedcompoData.name,
-    //   endDate: endDate,
-    //   machineName: selectedMachineName,
-    //   moduleName: selectedModuleName,
-    //   startDate: startDate,
-    // };
-
     const inputdata = {
-      componentName: "root-000-000",
-      endDate: "2023-05-10T04:43:53.326Z",
-      machineName: "TT_TEST",
-      moduleName: "root-000",
-      startDate: "2023-05-03T04:43:53.326Z",
+      componentName: selectedcompoData.name,
+      endDate: endDate,
+      machineName: selectedMachineName,
+      moduleName: selectedModuleName,
+      startDate: startDate,
     };
-
-    const res2 = await api.post("data/Graph", inputdata);
-
+    console.time("API Request");
+    const res2 = await api.post("data/graph", inputdata);
+    console.timeEnd("API Request");
     console.log(res2);
     console.log(res2.data);
 
@@ -784,7 +789,7 @@ const Graphtest = ({
   useEffect(() => {
     if (selectedcompoData) {
       debouncedHandleComponentClick(selectedcompoData.name);
-      console.log("debounce 콘솔 @@@@@@@@@@@@@@@@@@@@@");
+      // console.log("debounce 콘솔 @@@@@@@@@@@@@@@@@@@@@");
     }
   }, [selectedcompoData?.name]);
 
@@ -796,6 +801,7 @@ const Graphtest = ({
         endDate={endDate}
         onChangeStartDate={setStartDate}
         onChangeEndDate={setEndDate}
+        // selectComponentName={selectedcompoData.name}
       />
         <MemoizedGraph //성능 개선을 위한 React.Memo 사용
           lines={lines}
@@ -820,8 +826,8 @@ const Box = styled.div`
   left: 600px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  width: 58%;
-  height: 62%;
+  width: 900px;
+  height: 470px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   display: flex;

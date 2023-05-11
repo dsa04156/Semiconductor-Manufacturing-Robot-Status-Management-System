@@ -33,7 +33,7 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
       console.log("connect", received);
       console.log(event.data);
     });
-
+    
     eventSource.addEventListener("machine", (event) => {
       const newMachineData = event.data;
       //   console.log(newMachineData);
@@ -44,9 +44,9 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
         //  console.log('장비 갱신 콘솔은 됨');
 
         api
-          .post(`/data/root`, JSON.stringify({})) // 추후 root 자리에 변수 넣어서 변경. 현재는 root로 그냥 테스트.
+          .post(`/data/${currentMachineName}`, JSON.stringify({})) // 추후 root 자리에 변수 넣어서 변경. 현재는 root로 그냥 테스트.
           .then((response) => {
-            console.log(response.data);
+            // console.log(response.data);
             const modulelist = []; // 모듈인 애들 담아 놓는 리스트.
             for (const a of response.data) {
               //    console.log(a);
@@ -71,7 +71,7 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
 
             api
               .post(
-                `data/machine/module?machineName=root&moduleName=${currentModuleName}`,
+                `data/machine/module?machineName=${currentMachineName}&moduleName=${currentModuleName}`,
                 JSON.stringify({})
               )
               .then((response) => {
@@ -85,19 +85,7 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
           .catch((error) => {
             console.log(error);
           });
-        //    console.log("여기 끝")
-        // api
-        // .post(`data/machine/module?machineName=root&moduleName=${currentModuleName}`, JSON.stringify({}))
-        // .then((response) => {
-        //   console.log(response.data);
-        //   setModuleChild(response.data);
-        // })
-        // .catch((err) => {
-        //   console.log(err);
-        // })
       }
-
-      // const newModuleData =
     });
 
     eventSource.addEventListener('error', (error) => {
@@ -111,14 +99,14 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
 
   const handleChangeMachine = (event) => {
     const selectMachineName = event.target.value;
-    console.log(secondSelect.current.value)
+    // console.log(secondSelect.current.value)
     setCurrentMachineName(selectMachineName);
     setModuleChild([]);     // 장비 드롭다운에서 다른 장비 선택 시 컴포넌트 리스트 출력 되는 것 초기화.
     secondSelect.current.value = ""  // 장비 드롭다운에서 다른 장비 선택 시 모듈 드롭다운 초기화
     setSelectedMachineName(selectMachineName);
 
     api
-      .post(`/data/root`, JSON.stringify({})) // 추후 root 자리에 변수 넣어서 변경. 현재는 root로 그냥 테스트.
+      .post(`/data/${selectMachineName}`, JSON.stringify({})) // 추후 root 자리에 변수 넣어서 변경. 현재는 root로 그냥 테스트.
       .then((response) => {
         //    console.log(response.data);
         const modulelist = []; // 모듈인 애들 담아 놓는 리스트.
@@ -146,18 +134,18 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
 
   const handleChangeModule = (event) => {
     const selectModuleName = event.target.value;
-    console.log("클릭", selectModuleName);
+    // console.log("클릭", selectModuleName);
     setCurrentModuleName(selectModuleName);
     setSelectedModuleName(selectModuleName);
 
     api
       .post(
-        `data/machine/module?machineName=root&moduleName=${selectModuleName}`,
+        `data/machine/module?machineName=${currentMachineName}&moduleName=${selectModuleName}`,
         JSON.stringify({})
       )
       .then((response) => {
         setModuleChild(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       });
   };
 

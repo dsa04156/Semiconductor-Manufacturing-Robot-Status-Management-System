@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 
 const Conbox = ({ mstate ,width,fontsize}) => {
-  // console.log(mstate)
   let [color,setcolor] = useState("");
 
   useEffect(() => {
