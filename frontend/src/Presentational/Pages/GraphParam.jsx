@@ -125,7 +125,7 @@ export default GraphParam;
 
 const ParamBox = styled.div`
   position: absolute;
-  top: 400px;
+  top: 500px;
   left: 30px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);

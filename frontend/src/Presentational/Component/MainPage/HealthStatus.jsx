@@ -3,7 +3,6 @@ import ReactApexChart from "react-apexcharts";
 import styled from "styled-components";
 
 const HealthStatus = ({ componentData }) => {
-  console.log(componentData)
   const compodata = componentData.map((data) => {
     return {
       name: data.name,
@@ -49,7 +48,12 @@ const HealthStatus = ({ componentData }) => {
   const good_lables = ["Good", "others"];
   const good_colors = ["#A5FF32", "#D9ECC8"];
 
-  const datas = [unaccep_compodata, unsat_compodata, sat_compodata, good_compodata];
+  const datas = [
+    unaccep_compodata,
+    unsat_compodata,
+    sat_compodata,
+    good_compodata,
+  ];
 
   const labels = ["unacceptable", "unsatisfactory", "satisfactory", "Good"];
   const colors = ["#FF5172", "#FFEE32", "#30ADF3", "#A5FF32"];
@@ -58,13 +62,10 @@ const HealthStatus = ({ componentData }) => {
     return acc + 1;
   }, 0);
 
-
   const unaccep_data = [unaccep_compodata, totalcount - unaccep_compodata];
   const unsat_data = [datas[1], totalcount - datas[1]];
   const sat_data = [datas[2], totalcount - datas[2]];
   const good_data = [datas[3], totalcount - datas[3]];
-
-
 
   const TotdonutData = {
     series: datas,
@@ -88,7 +89,6 @@ const HealthStatus = ({ componentData }) => {
   };
 
   const unacceptdonutData = {
-
     series: unaccep_data,
     options: {
       chart: {
@@ -112,7 +112,6 @@ const HealthStatus = ({ componentData }) => {
   };
 
   const unsatdonutData = {
-
     series: unsat_data,
     options: {
       chart: {
@@ -181,7 +180,9 @@ const HealthStatus = ({ componentData }) => {
   return (
     <div>
       <Big>
-        <div style={{ margin: "15px 0px 0 40px", fontSize: "20px" }}>Health Status</div>
+        <div style={{ margin: "15px 0px 0 40px", fontSize: "20px" }}>
+          Health Status
+        </div>
         <HealthStatusTitle>
           <TLabel>Total</TLabel>
           <TValue>{totalcount}</TValue>
@@ -255,72 +256,72 @@ const HealthStatusTitle = styled.div`
 
 const TLabel = styled.div`
   position: absolute;
-  top:170px;
-  left :70px;
+  top: 170px;
+  left: 70px;
   font-size: 16px;
-  color: #ADB1B8;
+  color: #adb1b8;
 `;
 const ULabel = styled.div`
   position: absolute;
-  top:170px;
-  left :220px;
+  top: 170px;
+  left: 220px;
   font-size: 16px;
-  color: #ADB1B8;
+  color: #adb1b8;
 `;
 const NLabel = styled.div`
   position: absolute;
-  top:170px;
-  left :400px;
+  top: 170px;
+  left: 400px;
   font-size: 16px;
-  color: #ADB1B8;
+  color: #adb1b8;
 `;
 const SLabel = styled.div`
   position: absolute;
-  top:170px;
-  left :590px;
+  top: 170px;
+  left: 590px;
   font-size: 16px;
-  color: #ADB1B8;
+  color: #adb1b8;
 `;
 const GLabel = styled.div`
   position: absolute;
-  top:170px;
-  left :790px;
+  top: 170px;
+  left: 790px;
   font-size: 16px;
-  color: #ADB1B8;
+  color: #adb1b8;
 `;
 
 const TValue = styled.div`
   position: absolute;
-  top:100px;
-  left :80px;
+  top: 100px;
+  left: 80px;
   font-size: 20px;
-  color: #ADB1B8;
+  color: #adb1b8;
 `;
 const UValue = styled.div`
   position: absolute;
-  top:100px;
-  left :265px;
+  top: 100px;
+  left: 265px;
   font-size: 20px;
-  color: #ADB1B8;
+  color: #adb1b8;
 `;
 const NValue = styled.div`
   position: absolute;
-  top:100px;
-  left :447px;
+  top: 100px;
+  left: 447px;
   font-size: 20px;
-  color: #ADB1B8;
+  color: #adb1b8;
 `;
 const SValue = styled.div`
   position: absolute;
-  top:100px;
-  left :627px;
+  top: 100px;
+  left: 627px;
   font-size: 20px;
-  color: #ADB1B8;
+  color: #adb1b8;
 `;
 const GValue = styled.div`
   position: absolute;
-  top:100px;
-  left :807px;
+  top: 100px;
+  left: 807px;
   font-size: 20px;
-  color: #ADB1B8;
+  color: #adb1b8;
 `;

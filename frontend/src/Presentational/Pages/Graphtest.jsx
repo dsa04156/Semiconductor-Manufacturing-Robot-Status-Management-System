@@ -20,10 +20,18 @@ const Graph = ({ lines, xRange, yRange }) => {
 
   useEffect(() => {
     const startTime = performance.now();
-    const margin = { top: 10, right: 10, bottom: 30, left: 30 };
-    const width = 600 - margin.left - margin.right;
+    const margin = { top: 0, right: 0, bottom: 25, left: 25 };
+
+    let dataLength =
+      lines.length > 0 && lines[0].data.length > 0 ? lines[0].data.length : 0;
+
+    // 데이터 갯수에 따라 svg의 가로 길이를 결정합니다.
+    let width = dataLength > 100 ? dataLength * 6 : 600; // 데이터 갯수당 6px로 계산. 조절 가능.
+
+    width = width - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
     widthRef.current = width;
+
     let svg = d3.select(ref.current).select("svg");
 
     if (svg.empty()) {
@@ -50,22 +58,23 @@ const Graph = ({ lines, xRange, yRange }) => {
       const graphGroup = svg.append("g");
 
       // x축 그리기
-      // graphGroup
-      //   .append("g")
-      //   .attr("class", "x-axis")
-      //   .attr("transform", `translate(0, ${height})`)
-      //   .call(
-      //     d3
-      //       .axisBottom(xScale)
-      //       .ticks(lines.length > 0 ? lines[0].data.length - 1 : 0)
-      //       .tickFormat((d) => {
-      //         return d + 1;
-      //       })
-      //   );
+      graphGroup
+        .append("g")
+        .attr("class", "x-axis")
+        .attr("transform", `translate(0, ${height})`)
+        .call(
+          d3
+            .axisBottom(xScale)
+            .ticks(lines.length > 0 ? lines[0].data.length - 1 : 0)
+            .tickFormat((d) => {
+              return d + 1;
+            })
+        );
 
       // y축 그리기
       graphGroup.append("g").attr("class", "y-axis").call(d3.axisLeft(yScale));
     }
+
     if (lines.length > 0) {
       const xScale = d3
         .scaleLinear()
@@ -75,7 +84,30 @@ const Graph = ({ lines, xRange, yRange }) => {
       xScaleRef.current = xScale;
       const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
       const graphGroup = svg.select("g");
+      // 줌 기능 구현
+      const zoom = d3
+        .zoom()
+        .scaleExtent([1, 20]) // 축소/확대 범위 설정
+        .translateExtent([
+          [0, 0],
+          [width, height],
+        ]) // 위치 이동 범위 설정
+        .on("zoom", zoomed); // 줌 이벤트 핸들러 등록
+      function zoomed({ transform }) {
+        graphGroup.attr("transform", transform);
 
+        graphGroup
+          .select(".x-axis")
+          .call(d3.axisBottom(transform.rescaleX(xScale)))
+          .attr("transform", `translate(0, ${height})`);
+
+        graphGroup
+          .select(".y-axis")
+          .call(d3.axisLeft(transform.rescaleY(yScale)))
+          .attr("transform", `translate(0, 0)`);
+      }
+
+      svg.call(zoom);
       // x축 그리기
       graphGroup
         .append("g")
@@ -113,11 +145,11 @@ const Graph = ({ lines, xRange, yRange }) => {
         .attr("d", (lineData) => line(lineData.data))
         .attr("fill", "none")
         .attr("stroke", (lineData) => lineData.strokeColor)
-        .attr("stroke-width", 3)
+        .attr("stroke-width", 0.7)
         .on("mouseover", function (event, lineData) {
           setActiveLines([...activeLines, lineData]);
-          d3.select(this).attr("stroke-width", 8).raise();
-          d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 10);
+          d3.select(this).attr("stroke-width", 0.7).raise();
+          d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 1);
           updateXAxisTicks(activeLines.length + 1);
         })
         .on("mouseout", function (event, lineData) {
@@ -130,8 +162,8 @@ const Graph = ({ lines, xRange, yRange }) => {
           } else {
             updateXAxisTicks(activeLines.length);
           }
-          d3.select(this).attr("stroke-width", 3);
-          d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 7);
+          d3.select(this).attr("stroke-width", 0.7);
+          d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 0.7);
         });
       function updateXAxisTicks(activeLinesCount) {
         const graphGroup = d3.select(ref.current).select("svg").select("g");
@@ -154,7 +186,7 @@ const Graph = ({ lines, xRange, yRange }) => {
         .classed("circle-dot", true)
         .attr("cx", (d, i) => xScale(i))
         .attr("cy", (d) => yScale(d.value))
-        .attr("r", 7)
+        .attr("r", 0.7)
         .attr("fill", (d, i, nodes) => {
           const parentData = d3.select(nodes[i].parentNode).datum();
           return parentData.strokeColor;
@@ -163,8 +195,8 @@ const Graph = ({ lines, xRange, yRange }) => {
           const parentData = d3.select(this.parentNode).datum();
           d3.select(this.parentNode)
             .select(".line-path")
-            .attr("stroke-width", 8);
-          d3.select(this).attr("r", 10);
+            .attr("stroke-width", 0.7);
+          d3.select(this).attr("r", 1);
 
           setTooltip({
             show: true,
@@ -185,8 +217,8 @@ const Graph = ({ lines, xRange, yRange }) => {
           setTooltip({ ...tooltip, show: false });
           d3.select(this.parentNode)
             .select(".line-path")
-            .attr("stroke-width", 3);
-          d3.select(this).attr("r", 7);
+            .attr("stroke-width", 0.7);
+          d3.select(this).attr("r", 0.7);
         });
     } else {
       // lines가 빈 배열일 때 기존 그래프를 삭제합니다.
@@ -357,8 +389,8 @@ const Graphtest = ({
     console.time("API Request");
     const res2 = await api.post("data/graph", inputdata);
     console.timeEnd("API Request");
-    console.log(res2);
-    console.log(res2.data);
+    // console.log(res2);
+    // console.log(res2.data);
 
     setParamsFromResponse(res2.data);
     console.log("setparams 콘솔");
@@ -380,14 +412,8 @@ const Graphtest = ({
   }, 300);
 
   useEffect(() => {
-    console.log("hiahi");
-    console.log(data);
-  }, [data]);
-
-  useEffect(() => {
     if (selectedcompoData) {
       debouncedHandleComponentClick(selectedcompoData.name);
-      console.log("debounce 콘솔 @@@@@@@@@@@@@@@@@@@@@");
     }
   }, [selectedcompoData?.name]);
 
@@ -422,10 +448,10 @@ const Box = styled.div`
   top: 260px;
   left: 600px;
   background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.7);
   width: 58%;
   height: 62%;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.75);
   border-radius: 20px;
   display: flex;
   flex-direction: column; // Flexbox의 방향을 column으로 설정
@@ -438,10 +464,10 @@ const CompoBox = styled.div`
   top: 400px;
   left: 30px;
   background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.7);
   width: 80%;
   height: 10%;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.75);
   border-radius: 20px;
   display: flex;
   align-items: center;
