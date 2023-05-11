@@ -12,7 +12,7 @@ const ComponentList = ({ child, setSelectComponentData }) => {
   return (
     <div>
       <Small>
-        <div style={{ margin: "10px 0px 10px 20px" }}>ComponentList</div>
+        <Font>COMPONENT LIST</Font>
         <CreateTable setTest={setTest} data={child} test={test} child={child} />
       </Small>
       <HealthStatus componentData={child} />
@@ -33,4 +33,13 @@ const Small = styled.div`
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   overflow-y: auto;
+`;
+
+const Font = styled.div`
+  margin : 10px 0px 10px 20px;
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  color: #707070;
 `;
