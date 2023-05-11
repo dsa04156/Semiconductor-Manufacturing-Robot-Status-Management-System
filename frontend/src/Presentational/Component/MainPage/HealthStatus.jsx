@@ -3,7 +3,7 @@ import ReactApexChart from "react-apexcharts";
 import styled from "styled-components";
 
 const HealthStatus = ({ componentData }) => {
-  console.log(componentData)
+  // console.log(componentData)
   const compodata = componentData.map((data) => {
     return {
       name: data.name,

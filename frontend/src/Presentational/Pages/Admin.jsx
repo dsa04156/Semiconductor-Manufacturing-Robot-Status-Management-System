@@ -15,12 +15,12 @@ const Admin = () => {
   const collectionJSON = localStorage.getItem('collectionNames')
   const collectionNames = JSON.parse(collectionJSON)
 
-  console.log(collectionNames);
+  // console.log(collectionNames);
   useEffect(() => {
     const _dbTest = async () => {
       const res = await api.get("account/list");
       setData(res.data);
-      console.log(res.data);
+      // console.log(res.data);
     };
     _dbTest();
   }, []);
@@ -51,7 +51,7 @@ const Admin = () => {
           email: email,
           type: type,
         });
-        console.log(res.data);
+        // console.log(res.data);
         alert(res.data);
         const res2 = await api.get("account/list");
         setData(res2.data);

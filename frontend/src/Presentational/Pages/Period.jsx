@@ -11,6 +11,7 @@ const Period = ({
   endDate: initialEndDate,
   onChangeStartDate,
   onChangeEndDate,
+  selectComponentName,
 }) => {
   const [localStartDate, setLocalStartDate] = useState(
     initialStartDate || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
@@ -37,8 +38,9 @@ const Period = ({
   };
   return (
     <PeriodBox>
-      PUMP6
-      <br></br>
+      <p style={{margin: '10px 0px -5px 0px', fontWeight: 'bold'}}>pump</p>
+      <hr/>
+      <AlignPeriod>
       {" PERIOD "}
       <CalendarIcon
         src="image/Calendar-icon.png"
@@ -115,6 +117,7 @@ const Period = ({
           }}
         />
       </DatePickerContainer>
+      </AlignPeriod>
     </PeriodBox>
   );
 };
@@ -123,17 +126,14 @@ export default Period;
 
 const PeriodBox = styled.div`
   position: relative;
-  top: 250px;
-  left: 600px;
-  display: flex;
   align-items: center;
-  overflow: visible;
-  z-index: 1;
+  z-index: 4;
+  font-size: 12px;
 `;
 
 const CalendarIcon = styled.img`
-  width: 35px;
-  height: 35px;
+  width: 20px;
+  height: 20px;
   margin-left: 10px;
   margin-right: 10px;
   cursor: pointer;
@@ -141,4 +141,10 @@ const CalendarIcon = styled.img`
 
 const DatePickerContainer = styled.div`
   overflow: visible;
+`;
+
+const AlignPeriod = styled.div`
+  display: flex;
+  align-items: center;
+  width: 850px;
 `;

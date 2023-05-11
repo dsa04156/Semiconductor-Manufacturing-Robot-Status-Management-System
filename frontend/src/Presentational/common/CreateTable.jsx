@@ -13,7 +13,6 @@ function CreateTable({ setTest, data, test, child }) {
   const idxHandler = (idx) => {
     setSelected(idx);
     setTest(idx);
-    console.log(selected); //idx 값
   }
 
   const idxClickHandler = () => {
