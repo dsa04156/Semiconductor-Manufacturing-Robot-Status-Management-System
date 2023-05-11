@@ -34,7 +34,7 @@ const Conbox = ({ mstate ,width,fontsize}) => {
 
   return (
     <Con color={color} width={width}>
-      <Icon icon={icon} color="white" width={ fontsize} /><Font fontsize={fontsize}>{mstate}</Font>
+      <Icon icon={icon} color="white" width={fontsize} style={{margin: 4}} /><Font fontsize={fontsize}>{mstate}</Font>
     </Con>
   )
 }

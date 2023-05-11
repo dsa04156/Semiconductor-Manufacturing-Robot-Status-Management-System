@@ -41,7 +41,7 @@ const EvalStatus = ( { evalValue } ) => {
         border-radius: 20px;
     `;
   
-    return <StyledStatus><Icon icon={icon} color="white" />{evalValue}</StyledStatus>;
+    return <StyledStatus><Icon icon={icon} color="white" style={{margin: 2}}/>{evalValue}</StyledStatus>;
 };
 
 export default EvalStatus;
