@@ -68,7 +68,7 @@ const Admin = () => {
           <table className="table table-hover">
             <thead
               style={{
-                fontSize: "40px",
+                fontSize: "20px",
                 position: "sticky",
                 top: "0",
                 zIndex: 1,
@@ -168,6 +168,57 @@ const Box = styled.div`
   display: flex;
   align-items: center;
   overflow: hidden;
+
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1);
+  }
+
+  table {
+    width: max-content;
+    table-layout: fixed;
+  }
+
+  th,
+  td {
+    padding: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  th:first-child,
+  td:first-child {
+    width: 20%;
+    max-width: 200px;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 15%;
+    max-width: 150px;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 25%;
+    max-width: 250px;
+  }
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 20%;
+    max-width: 200px;
+  }
+
+  th:last-child,
+  td:last-child {
+    width: 20%;
+    max-width: 200px;
+  }
 `;
 
 const Box2 = styled.div`
@@ -177,4 +228,13 @@ const Box2 = styled.div`
   width: 40%;
   display: flex;
   align-items: center;
+
+  .admin {
+    margin-right: 10px;
+  }
+
+  .search {
+    width: 300px;
+    margin-right: 10px;
+  }
 `;
