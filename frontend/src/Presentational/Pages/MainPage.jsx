@@ -1,6 +1,6 @@
 import Condition from "../Component/MainPage/Condition";
 import ComponentList from "../Component/MainPage/ComponentList";
-import Graphtest from "../Pages/Graphtest";
+import Graph from "../Component/MainPage/Graph";
 import react, { useState } from "react";
 
 const Mainpage = () => {
@@ -9,10 +9,6 @@ const Mainpage = () => {
   const [selectedMachineName, setSelectedMachineName] = useState();
   const [selectedModuleName, setSelectedModuleName] = useState();
 
-  //  console.log(moduleChild)
-  // console.log(selectComponentData);
-  // console.log(selectedMachineName);
-  // console.log(selectedModuleName);
 
   return (
     <div>
@@ -25,7 +21,7 @@ const Mainpage = () => {
         child={moduleChild}
         setSelectComponentData={setSelectComponentData}
       />
-      <Graphtest
+      <Graph
         selectedcompoData={selectComponentData}
         selectedMachineName={selectedMachineName}
         selectedModuleName={selectedModuleName}
