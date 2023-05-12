@@ -1,28 +1,31 @@
+import React, { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import Form from "react-bootstrap/Form";
+import Conbox from "../Condition/Conbox";
+import api from "../../../redux/api";
 
-import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import Form from 'react-bootstrap/Form';
-import Conbox from '../Condition/Conbox';
-import api from '../../../redux/api';
-
-const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleName }) => {
+const Condition = ({
+  setModuleChild,
+  setSelectedMachineName,
+  setSelectedModuleName,
+}) => {
   const [machineData, setMachineData] = useState({});
   const [moduleData, setModuleData] = useState([]);
   const [componentData, setComponentData] = useState([]);
-  const [status, setStatus] = useState('');
-  const [currentMachineName, setCurrentMachineName] = useState('');
-  const [currentModuleName, setCurrentModuleName] = useState('');
+  const [status, setStatus] = useState("");
+  const [currentMachineName, setCurrentMachineName] = useState("");
+  const [currentModuleName, setCurrentModuleName] = useState("");
 
-  
-  const collectionJSON = localStorage.getItem('collectionNames');
+  const collectionJSON = localStorage.getItem("collectionNames");
   const collectionNames = JSON.parse(collectionJSON);
 
   const secondSelect = useRef();
 
   useEffect(() => {
     const eventSource = new EventSource(
-      'http://3.36.125.122:8082/sse/connect',
-      { headers: { accept: 'text/event-stream' }}, { withCredentials: true}
+      "http://3.36.125.122:8082/sse/connect",
+      { headers: { accept: "text/event-stream" } },
+      { withCredentials: true }
     );
 
     eventSource.onmessage = (e) => {
@@ -34,7 +37,7 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
       console.log("connect", received);
       console.log(event.data);
     });
-    
+
     eventSource.addEventListener("machine", (event) => {
       const newMachineData = event.data;
       //   console.log(newMachineData);
@@ -89,8 +92,8 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
       }
     });
 
-    eventSource.addEventListener('error', (error) => {
-      console.log('SSE Error: ', error);
+    eventSource.addEventListener("error", (error) => {
+      console.log("SSE Error: ", error);
     });
 
     return () => {
@@ -102,8 +105,8 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
     const selectMachineName = event.target.value;
     // console.log(secondSelect.current.value)
     setCurrentMachineName(selectMachineName);
-    setModuleChild([]);     // 장비 드롭다운에서 다른 장비 선택 시 컴포넌트 리스트 출력 되는 것 초기화.
-    secondSelect.current.value = ""  // 장비 드롭다운에서 다른 장비 선택 시 모듈 드롭다운 초기화
+    setModuleChild([]); // 장비 드롭다운에서 다른 장비 선택 시 컴포넌트 리스트 출력 되는 것 초기화.
+    secondSelect.current.value = ""; // 장비 드롭다운에서 다른 장비 선택 시 모듈 드롭다운 초기화
     setSelectedMachineName(selectMachineName);
 
     api
@@ -131,7 +134,7 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
         }
         setModuleData(modulelist);
       });
-  }
+  };
 
   const handleChangeModule = (event) => {
     const selectModuleName = event.target.value;
@@ -163,7 +166,6 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
             defaultValue=""
             onChange={handleChangeMachine}
           >
-
             {collectionNames &&
               collectionNames.map((data) => <option key={data}>{data}</option>)}
           </CustomSelect>
@@ -187,17 +189,15 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
       </Big>
     </div>
   );
-  
-}
+};
 
 export default Condition;
-
 
 const Big = styled.div`
   position: absolute;
   top: 20px;
   left: 1070px;
-  background: linear-gradient(90deg, #0051C4 0%, #002962 100%);
+  background: linear-gradient(90deg, #0051c4 0%, #002962 100%);
   border: 1px solid rgba(0, 0, 0, 0.2);
   width: 429px;
   height: 210px;
@@ -205,14 +205,14 @@ const Big = styled.div`
   border-radius: 20px;
 `;
 const Fontst = styled.div`
-  font-family: 'Domine';
+  font-family: "Domine";
   font-style: normal;
   font-size: ${(props) => props.size}px;
   color: #ffffff;
   margin-left: 5px;
 `;
 const Fontrmargin = styled.div`
-  font-family: 'Domine';
+  font-family: "Domine";
   font-style: normal;
   font-size: ${(props) => props.size}px;
   color: #ffffff;
@@ -225,66 +225,21 @@ const SelectContainer = styled.div`
   justify-content: space-between; /* 추가 */
 `;
 const CustomSelect = styled.select`
-background-color:transparent;
-color: #ffffff;
-border: none;
-padding: 5px;
-position: relative;
-margin-left :20px;
-border-bottom: solid;
-border-bottom-color: #ffffff;
-
-& option {
-  color: black; 
-}
-
-&::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-top: 5px solid #ffffff;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-}
-option::before {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background-color: #ffffff;
-}
-&::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  right: 10px;
-  width: 4px;
-  height: 1px;
   background-color: transparent;
-}
-`;
-const CustomrSelect = styled.select`
-  background-color:transparent;
   color: #ffffff;
   border: none;
   padding: 5px;
   position: relative;
-  margin-left :70px;
+  margin-left: 20px;
   border-bottom: solid;
   border-bottom-color: #ffffff;
 
   & option {
-    color: black; 
+    color: black;
   }
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     right: 10px;
@@ -296,7 +251,7 @@ const CustomrSelect = styled.select`
     border-right: 4px solid transparent;
   }
   option::before {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -1px;
     left: 0;
@@ -305,7 +260,52 @@ const CustomrSelect = styled.select`
     background-color: #ffffff;
   }
   &::before {
-    content: '';
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    width: 4px;
+    height: 1px;
+    background-color: transparent;
+  }
+`;
+const CustomrSelect = styled.select`
+  background-color: transparent;
+  color: #ffffff;
+  border: none;
+  padding: 5px;
+  position: relative;
+  margin-left: 70px;
+  border-bottom: solid;
+  border-bottom-color: #ffffff;
+
+  & option {
+    color: black;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 5px solid #ffffff;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+  }
+  option::before {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #ffffff;
+  }
+  &::before {
+    content: "";
     position: absolute;
     bottom: 0;
     right: 10px;
