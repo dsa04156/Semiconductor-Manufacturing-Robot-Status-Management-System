@@ -422,10 +422,18 @@ const Graph = ({ lines, xRange, yRange }) => {
 
   useEffect(() => {
     const startTime = performance.now();
-    const margin = { top: 10, right: 10, bottom: 30, left: 30 };
-    const width = 600 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    const margin = { top: 12, right: 0, bottom: 25, left: 25 };
+
+    let dataLength =
+      lines.length > 0 && lines[0].data.length > 0 ? lines[0].data.length : 0;
+
+    // 데이터 갯수에 따라 svg의 가로 길이를 결정합니다.
+    let width = dataLength > 100 ? dataLength * 6 : 600; // 데이터 갯수당 6px로 계산. 조절 가능.
+
+    width = width - margin.left - margin.right;
+    const height = 380 - margin.top - margin.bottom;
     widthRef.current = width;
+
     let svg = d3.select(ref.current).select("svg");
 
     if (svg.empty()) {
@@ -452,22 +460,23 @@ const Graph = ({ lines, xRange, yRange }) => {
       const graphGroup = svg.append("g");
 
       // x축 그리기
-      // graphGroup
-      //   .append("g")
-      //   .attr("class", "x-axis")
-      //   .attr("transform", `translate(0, ${height})`)
-      //   .call(
-      //     d3
-      //       .axisBottom(xScale)
-      //       .ticks(lines.length > 0 ? lines[0].data.length - 1 : 0)
-      //       .tickFormat((d) => {
-      //         return d + 1;
-      //       })
-      //   );
+      graphGroup
+        .append("g")
+        .attr("class", "x-axis")
+        .attr("transform", `translate(0, ${height})`)
+        .call(
+          d3
+            .axisBottom(xScale)
+            .ticks(lines.length > 0 ? lines[0].data.length - 1 : 0)
+            .tickFormat((d) => {
+              return d + 1;
+            })
+        );
 
       // y축 그리기
       graphGroup.append("g").attr("class", "y-axis").call(d3.axisLeft(yScale));
     }
+
     if (lines.length > 0) {
       const xScale = d3
         .scaleLinear()
@@ -477,7 +486,30 @@ const Graph = ({ lines, xRange, yRange }) => {
       xScaleRef.current = xScale;
       const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
       const graphGroup = svg.select("g");
+      // 줌 기능 구현
+      const zoom = d3
+        .zoom()
+        .scaleExtent([1, 20]) // 축소/확대 범위 설정
+        .translateExtent([
+          [0, 0],
+          [width, height],
+        ]) // 위치 이동 범위 설정
+        .on("zoom", zoomed); // 줌 이벤트 핸들러 등록
+      function zoomed({ transform }) {
+        graphGroup.attr("transform", transform);
 
+        graphGroup
+          .select(".x-axis")
+          .call(d3.axisBottom(transform.rescaleX(xScale)))
+          .attr("transform", `translate(0, ${height})`);
+
+        graphGroup
+          .select(".y-axis")
+          .call(d3.axisLeft(transform.rescaleY(yScale)))
+          .attr("transform", `translate(0, 0)`);
+      }
+
+      svg.call(zoom);
       // x축 그리기
       graphGroup
         .append("g")
@@ -515,11 +547,11 @@ const Graph = ({ lines, xRange, yRange }) => {
         .attr("d", (lineData) => line(lineData.data))
         .attr("fill", "none")
         .attr("stroke", (lineData) => lineData.strokeColor)
-        .attr("stroke-width", 3)
+        .attr("stroke-width", 0.7)
         .on("mouseover", function (event, lineData) {
           setActiveLines([...activeLines, lineData]);
-          d3.select(this).attr("stroke-width", 8).raise();
-          d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 10);
+          d3.select(this).attr("stroke-width", 0.7).raise();
+          d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 1);
           updateXAxisTicks(activeLines.length + 1);
         })
         .on("mouseout", function (event, lineData) {
@@ -532,8 +564,8 @@ const Graph = ({ lines, xRange, yRange }) => {
           } else {
             updateXAxisTicks(activeLines.length);
           }
-          d3.select(this).attr("stroke-width", 3);
-          d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 7);
+          d3.select(this).attr("stroke-width", 0.7);
+          d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 0.7);
         });
       function updateXAxisTicks(activeLinesCount) {
         const graphGroup = d3.select(ref.current).select("svg").select("g");
@@ -556,7 +588,7 @@ const Graph = ({ lines, xRange, yRange }) => {
         .classed("circle-dot", true)
         .attr("cx", (d, i) => xScale(i))
         .attr("cy", (d) => yScale(d.value))
-        .attr("r", 7)
+        .attr("r", 0.7)
         .attr("fill", (d, i, nodes) => {
           const parentData = d3.select(nodes[i].parentNode).datum();
           return parentData.strokeColor;
@@ -565,8 +597,8 @@ const Graph = ({ lines, xRange, yRange }) => {
           const parentData = d3.select(this.parentNode).datum();
           d3.select(this.parentNode)
             .select(".line-path")
-            .attr("stroke-width", 8);
-          d3.select(this).attr("r", 10);
+            .attr("stroke-width", 0.7);
+          d3.select(this).attr("r", 1);
 
           setTooltip({
             show: true,
@@ -587,8 +619,8 @@ const Graph = ({ lines, xRange, yRange }) => {
           setTooltip({ ...tooltip, show: false });
           d3.select(this.parentNode)
             .select(".line-path")
-            .attr("stroke-width", 3);
-          d3.select(this).attr("r", 7);
+            .attr("stroke-width", 0.7);
+          d3.select(this).attr("r", 0.7);
         });
     } else {
       // lines가 빈 배열일 때 기존 그래프를 삭제합니다.
@@ -596,6 +628,9 @@ const Graph = ({ lines, xRange, yRange }) => {
       graphGroup.selectAll(".line-path").remove();
       graphGroup.selectAll(".circle-group").remove();
     }
+
+    // 0번째 index를 post 2초걸렸을꺼다.
+
     const endTime = performance.now();
     const elapsedTime = endTime - startTime; // 그래프를 그리는데 걸린 시간 (밀리초)
 
@@ -631,6 +666,7 @@ const Graphtest = ({
   );
   const [endDate, setEndDate] = useState(new Date());
   const [data, setData] = useState([]);
+  const [selectedComponentName, setSelectedComponentName] = useState();
   const [params, setparams] = useState({ data: [], nameList: [] });
   const setParamsFromResponse = (responseData) => {
     if (!responseData || responseData.length === 0) {
@@ -645,8 +681,8 @@ const Graphtest = ({
     const nameList = responseData.map((item) => item.name);
 
     setparams({ data, nameList });
-    // console.log("얏호");
-    // console.log(nameList);
+    console.log("얏호");
+    console.log(nameList);
   };
 
   const [selectedParam, setSelectedParam] = useState("");
@@ -756,11 +792,23 @@ const Graphtest = ({
       moduleName: selectedModuleName,
       startDate: startDate,
     };
+
+    // 조건문으로 endDate - startDate = 날짜
+    // 날짜가 어느정도 이상이면 n등분
+    // n등분한걸 배열에 담는다
+
     console.time("API Request");
+    //post (n등분한거의 0번째 index)
+    //setParamsFromResponse(res2.data);
+    //조건문으로 res(빈배열인지 검사)
+    //빈배열이라면 위로 돌아가서
+    // n등분한거의 0+1 번째 index
+
     const res2 = await api.post("data/graph", inputdata);
+
     console.timeEnd("API Request");
-    console.log(res2);
-    console.log(res2.data);
+    // console.log(res2);
+    // console.log(res2.data);
 
     setParamsFromResponse(res2.data);
     console.log("setparams 콘솔");
@@ -782,14 +830,9 @@ const Graphtest = ({
   }, 300);
 
   useEffect(() => {
-    console.log("hiahi");
-    console.log(data);
-  }, [data]);
-
-  useEffect(() => {
     if (selectedcompoData) {
+      setSelectedComponentName(selectedcompoData.name);
       debouncedHandleComponentClick(selectedcompoData.name);
-      // console.log("debounce 콘솔 @@@@@@@@@@@@@@@@@@@@@");
     }
   }, [selectedcompoData?.name]);
 
@@ -801,7 +844,7 @@ const Graphtest = ({
         endDate={endDate}
         onChangeStartDate={setStartDate}
         onChangeEndDate={setEndDate}
-        // selectComponentName={selectedcompoData.name}
+        selectComponentName={selectedComponentName}
       />
         <MemoizedGraph //성능 개선을 위한 React.Memo 사용
           lines={lines}

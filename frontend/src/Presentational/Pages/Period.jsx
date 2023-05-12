@@ -38,7 +38,7 @@ const Period = ({
   };
   return (
     <PeriodBox>
-      <p style={{margin: '10px 0px -5px 0px', fontWeight: 'bold'}}>pump</p>
+      <ComponentName style={{margin: '10px 0px -5px 0px'}}>{selectComponentName}</ComponentName>
       <hr/>
       <AlignPeriod>
       {" PERIOD "}
@@ -147,4 +147,13 @@ const AlignPeriod = styled.div`
   display: flex;
   align-items: center;
   width: 850px;
+`;
+
+const ComponentName = styled.p`
+font-family: "Inter";
+  font-style: normal;
+  font-weight: bold;
+  font-size: 12px;
+  color: #707070;
+  font-weight: bold,
 `;

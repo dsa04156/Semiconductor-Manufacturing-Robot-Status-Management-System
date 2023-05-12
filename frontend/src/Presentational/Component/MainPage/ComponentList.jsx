@@ -39,7 +39,7 @@ const Font = styled.div`
   margin : 10px 0px 10px 20px;
   font-family: "Inter";
   font-style: normal;
-  font-weight: 400;
-  font-size: 18px;
+  font-weight: bold;
+  font-size: 12px;
   color: #707070;
 `;

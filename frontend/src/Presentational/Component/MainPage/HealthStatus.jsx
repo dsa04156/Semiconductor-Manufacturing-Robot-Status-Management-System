@@ -278,12 +278,12 @@ export default HealthStatus;
 
 const Head = styled.div`
   margin-left: 30px;
-  margin-top: 15px;
+  margin-top: 12px;
   margin-bottom: 10px;
   font-family: "Inter";
   font-style: normal;
-  font-weight: 400;
-  font-size: 18px;
+  font-weight: bold;
+  font-size: 15px;
   color: #707070;
   line-height: 22px;
 `;
