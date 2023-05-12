@@ -78,7 +78,7 @@ const Styles = styled.div`
     td {
       text-align: center;
       font-size: 12px;
-      font-family: 'Inter';
+      font-family: "Inter";
       font-style: normal;
       color: #707070;
     }

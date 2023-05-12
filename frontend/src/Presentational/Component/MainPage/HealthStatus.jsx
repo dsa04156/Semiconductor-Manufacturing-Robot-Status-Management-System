@@ -96,7 +96,7 @@ const HealthStatus = ({ componentData }) => {
         type: "donut",
       },
       dataLabels: {
-        enabled:false
+        enabled: false,
       },
       fill: {
         colors: unaccep_colors,
@@ -122,7 +122,7 @@ const HealthStatus = ({ componentData }) => {
         type: "donut",
       },
       dataLabels: {
-        enabled:false
+        enabled: false,
       },
       fill: {
         colors: unsat_colors,
@@ -147,7 +147,7 @@ const HealthStatus = ({ componentData }) => {
         type: "donut",
       },
       dataLabels: {
-        enabled:false
+        enabled: false,
       },
       fill: {
         colors: sat_colors,
@@ -172,7 +172,7 @@ const HealthStatus = ({ componentData }) => {
         type: "donut",
       },
       dataLabels: {
-        enabled:false
+        enabled: false,
       },
       fill: {
         colors: good_colors,
@@ -193,12 +193,15 @@ const HealthStatus = ({ componentData }) => {
   return (
     <div>
       <Big>
-        <div style={{ margin: "15px 0px 0 40px", fontSize: "20px" }}>
-          Health Status
-        </div>
+        <Line></Line>
+        <Head>Health Status</Head>
         <HealthStatusTitle>
           <TLabel>Total</TLabel>
-          {totalcount <10 ? <TValue size={98}>{totalcount}</TValue>: <TValue size={85}>{totalcount}</TValue>}
+          {totalcount < 10 ? (
+            <TValue size={98}>{totalcount}</TValue>
+          ) : (
+            <TValue size={85}>{totalcount}</TValue>
+          )}
           <ReactApexChart
             options={TotdonutData.options}
             series={TotdonutData.series}
@@ -210,10 +213,17 @@ const HealthStatus = ({ componentData }) => {
 
           <Box size={260}>
             <InBox color={"#ffcece"}>
-              <Icon icon="icon-park-solid:bad-two" color="#ff3e53" hFlip={true} />
+              <Icon
+                icon="icon-park-solid:bad-two"
+                color="#ff3e53"
+                hFlip={true}
+              />
             </InBox>
-            {unaccep_compodata < 10 ? <Value size={61}>{unaccep_compodata }</Value> : <Value size={55}>{unaccep_compodata }</Value>}
-
+            {unaccep_compodata < 10 ? (
+              <Value size={61}>{unaccep_compodata}</Value>
+            ) : (
+              <Value size={55}>{unaccep_compodata}</Value>
+            )}
 
             <ReactApexChart
               options={unacceptdonutData.options}
@@ -232,8 +242,11 @@ const HealthStatus = ({ componentData }) => {
                 color="#ffb733"
               />
             </InBox>
-            {unsat_compodata < 10 ? <Value size={61}>{unsat_compodata}</Value> : <Value size={55}>{unsat_compodata}</Value>}
-
+            {unsat_compodata < 10 ? (
+              <Value size={61}>{unsat_compodata}</Value>
+            ) : (
+              <Value size={55}>{unsat_compodata}</Value>
+            )}
 
             <ReactApexChart
               options={unsatdonutData.options}
@@ -249,7 +262,11 @@ const HealthStatus = ({ componentData }) => {
             <InBox color={"#CBFFFD"}>
               <Icon icon="teenyicons:mood-smile-solid" color="#2bbfba" />
             </InBox>
-            {sat_compodata < 10 ? <Value size={61}>{sat_compodata}</Value> : <Value size={55}>{sat_compodata}</Value>}
+            {sat_compodata < 10 ? (
+              <Value size={61}>{sat_compodata}</Value>
+            ) : (
+              <Value size={55}>{sat_compodata}</Value>
+            )}
             <ReactApexChart
               options={satdonutData.options}
               series={satdonutData.series}
@@ -264,7 +281,11 @@ const HealthStatus = ({ componentData }) => {
             <InBox color={"#C6FFDD"}>
               <Icon icon="icon-park-solid:good-two" color="#14b856" />
             </InBox>
-            {good_compodata < 10 ? <Value size={61}>{good_compodata}</Value> : <Value size={55}>{good_compodata}</Value>}
+            {good_compodata < 10 ? (
+              <Value size={61}>{good_compodata}</Value>
+            ) : (
+              <Value size={55}>{good_compodata}</Value>
+            )}
             <ReactApexChart
               options={gooddonutData.options}
               series={gooddonutData.series}
@@ -339,7 +360,7 @@ const Line = styled.div`
   height: 0px;
   left: 25px;
   top: 45px;
-  border: 1px solid #eff1f5;;
+  border: 1px solid #eff1f5;
 `;
 
 const TLabel = styled.div`
@@ -348,7 +369,7 @@ const TLabel = styled.div`
   left: 95px;
   font-size: 16px;
   color: #adb1b8;
-  z-index:3;
+  z-index: 3;
 `;
 const Label = styled.div`
   position: absolute;
@@ -371,5 +392,5 @@ const Value = styled.div`
   left: ${(props) => props.size}px;
   font-size: 20px;
   color: black;
-  z-index:2;
+  z-index: 2;
 `;

@@ -427,7 +427,7 @@ const Graph = ({ lines, xRange, yRange }) => {
     let dataLength =
       lines.length > 0 && lines[0].data.length > 0 ? lines[0].data.length : 0;
 
-    // 데이터 갯수에 따라 svg의 가로 길이를 결정합니다.
+    // 데이터 갯수에 따라 svg의 가로 길이를 결정
     let width = dataLength > 100 ? dataLength * 3 : 600; // 데이터 갯수당 ?px로 계산. 조절 가능.
 
     lines.forEach((line) => {
@@ -438,11 +438,8 @@ const Graph = ({ lines, xRange, yRange }) => {
     let minDate = d3.min(lines, (line) => d3.min(line.data, (d) => d.date));
     let maxDate = d3.max(lines, (line) => d3.max(line.data, (d) => d.date));
 
-    console.log("minDate : " + minDate);
-    console.log("maxDate : " + maxDate);
-
     width = width - margin.left - margin.right + 230;
-    const height = 500 - margin.top - margin.bottom;
+    const height = 400 - margin.top - margin.bottom;
     widthRef.current = width;
 
     let svg = d3.select(ref.current).select("svg");
@@ -489,6 +486,7 @@ const Graph = ({ lines, xRange, yRange }) => {
 
       xScaleRef.current = xScale;
       const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
+
       const graphGroup = svg.select("g");
       // 줌 기능 구현
       const zoom = d3
@@ -506,6 +504,12 @@ const Graph = ({ lines, xRange, yRange }) => {
           line.data.forEach((d) => {
             if (d.date.getHours() === 0 && d.date.getMinutes() === 0) {
               ticks.push(d.date);
+            } else if (d.date.getHours() === 12 && d.date.getMinutes() === 0) {
+              ticks.push(d.date);
+            } else if (d.date.getHours() === 6 && d.date.getMinutes() === 0) {
+              ticks.push(d.date);
+            } else if (d.date.getHours() === 18 && d.date.getMinutes() === 0) {
+              ticks.push(d.date);
             }
           });
         });
@@ -518,24 +522,10 @@ const Graph = ({ lines, xRange, yRange }) => {
               .tickFormat(d3.timeFormat("%m-%d %H:%M")) // 날짜 형식 지정
           )
           .attr("transform", `translate(0, ${height})`);
-
-        graphGroup
-          .select(".y-axis")
-          .call(d3.axisLeft(transform.rescaleY(yScale)))
-          .attr("transform", `translate(0, 0)`);
       }
 
       svg.call(zoom);
 
-      // 데이터의 양에 따라 눈금의 수를 동적으로 조정하는 함수
-      function getTickNumber(lines) {
-        let numDataPoints = lines.length > 0 ? lines[0].data.length - 1 : 0;
-        if (numDataPoints >= 30) {
-          return 4;
-        } else {
-          return numDataPoints;
-        }
-      }
       const line = d3
         .line()
         .defined((d) => d.value !== null && d.value !== undefined)
@@ -551,16 +541,6 @@ const Graph = ({ lines, xRange, yRange }) => {
         .attr("fill", "none")
         .attr("stroke", (lineData) => lineData.strokeColor)
         .attr("stroke-width", 0.7);
-
-      function updateXAxisTicks(activeLinesCount) {
-        const graphGroup = d3.select(ref.current).select("svg").select("g");
-        graphGroup.select(".x-axis").call(
-          d3
-            .axisBottom(xScaleRef.current)
-            .ticks(activeLinesCount > 0 ? activeLinesCount - 1 : 0)
-            .tickFormat(activeLinesCount > 0 ? (d) => d + 1 : null)
-        );
-      }
 
       graphGroup
         .selectAll(".circle-group")
@@ -648,7 +628,6 @@ const Graphtest = ({
 
   const [endDate, setEndDate] = useState(new Date());
   const [data, setData] = useState([]);
-  const [selectedComponentName, setSelectedComponentName] = useState();
   const [params, setparams] = useState({ data: [], nameList: [] });
   const setParamsFromResponse = (responseData) => {
     if (!responseData || responseData.length === 0) {
@@ -663,8 +642,6 @@ const Graphtest = ({
     const nameList = responseData.map((item) => item.name);
 
     setparams({ data, nameList });
-    console.log("얏호");
-    console.log(nameList);
   };
 
   const [selectedParam, setSelectedParam] = useState("");
@@ -783,7 +760,7 @@ const Graphtest = ({
 
     setParamsFromResponse(res2.data);
     console.log("setparams 콘솔");
-    console.log(res2);
+
     console.log(res2.data);
   };
 
@@ -802,54 +779,20 @@ const Graphtest = ({
 
   useEffect(() => {
     if (selectedcompoData) {
-      setSelectedComponentName(selectedcompoData.name);
       debouncedHandleComponentClick(selectedcompoData.name);
     }
   }, [selectedcompoData?.name]);
 
-  return (
-    <div>
-      <Box>
-      <Period
-        startDate={startDate}
-        endDate={endDate}
-        onChangeStartDate={setStartDate}
-        onChangeEndDate={setEndDate}
-        selectComponentName={selectedComponentName}
-      />
-        <MemoizedGraph //성능 개선을 위한 React.Memo 사용
-          lines={lines}
-          xRange={xRange}
-          yRange={yRange}
-        />
-
-        <GraphParam
-          nameList={params.nameList}
-          handleParamsCall={handleParamsCall}
-        ></GraphParam>
-      </Box>
-    </div>
-  );
-};
-
-export default Graphtest;
 
 const Box = styled.div`
   position: absolute;
   top: 260px;
   left: 600px;
   background: #ffffff;
-<<<<<<< HEAD
   border: 1px solid rgba(0, 0, 0, 0.2);
   width: 900px;
   height: 470px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-=======
-  border: 1px solid rgba(0, 0, 0, 0.7);
-  width: 58%;
-  height: 62%;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.75);
->>>>>>> 698a163dd3537132e49d3a2bd30465dece36b1ed
   border-radius: 20px;
   display: flex;
   flex-direction: column; // Flexbox의 방향을 column으로 설정
@@ -857,14 +800,14 @@ const Box = styled.div`
 
   overflow: hidden;
 `;
-const Tooltip = styled.div`
-  position: absolute;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 5px;
-  border-radius: 5px;
-  font-size: 12px;
-  pointer-events: none;
-  left: ${(props) => props.x}px;
-  top: ${(props) => props.y}px;
-`;
+// const Tooltip = styled.div`
+//   position: absolute;
+//   background-color: rgba(0, 0, 0, 0.7);
+//   color: white;
+//   padding: 5px;
+//   border-radius: 5px;
+//   font-size: 12px;
+//   pointer-events: none;
+//   left: ${(props) => props.x}px;
+//   top: ${(props) => props.y}px;
+// `;

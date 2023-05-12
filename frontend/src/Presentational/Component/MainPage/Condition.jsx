@@ -204,7 +204,11 @@ const Big = styled.div`
   position: absolute;
   top: 20px;
   left: 1070px;
+<<<<<<< HEAD
   background: linear-gradient(90deg, #0051C4 0%, #002962 100%);
+=======
+  background: linear-gradient(90deg, #0051c4 0%, #002962 100%);
+>>>>>>> 836e839b77dd233afd6e3a9d7744ba031e9ae648
   border: 1px solid rgba(0, 0, 0, 0.2);
   width: 429px;
   height: 210px;
