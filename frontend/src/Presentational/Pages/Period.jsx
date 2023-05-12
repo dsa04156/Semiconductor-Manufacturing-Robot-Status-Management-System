@@ -125,6 +125,7 @@ const PeriodBox = styled.div`
   position: relative;
   top: 250px;
   left: 600px;
+  width: 30%;
   display: flex;
   align-items: center;
   overflow: visible;

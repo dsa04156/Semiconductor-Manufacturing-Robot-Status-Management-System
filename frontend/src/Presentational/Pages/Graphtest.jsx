@@ -20,16 +20,27 @@ const Graph = ({ lines, xRange, yRange }) => {
 
   useEffect(() => {
     const startTime = performance.now();
-    const margin = { top: 0, right: 0, bottom: 25, left: 25 };
+    const margin = { top: 40, right: 0, bottom: 35, left: 35 };
 
     let dataLength =
       lines.length > 0 && lines[0].data.length > 0 ? lines[0].data.length : 0;
 
     // 데이터 갯수에 따라 svg의 가로 길이를 결정합니다.
-    let width = dataLength > 100 ? dataLength * 6 : 600; // 데이터 갯수당 6px로 계산. 조절 가능.
+    let width = dataLength > 100 ? dataLength * 3 : 600; // 데이터 갯수당 ?px로 계산. 조절 가능.
 
-    width = width - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    lines.forEach((line) => {
+      line.data.forEach((d) => {
+        d.date = new Date(d.date); // You can use d3.timeParse if needed
+      });
+    });
+    let minDate = d3.min(lines, (line) => d3.min(line.data, (d) => d.date));
+    let maxDate = d3.max(lines, (line) => d3.max(line.data, (d) => d.date));
+
+    console.log("minDate : " + minDate);
+    console.log("maxDate : " + maxDate);
+
+    width = width - margin.left - margin.right + 230;
+    const height = 500 - margin.top - margin.bottom;
     widthRef.current = width;
 
     let svg = d3.select(ref.current).select("svg");
@@ -44,13 +55,8 @@ const Graph = ({ lines, xRange, yRange }) => {
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
       const xScale = d3
-        .scaleLinear()
-        .domain([
-          0,
-          lines.length > 0 && lines[0].data.length > 0
-            ? lines[0].data.length - 1
-            : 0,
-        ])
+        .scaleTime()
+        .domain([minDate, maxDate])
         .range([0, width]);
 
       xScaleRef.current = xScale;
@@ -65,10 +71,8 @@ const Graph = ({ lines, xRange, yRange }) => {
         .call(
           d3
             .axisBottom(xScale)
-            .ticks(lines.length > 0 ? lines[0].data.length - 1 : 0)
-            .tickFormat((d) => {
-              return d + 1;
-            })
+
+            .tickFormat(d3.timeFormat("%m-%d")) // 날짜 형식 지정
         );
 
       // y축 그리기
@@ -77,8 +81,8 @@ const Graph = ({ lines, xRange, yRange }) => {
 
     if (lines.length > 0) {
       const xScale = d3
-        .scaleLinear()
-        .domain([0, lines[0].data.length - 1])
+        .scaleTime()
+        .domain([minDate, maxDate])
         .range([0, width]);
 
       xScaleRef.current = xScale;
@@ -87,18 +91,30 @@ const Graph = ({ lines, xRange, yRange }) => {
       // 줌 기능 구현
       const zoom = d3
         .zoom()
-        .scaleExtent([1, 20]) // 축소/확대 범위 설정
+        .scaleExtent([-20, 20]) // 축소/확대 범위 설정
         .translateExtent([
-          [0, 0],
-          [width, height],
+          [-width * 0.8, -height * 0.8],
+          [width * 1.5, height * 1.5],
         ]) // 위치 이동 범위 설정
         .on("zoom", zoomed); // 줌 이벤트 핸들러 등록
       function zoomed({ transform }) {
         graphGroup.attr("transform", transform);
-
+        let ticks = [];
+        lines.forEach((line) => {
+          line.data.forEach((d) => {
+            if (d.date.getHours() === 0 && d.date.getMinutes() === 0) {
+              ticks.push(d.date);
+            }
+          });
+        });
         graphGroup
           .select(".x-axis")
-          .call(d3.axisBottom(transform.rescaleX(xScale)))
+          .call(
+            d3
+              .axisBottom(xScale)
+              .tickValues(ticks) // 사용자 정의 눈금 생성
+              .tickFormat(d3.timeFormat("%m-%d %H:%M")) // 날짜 형식 지정
+          )
           .attr("transform", `translate(0, ${height})`);
 
         graphGroup
@@ -108,33 +124,11 @@ const Graph = ({ lines, xRange, yRange }) => {
       }
 
       svg.call(zoom);
-      // x축 그리기
-      graphGroup
-        .append("g")
-        .attr("class", "x-axis")
-        .attr("transform", `translate(0, ${height})`)
-        .call(
-          d3
-            .axisBottom(xScale)
-            .ticks(getTickNumber(lines)) // 데이터의 양에 따라 눈금의 수를 동적으로 조정
-            .tickFormat((d) => {
-              return d + 1;
-            })
-        );
 
-      // 데이터의 양에 따라 눈금의 수를 동적으로 조정하는 함수
-      function getTickNumber(lines) {
-        let numDataPoints = lines.length > 0 ? lines[0].data.length - 1 : 0;
-        if (numDataPoints >= 30) {
-          return 4;
-        } else {
-          return numDataPoints;
-        }
-      }
       const line = d3
         .line()
         .defined((d) => d.value !== null && d.value !== undefined)
-        .x((d, i) => xScale(i))
+        .x((d) => xScale(d.date))
         .y((d) => yScale(d.value));
 
       graphGroup
@@ -145,26 +139,8 @@ const Graph = ({ lines, xRange, yRange }) => {
         .attr("d", (lineData) => line(lineData.data))
         .attr("fill", "none")
         .attr("stroke", (lineData) => lineData.strokeColor)
-        .attr("stroke-width", 0.7)
-        .on("mouseover", function (event, lineData) {
-          setActiveLines([...activeLines, lineData]);
-          d3.select(this).attr("stroke-width", 0.7).raise();
-          d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 1);
-          updateXAxisTicks(activeLines.length + 1);
-        })
-        .on("mouseout", function (event, lineData) {
-          setActiveLines(
-            activeLines.filter((activeLine) => activeLine !== lineData)
-          );
+        .attr("stroke-width", 0.7);
 
-          if (activeLines.length === 0) {
-            updateXAxisTicks(lines.length > 0 ? lines[0].data.length - 1 : 0);
-          } else {
-            updateXAxisTicks(activeLines.length);
-          }
-          d3.select(this).attr("stroke-width", 0.7);
-          d3.select(this.parentNode).selectAll(".circle-dot").attr("r", 0.7);
-        });
       function updateXAxisTicks(activeLinesCount) {
         const graphGroup = d3.select(ref.current).select("svg").select("g");
         graphGroup.select(".x-axis").call(
@@ -184,9 +160,9 @@ const Graph = ({ lines, xRange, yRange }) => {
         .data((lineData) => lineData.data)
         .join("circle")
         .classed("circle-dot", true)
-        .attr("cx", (d, i) => xScale(i))
+        .attr("cx", (d) => xScale(d.date))
         .attr("cy", (d) => yScale(d.value))
-        .attr("r", 0.7)
+        .attr("r", 2)
         .attr("fill", (d, i, nodes) => {
           const parentData = d3.select(nodes[i].parentNode).datum();
           return parentData.strokeColor;
@@ -196,13 +172,14 @@ const Graph = ({ lines, xRange, yRange }) => {
           d3.select(this.parentNode)
             .select(".line-path")
             .attr("stroke-width", 0.7);
-          d3.select(this).attr("r", 1);
+          d3.select(this).attr("r", 2);
+          const dateFormat = d3.timeFormat("%Y-%m-%d %H:%M");
 
           setTooltip({
             show: true,
             x: event.pageX,
             y: event.pageY,
-            date: "Date : " + d.date,
+            date: "Date : " + dateFormat(d.date),
             value: "Value : " + d.value,
             name: "Name : " + parentData.name,
           });
@@ -218,7 +195,7 @@ const Graph = ({ lines, xRange, yRange }) => {
           d3.select(this.parentNode)
             .select(".line-path")
             .attr("stroke-width", 0.7);
-          d3.select(this).attr("r", 0.7);
+          d3.select(this).attr("r", 2);
         });
     } else {
       // lines가 빈 배열일 때 기존 그래프를 삭제합니다.
@@ -226,8 +203,9 @@ const Graph = ({ lines, xRange, yRange }) => {
       graphGroup.selectAll(".line-path").remove();
       graphGroup.selectAll(".circle-group").remove();
     }
+
     const endTime = performance.now();
-    const elapsedTime = endTime - startTime; // 그래프를 그리는데 걸린 시간 (밀리초)
+    const elapsedTime = endTime - startTime;
 
     console.log(`그래프를 그리는데 ${elapsedTime}밀리초가 소요되었습니다.`);
   }, [lines, xRange, yRange]);
@@ -246,19 +224,17 @@ const Graph = ({ lines, xRange, yRange }) => {
 };
 
 const MemoizedGraph = React.memo(Graph);
+
 const Graphtest = ({
   selectedcompoData,
   selectedMachineName,
   selectedModuleName,
 }) => {
-  // console.log(selectedMachineName);
-  // console.log(selectedModuleName);
-  // console.log(selectedcompoData);
-
   const [lines, setLines] = useState([]);
   const [startDate, setStartDate] = useState(
     new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   );
+
   const [endDate, setEndDate] = useState(new Date());
   const [data, setData] = useState([]);
   const [params, setparams] = useState({ data: [], nameList: [] });
@@ -386,11 +362,12 @@ const Graphtest = ({
       moduleName: selectedModuleName,
       startDate: startDate,
     };
+
     console.time("API Request");
+
     const res2 = await api.post("data/graph", inputdata);
+
     console.timeEnd("API Request");
-    // console.log(res2);
-    // console.log(res2.data);
 
     setParamsFromResponse(res2.data);
     console.log("setparams 콘솔");
@@ -456,21 +433,7 @@ const Box = styled.div`
   display: flex;
   flex-direction: column; // Flexbox의 방향을 column으로 설정
   justify-content: space-between; // 컴포넌트 사이에 공간을 균일하게 배분
-  align-items: center;
-  overflow: hidden;
-`;
-const CompoBox = styled.div`
-  position: absolute;
-  top: 400px;
-  left: 30px;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.7);
-  width: 80%;
-  height: 10%;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.75);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
+
   overflow: hidden;
 `;
 const Tooltip = styled.div`

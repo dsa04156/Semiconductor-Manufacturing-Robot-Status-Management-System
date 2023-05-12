@@ -9,11 +9,6 @@ const Mainpage = () => {
   const [selectedMachineName, setSelectedMachineName] = useState();
   const [selectedModuleName, setSelectedModuleName] = useState();
 
-  //  console.log(moduleChild)
-  // console.log(selectComponentData);
-  // console.log(selectedMachineName);
-  // console.log(selectedModuleName);
-
   return (
     <div>
       <Condition
