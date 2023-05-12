@@ -158,22 +158,18 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
           <Fontrmargin size={24}>Module</Fontrmargin>
         </div>
         <div className="d-flex mt-3 ms-5 me-5 space-between">
-          <Form.Select
+          <CustomSelect
             size="sm"
             defaultValue=""
-            style={{ margin: '0 20px 0 0' }}
             onChange={handleChangeMachine}
           >
-            <option value="" disabled>
-              ---------
-            </option>
+
             {collectionNames &&
               collectionNames.map((data) => <option key={data}>{data}</option>)}
-          </Form.Select>
-          <Form.Select
+          </CustomSelect>
+          <CustomrSelect
             size="sm"
             defaultValue=""
-            style={{ margin: '0 0 0 20px' }}
             onChange={handleChangeModule}
             ref={secondSelect}
           >
@@ -183,7 +179,7 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
             {moduleData.map((data) => (
               <option key={data.name}>{data.name}</option>
             ))}
-          </Form.Select>
+          </CustomrSelect>
         </div>
         <div className="mt-4 d-flex justify-content-center align-items-center">
           <Conbox mstate={status} width={200} fontsize={24} />
@@ -227,4 +223,94 @@ const SelectContainer = styled.div`
   flex: 1; /* 추가 */
   display: flex; /* 추가 */
   justify-content: space-between; /* 추가 */
+`;
+const CustomSelect = styled.select`
+background-color:transparent;
+color: #ffffff;
+border: none;
+padding: 5px;
+position: relative;
+margin-left :20px;
+border-bottom: solid;
+border-bottom-color: #ffffff;
+
+& option {
+  color: black; 
+}
+
+&::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 5px solid #ffffff;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+}
+option::before {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: #ffffff;
+}
+&::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 10px;
+  width: 4px;
+  height: 1px;
+  background-color: transparent;
+}
+`;
+const CustomrSelect = styled.select`
+  background-color:transparent;
+  color: #ffffff;
+  border: none;
+  padding: 5px;
+  position: relative;
+  margin-left :70px;
+  border-bottom: solid;
+  border-bottom-color: #ffffff;
+
+  & option {
+    color: black; 
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 5px solid #ffffff;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+  }
+  option::before {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #ffffff;
+  }
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    width: 4px;
+    height: 1px;
+    background-color: transparent;
+  }
 `;
