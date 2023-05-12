@@ -40,6 +40,6 @@ const Font = styled.div`
   font-family: "Inter";
   font-style: normal;
   font-weight: 400;
-  font-size: 18px;
+  font-size: 15px;
   color: #707070;
 `;

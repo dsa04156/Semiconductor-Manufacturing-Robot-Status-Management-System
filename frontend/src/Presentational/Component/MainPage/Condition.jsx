@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Form from 'react-bootstrap/Form';
@@ -154,7 +155,7 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
       <Big>
         <div className="d-flex mt-3 ms-5 me-5 justify-content-between">
           <Fontst size={24}>CONDITION</Fontst>
-          <Fontrmargin size={24}>MODULE</Fontrmargin>
+          <Fontrmargin size={24}>Module</Fontrmargin>
         </div>
         <div className="d-flex mt-3 ms-5 me-5 space-between">
           <Form.Select
@@ -194,6 +195,7 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
 }
 
 export default Condition;
+
 
 const Big = styled.div`
   position: absolute;
