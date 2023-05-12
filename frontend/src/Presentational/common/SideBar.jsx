@@ -1,4 +1,4 @@
-import React,{memo} from "react";
+import React, { memo } from "react";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import styled from "styled-components";
@@ -62,19 +62,6 @@ const SideBar = () => {
           </Menu>
         </NavLink>
       )}
-
-      <NavLink
-        to="/Graphtest"
-        onClick={() => handleNavClick(3)}
-        className={num === 3 ? "back_type" : "nav_item"}
-      >
-        <Menu>
-          <div>
-            <Icon icon="mdi:human-female" width="35" />
-          </div>
-          <Font2> Graphtest</Font2>
-        </Menu>
-      </NavLink>
 
       <NavLink to="/">
         <Logout onClick={() => dispatch(authActions.logOut())}>

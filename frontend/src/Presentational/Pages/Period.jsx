@@ -37,8 +37,6 @@ const Period = ({
   };
   return (
     <PeriodBox>
-      PUMP6
-      <br></br>
       {" PERIOD "}
       <CalendarIcon
         src="image/Calendar-icon.png"

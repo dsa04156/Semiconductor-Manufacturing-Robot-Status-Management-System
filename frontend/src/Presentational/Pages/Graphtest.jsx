@@ -25,7 +25,7 @@ const Graph = ({ lines, xRange, yRange }) => {
     let dataLength =
       lines.length > 0 && lines[0].data.length > 0 ? lines[0].data.length : 0;
 
-    // 데이터 갯수에 따라 svg의 가로 길이를 결정합니다.
+    // 데이터 갯수에 따라 svg의 가로 길이를 결정
     let width = dataLength > 100 ? dataLength * 3 : 600; // 데이터 갯수당 ?px로 계산. 조절 가능.
 
     lines.forEach((line) => {
@@ -35,9 +35,6 @@ const Graph = ({ lines, xRange, yRange }) => {
     });
     let minDate = d3.min(lines, (line) => d3.min(line.data, (d) => d.date));
     let maxDate = d3.max(lines, (line) => d3.max(line.data, (d) => d.date));
-
-    console.log("minDate : " + minDate);
-    console.log("maxDate : " + maxDate);
 
     width = width - margin.left - margin.right + 230;
     const height = 500 - margin.top - margin.bottom;
@@ -87,6 +84,7 @@ const Graph = ({ lines, xRange, yRange }) => {
 
       xScaleRef.current = xScale;
       const yScale = d3.scaleLinear().domain([0, yRange]).range([height, 0]);
+
       const graphGroup = svg.select("g");
       // 줌 기능 구현
       const zoom = d3
@@ -98,11 +96,42 @@ const Graph = ({ lines, xRange, yRange }) => {
         ]) // 위치 이동 범위 설정
         .on("zoom", zoomed); // 줌 이벤트 핸들러 등록
       function zoomed({ transform }) {
+        // x축 격자 무늬 그리기
+        graphGroup
+          .append("g")
+          .attr("class", "x-grid")
+          .attr("transform", `translate(0, ${height})`)
+          .call(
+            d3
+              .axisBottom(xScale)
+              .tickSize(-height) // 음수 값으로 설정하여 눈금의 길이만큼 선 그리기
+              .tickFormat("") // 눈금에 표시할 텍스트 지우기
+              .attr("stroke-width", 0.1)
+          )
+          .select(".domain")
+          .remove();
+
+        // y축 격자 무늬 그리기
+        graphGroup
+          .append("g")
+          .attr("class", "y-grid")
+          .call(
+            d3
+              .axisLeft(yScale)
+              .attr("stroke-width", 0.1)
+              .tickSize(-width) // 음수 값으로 설정하여 눈금의 길이만큼 선 그리기
+              .tickFormat("") // 눈금에 표시할 텍스트 지우기
+          )
+          .select(".domain")
+          .remove();
+
         graphGroup.attr("transform", transform);
         let ticks = [];
         lines.forEach((line) => {
           line.data.forEach((d) => {
             if (d.date.getHours() === 0 && d.date.getMinutes() === 0) {
+              ticks.push(d.date);
+            } else if (d.date.getHours() === 12 && d.date.getMinutes() === 0) {
               ticks.push(d.date);
             }
           });
@@ -140,16 +169,6 @@ const Graph = ({ lines, xRange, yRange }) => {
         .attr("fill", "none")
         .attr("stroke", (lineData) => lineData.strokeColor)
         .attr("stroke-width", 0.7);
-
-      function updateXAxisTicks(activeLinesCount) {
-        const graphGroup = d3.select(ref.current).select("svg").select("g");
-        graphGroup.select(".x-axis").call(
-          d3
-            .axisBottom(xScaleRef.current)
-            .ticks(activeLinesCount > 0 ? activeLinesCount - 1 : 0)
-            .tickFormat(activeLinesCount > 0 ? (d) => d + 1 : null)
-        );
-      }
 
       graphGroup
         .selectAll(".circle-group")
@@ -251,8 +270,6 @@ const Graphtest = ({
     const nameList = responseData.map((item) => item.name);
 
     setparams({ data, nameList });
-    console.log("얏호");
-    console.log(nameList);
   };
 
   const [selectedParam, setSelectedParam] = useState("");
@@ -371,7 +388,7 @@ const Graphtest = ({
 
     setParamsFromResponse(res2.data);
     console.log("setparams 콘솔");
-    console.log(res2);
+
     console.log(res2.data);
   };
 
@@ -427,7 +444,7 @@ const Box = styled.div`
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.7);
   width: 58%;
-  height: 62%;
+  height: 470px
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.75);
   border-radius: 20px;
   display: flex;
