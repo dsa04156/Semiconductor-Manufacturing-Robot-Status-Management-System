@@ -1,11 +1,14 @@
+import React, { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import Form from "react-bootstrap/Form";
+import Conbox from "../Condition/Conbox";
+import api from "../../../redux/api";
 
-import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import Form from 'react-bootstrap/Form';
-import Conbox from '../Condition/Conbox';
-import api from '../../../redux/api';
-
-const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleName }) => {
+const Condition = ({
+  setModuleChild,
+  setSelectedMachineName,
+  setSelectedModuleName,
+}) => {
   const [machineData, setMachineData] = useState({});
   const [moduleData, setModuleData] = useState([]);
   const [componentData, setComponentData] = useState([]);
@@ -102,8 +105,8 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
     const selectMachineName = event.target.value;
     // console.log(secondSelect.current.value)
     setCurrentMachineName(selectMachineName);
-    setModuleChild([]);     // 장비 드롭다운에서 다른 장비 선택 시 컴포넌트 리스트 출력 되는 것 초기화.
-    secondSelect.current.value = ""  // 장비 드롭다운에서 다른 장비 선택 시 모듈 드롭다운 초기화
+    setModuleChild([]); // 장비 드롭다운에서 다른 장비 선택 시 컴포넌트 리스트 출력 되는 것 초기화.
+    secondSelect.current.value = ""; // 장비 드롭다운에서 다른 장비 선택 시 모듈 드롭다운 초기화
     setSelectedMachineName(selectMachineName);
 
     api

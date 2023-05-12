@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import EvalStatus from './EvalStatus';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import EvalStatus from "./EvalStatus";
 
 function CreateTable({ setTest, data, test, child }) {
   const [selected, setSelected] = useState(test);
@@ -13,53 +13,55 @@ function CreateTable({ setTest, data, test, child }) {
   const idxHandler = (idx) => {
     setSelected(idx);
     setTest(idx);
-  }
+  };
 
   const idxClickHandler = () => {
     setSelectedComponentData(child[selected]);
-  }
+  };
 
   const dataTable = data?.map((elem, idx) => {
-    if (elem.value < 0){
+    if (elem.value < 0) {
       elem.eval = "unacceptable";
-    }
-    else if (elem.value < 0.03){
+    } else if (elem.value < 0.03) {
       elem.eval = "unsatisfactory";
-    }
-    else if (elem.value < 0.3){
+    } else if (elem.value < 0.3) {
       elem.eval = "satisfactory";
-    }
-    else {
+    } else {
       elem.eval = "Good";
     }
-    
+
     return (
-      <tr className='tableBody' key={idx}>
-        <td style={{ width: '30px' }}><input type="radio" checked={idx === selected} onChange={() => idxHandler(idx)} onClick={idxClickHandler}/></td>
+      <tr className="tableBody" key={idx}>
+        <td style={{ width: "30px" }}>
+          <input
+            type="radio"
+            checked={idx === selected}
+            onChange={() => idxHandler(idx)}
+            onClick={idxClickHandler}
+          />
+        </td>
         <td>{elem.name}</td>
         <td>
-          <EvalStatus evalValue={elem.eval}/>
+          <EvalStatus evalValue={elem.eval} />
         </td>
         <td>{elem.value}</td>
       </tr>
     );
   });
-  
+
   // Render the UI for your table
   return (
     <Styles>
       <table className="table">
         <thead>
-          <tr className='tableHeader'>
-            <td style={{ width: '30px' }}></td>
+          <tr className="tableHeader">
+            <td style={{ width: "30px" }}></td>
             <td>Component</td>
             <td>Status</td>
             <td>AssetScore</td>
           </tr>
         </thead>
-        <tbody>
-          {dataTable}
-        </tbody>
+        <tbody>{dataTable}</tbody>
       </table>
     </Styles>
   );
@@ -93,7 +95,7 @@ const Styles = styled.div`
         background-color: #ddd;
       }
 
-      input[type='radio']:checked {
+      input[type="radio"]:checked {
         background-color: #2196f3;
         color: white;
       }

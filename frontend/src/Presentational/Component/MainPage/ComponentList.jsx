@@ -5,8 +5,6 @@ import HealthStatus from "./HealthStatus";
 
 const ComponentList = ({ child, setSelectComponentData }) => {
   const [test, setTest] = useState(); //component list idx 값 저장
-  // console.log(test);
-  // console.log(child);
   setSelectComponentData(child[test]);
 
   return (

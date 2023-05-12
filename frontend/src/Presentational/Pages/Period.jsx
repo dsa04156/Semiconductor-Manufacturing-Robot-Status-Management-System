@@ -126,6 +126,10 @@ export default Period;
 
 const PeriodBox = styled.div`
   position: relative;
+  top: 250px;
+  left: 600px;
+  width: 30%;
+  display: flex;
   align-items: center;
   z-index: 4;
   font-size: 12px;

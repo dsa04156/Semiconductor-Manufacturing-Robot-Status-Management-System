@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { Icon } from "@iconify/react";
 
 const HealthStatus = ({ componentData }) => {
-
   const compodata = componentData.map((data) => {
     return {
       name: data.name,
@@ -50,7 +49,12 @@ const HealthStatus = ({ componentData }) => {
   const good_lables = ["Good", "others"];
   const good_colors = ["#A5FF32", "#D9ECC8"];
 
-  const datas = [unaccep_compodata, unsat_compodata, sat_compodata, good_compodata];
+  const datas = [
+    unaccep_compodata,
+    unsat_compodata,
+    sat_compodata,
+    good_compodata,
+  ];
 
   const labels = ["unacceptable", "unsatisfactory", "satisfactory", "Good"];
   const colors = ["#ff3e53", "#ffb733", "#2bbfba", "#14b856"];
@@ -110,7 +114,6 @@ const HealthStatus = ({ componentData }) => {
       labels: unaccep_lables,
     },
   };
-
 
   const unsatdonutData = {
     series: unsat_data,
@@ -190,8 +193,9 @@ const HealthStatus = ({ componentData }) => {
   return (
     <div>
       <Big>
-        <Line></Line>
-        <Head>Health Status</Head>
+        <div style={{ margin: "15px 0px 0 40px", fontSize: "20px" }}>
+          Health Status
+        </div>
         <HealthStatusTitle>
           <TLabel>Total</TLabel>
           {totalcount <10 ? <TValue size={98}>{totalcount}</TValue>: <TValue size={85}>{totalcount}</TValue>}
