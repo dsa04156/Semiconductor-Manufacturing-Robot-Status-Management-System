@@ -16,6 +16,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.GZIPOutputStream;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -55,13 +66,30 @@ public class MachineController {
 
     // component 이름으로 graph 찾기
     @PostMapping("/graph")
-    public ResponseEntity<?> findGraphData(@RequestBody GraphInputDto graphInputDto){
-        System.out.println(graphInputDto.toString());
+    public ResponseEntity<?> findGraphData(@RequestBody GraphInputDto graphInputDto) throws IOException{
         StopWatch sw = new StopWatch();
         sw.start();
         List<ResultDataDto> resultDataDto = machineService.findGraphData(graphInputDto);
         sw.stop();
+
+        ObjectMapper mapper = new ObjectMapper();
+        byte[] data = null;
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                GZIPOutputStream gzos = new GZIPOutputStream(baos)) {
+            mapper.writeValue(gzos, resultDataDto);
+            gzos.finish();
+            data = baos.toByteArray();
+        }
+     
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setCacheControl("max-age=86400, must-revalidate, proxy-revalidate");
+        headers.setPragma("no-cache");
+        headers.setExpires(0);
+        headers.set("Content-Encoding", "gzip");
+        System.out.println(data + " " +headers);
         System.out.println(sw.getTotalTimeSeconds());
-        return ResponseEntity.ok().body(resultDataDto);
+        return new ResponseEntity<>(data,headers, HttpStatus.OK);
+//        return ResponseEntity.ok().body(resultDataDto);
     }
 }
