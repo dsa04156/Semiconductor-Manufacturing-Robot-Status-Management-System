@@ -88,7 +88,7 @@ public class MachineController {
         headers.setExpires(0);
         headers.set("Content-Encoding", "gzip");
         System.out.println(data + " " +headers);
-        System.out.println(sw.getTotalTimeSeconds());
+        System.out.println("그래프 데이터"+sw.getTotalTimeSeconds());
         return new ResponseEntity<>(data,headers, HttpStatus.OK);
 //        return ResponseEntity.ok().body(resultDataDto);
     }
