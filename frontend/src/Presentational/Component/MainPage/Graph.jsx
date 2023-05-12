@@ -109,6 +109,12 @@ const Graph = (selectedcompoData, selectedMachineName, selectedModuleName) => {
     const t0 = performance.now();
     setOptions(prev => ({
       ...prev,
+      xAxis: {
+        type: 'time',
+        min: startDate.getTime(),
+        max: endDate.getTime(),
+        show: true,
+      },
       legend:{
         data: nameArr,
         selectedMode:true
