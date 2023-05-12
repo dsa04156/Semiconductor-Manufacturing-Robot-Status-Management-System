@@ -37,7 +37,7 @@ const Graph = ({ lines, xRange, yRange }) => {
     let maxDate = d3.max(lines, (line) => d3.max(line.data, (d) => d.date));
 
     width = width - margin.left - margin.right + 230;
-    const height = 500 - margin.top - margin.bottom;
+    const height = 400 - margin.top - margin.bottom;
     widthRef.current = width;
 
     let svg = d3.select(ref.current).select("svg");
@@ -96,35 +96,6 @@ const Graph = ({ lines, xRange, yRange }) => {
         ]) // 위치 이동 범위 설정
         .on("zoom", zoomed); // 줌 이벤트 핸들러 등록
       function zoomed({ transform }) {
-        // x축 격자 무늬 그리기
-        graphGroup
-          .append("g")
-          .attr("class", "x-grid")
-          .attr("transform", `translate(0, ${height})`)
-          .call(
-            d3
-              .axisBottom(xScale)
-              .tickSize(-height) // 음수 값으로 설정하여 눈금의 길이만큼 선 그리기
-              .tickFormat("") // 눈금에 표시할 텍스트 지우기
-              .attr("stroke-width", 0.1)
-          )
-          .select(".domain")
-          .remove();
-
-        // y축 격자 무늬 그리기
-        graphGroup
-          .append("g")
-          .attr("class", "y-grid")
-          .call(
-            d3
-              .axisLeft(yScale)
-              .attr("stroke-width", 0.1)
-              .tickSize(-width) // 음수 값으로 설정하여 눈금의 길이만큼 선 그리기
-              .tickFormat("") // 눈금에 표시할 텍스트 지우기
-          )
-          .select(".domain")
-          .remove();
-
         graphGroup.attr("transform", transform);
         let ticks = [];
         lines.forEach((line) => {
@@ -132,6 +103,10 @@ const Graph = ({ lines, xRange, yRange }) => {
             if (d.date.getHours() === 0 && d.date.getMinutes() === 0) {
               ticks.push(d.date);
             } else if (d.date.getHours() === 12 && d.date.getMinutes() === 0) {
+              ticks.push(d.date);
+            } else if (d.date.getHours() === 6 && d.date.getMinutes() === 0) {
+              ticks.push(d.date);
+            } else if (d.date.getHours() === 18 && d.date.getMinutes() === 0) {
               ticks.push(d.date);
             }
           });
@@ -145,11 +120,6 @@ const Graph = ({ lines, xRange, yRange }) => {
               .tickFormat(d3.timeFormat("%m-%d %H:%M")) // 날짜 형식 지정
           )
           .attr("transform", `translate(0, ${height})`);
-
-        graphGroup
-          .select(".y-axis")
-          .call(d3.axisLeft(transform.rescaleY(yScale)))
-          .attr("transform", `translate(0, 0)`);
       }
 
       svg.call(zoom);
@@ -413,13 +383,13 @@ const Graphtest = ({
 
   return (
     <div>
-      <Period
-        startDate={startDate}
-        endDate={endDate}
-        onChangeStartDate={setStartDate}
-        onChangeEndDate={setEndDate}
-      />
       <Box>
+        <Period
+          startDate={startDate}
+          endDate={endDate}
+          onChangeStartDate={setStartDate}
+          onChangeEndDate={setEndDate}
+        />
         <MemoizedGraph //성능 개선을 위한 React.Memo 사용
           lines={lines}
           xRange={xRange}
@@ -442,10 +412,10 @@ const Box = styled.div`
   top: 260px;
   left: 600px;
   background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   width: 58%;
-  height: 470px
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.75);
+  height: 62%
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   display: flex;
   flex-direction: column; // Flexbox의 방향을 column으로 설정
