@@ -51,7 +51,7 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
             const modulelist = []; // 모듈인 애들 담아 놓는 리스트.
             for (const a of response.data) {
               //    console.log(a);
-              if (a.name === "root") {
+              if (a.name === currentMachineName) {
                 setMachineData(a);
                 const value = a.value;
                 if (value < 0) {
@@ -113,7 +113,7 @@ const Condition = ({ setModuleChild, setSelectedMachineName, setSelectedModuleNa
         const modulelist = []; // 모듈인 애들 담아 놓는 리스트.
         for (const a of response.data) {
           //    console.log(a);
-          if (a.name === "root") {
+          if (a.name === selectMachineName) {
             setMachineData(a);
             const value = a.value;
             if (value < 0) {

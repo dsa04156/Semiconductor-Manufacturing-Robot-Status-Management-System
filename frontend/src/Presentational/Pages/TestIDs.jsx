@@ -43,7 +43,7 @@ const TestIDs = () => {
         phoneNumber: phoneNumber,
       });
 
-      console.log(res);
+      // console.log(res);
       alert(`당신의 아이디는 ${res.data}입니다.`);
     } catch (error) {
       console.error(error);
