@@ -29,13 +29,13 @@ const Condition = ({
     );
 
     eventSource.onmessage = (e) => {
-      console.log(e);
+      //  console.log(e);
     };
 
     eventSource.addEventListener("connect", (event) => {
       const { data: received } = event;
-      console.log("connect", received);
-      console.log(event.data);
+      //  console.log("connect", received);
+      //  console.log(event.data);
     });
 
     eventSource.addEventListener("machine", (event) => {
@@ -83,11 +83,11 @@ const Condition = ({
                 setModuleChild(response.data);
               })
               .catch((err) => {
-                console.log(err);
+                // console.log(err);
               });
           })
           .catch((error) => {
-            console.log(error);
+            //  console.log(error);
           });
       }
     });

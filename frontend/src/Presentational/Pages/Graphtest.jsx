@@ -26,13 +26,14 @@ const Graph = ({ lines, xRange, yRange }) => {
       lines.length > 0 && lines[0].data.length > 0 ? lines[0].data.length : 0;
 
     // 데이터 갯수에 따라 svg의 가로 길이를 결정
-    let width = dataLength > 100 ? dataLength * 3 : 600; // 데이터 갯수당 ?px로 계산. 조절 가능.
+    let width = 600; // 데이터 갯수당 ?px로 계산. 조절 가능.
 
     lines.forEach((line) => {
       line.data.forEach((d) => {
         d.date = new Date(d.date); // You can use d3.timeParse if needed
       });
     });
+
     let minDate = d3.min(lines, (line) => d3.min(line.data, (d) => d.date));
     let maxDate = d3.max(lines, (line) => d3.max(line.data, (d) => d.date));
 
@@ -89,37 +90,36 @@ const Graph = ({ lines, xRange, yRange }) => {
       // 줌 기능 구현
       const zoom = d3
         .zoom()
-        .scaleExtent([-20, 20]) // 축소/확대 범위 설정
+        .scaleExtent([1, 20000]) // 축소/확대 범위 설정
         .translateExtent([
           [-width * 0.8, -height * 0.8],
           [width * 1.5, height * 1.5],
         ]) // 위치 이동 범위 설정
         .on("zoom", zoomed); // 줌 이벤트 핸들러 등록
       function zoomed({ transform }) {
-        graphGroup.attr("transform", transform);
-        let ticks = [];
-        lines.forEach((line) => {
-          line.data.forEach((d) => {
-            if (d.date.getHours() === 0 && d.date.getMinutes() === 0) {
-              ticks.push(d.date);
-            } else if (d.date.getHours() === 12 && d.date.getMinutes() === 0) {
-              ticks.push(d.date);
-            } else if (d.date.getHours() === 6 && d.date.getMinutes() === 0) {
-              ticks.push(d.date);
-            } else if (d.date.getHours() === 18 && d.date.getMinutes() === 0) {
-              ticks.push(d.date);
-            }
-          });
-        });
+        const newXScale = transform.rescaleX(xScale);
+        xScaleRef.current = newXScale;
+
+        const line = d3
+          .line()
+          .defined((d) => d.value !== null && d.value !== undefined)
+          .x((d) => newXScale(d.date))
+          .y((d) => yScale(d.value));
+
         graphGroup
           .select(".x-axis")
           .call(
-            d3
-              .axisBottom(xScale)
-              .tickValues(ticks) // 사용자 정의 눈금 생성
-              .tickFormat(d3.timeFormat("%m-%d %H:%M")) // 날짜 형식 지정
+            d3.axisBottom(newXScale).tickFormat(d3.timeFormat("%m-%d %H:%M"))
           )
           .attr("transform", `translate(0, ${height})`);
+
+        graphGroup
+          .selectAll(".line-path")
+          .attr("d", (lineData) => line(lineData.data));
+
+        graphGroup
+          .selectAll(".circle-dot")
+          .attr("cx", (d) => newXScale(d.date));
       }
 
       svg.call(zoom);
@@ -350,11 +350,11 @@ const Graphtest = ({
       startDate: startDate,
     };
 
-    console.time("API Request");
+    console.time("데이터 가져오는데 걸리는 시간");
 
     const res2 = await api.post("data/graph", inputdata);
 
-    console.timeEnd("API Request");
+    console.timeEnd("데이터 가져오는데 걸리는 시간");
 
     setParamsFromResponse(res2.data);
     console.log("setparams 콘솔");
