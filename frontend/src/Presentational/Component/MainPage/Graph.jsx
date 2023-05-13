@@ -292,12 +292,11 @@ const Graph = ({
             position: "relative",
           }}
         >
-          <ECharts
+          <EChartsWrapper
             ref={chartRef}
             option={options}
             opts={{ width: "auto", height: "auto" }}
           />
-
           {isLoading && (
             <div
               style={{
@@ -312,7 +311,7 @@ const Graph = ({
                 background: "rgba(255, 255, 255, 0.5)",
               }}
             >
-              <Oval color="#00BFFF" height={100} width={100} timeout={3000} />
+              <Oval color="#00BFFF" height={100} width={100} timeout={5000} />
             </div>
           )}
         </div>
@@ -322,7 +321,11 @@ const Graph = ({
 };
 
 export default Graph;
-
+const EChartsWrapper = styled(ECharts)`
+  width: 100%; /* 가로 크기 조정 */
+  height: 200%; /* 세로 크기 조정 */
+  margin-top: 50px; /* 위쪽 여백 조정 */
+`;
 const SIconContainer = styled.div`
   width: 20px;
   color: blue;
@@ -342,11 +345,11 @@ const Box = styled.div`
   overflow: hidden;
 `;
 const Font = styled.div`
-  margin: 10px 0px 10px 20px;
+  margin: 5px 0px 0px 20px;
   font-family: "Inter";
   font-style: normal;
-  font-weight: 400;
-  font-size: 15px;
+  font-weight: bold;
+  font-size: 17px;
   color: #707070;
 `;
 const Line = styled.div`
@@ -354,7 +357,7 @@ const Line = styled.div`
   width: 810px;
   height: 0px;
   left: 25px;
-  top: 45px;
+  top: 30px;
   border: 1px solid #eff1f5;
 `;
 
@@ -374,7 +377,7 @@ const PeriodBox = styled.div`
   font-size: 12px;
 `;
 const AlignPeriod = styled.div`
-  margin-top: 40px;
+  margin-top: 15px;
   display: flex;
   width: 450px;
 `;

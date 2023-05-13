@@ -84,7 +84,7 @@ const Condition = ({
     });
 
     eventSource.addEventListener("error", (error) => {
-      console.log("SSE Error: ", error);
+      // console.log("SSE Error: ", error);
     });
 
     return () => {

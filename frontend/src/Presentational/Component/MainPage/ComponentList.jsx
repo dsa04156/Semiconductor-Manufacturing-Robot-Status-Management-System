@@ -38,6 +38,6 @@ const Font = styled.div`
   font-family: "Inter";
   font-style: normal;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 16px;
   color: #707070;
 `;

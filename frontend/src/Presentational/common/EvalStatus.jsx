@@ -6,28 +6,33 @@ const EvalStatus = ({ evalValue }) => {
   let color;
   let background;
   let icon;
+  let width;
 
   switch (evalValue) {
-    case "unacceptable":
+    case "UNACCEPTABLE":
       color = "white";
       background = "red";
       icon = "icon-park-solid:bad-two";
+      width = "115px";
       break;
-    case "unsatisfactory":
+    case "UNSATISFACTORY":
       color = "white";
-      background = "yellow";
+      background = "#D9B310";
       icon =
         "streamline:mail-smiley-sad-face-chat-message-smiley-emoji-sad-face-unsatisfied";
+      width = "125px";
       break;
-    case "satisfactory":
+    case "SATISFACTORY":
       color = "white";
       background = "blue";
       icon = "teenyicons:mood-smile-solid";
+      width = "110px";
       break;
-    case "Good":
+    case "GOOD":
       color = "white";
       background = "green";
       icon = "icon-park-solid:good-two";
+      width = "60px";
       break;
     default:
       break;
@@ -38,8 +43,9 @@ const EvalStatus = ({ evalValue }) => {
     background: ${background};
     text-align: center;
     display: inline-block;
-    width: 100px;
+    width: ${width};
     border-radius: 20px;
+    font-weight: bold;
   `;
 
   return (
