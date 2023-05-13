@@ -67,7 +67,7 @@ const Graph = (selectedcompoData, selectedMachineName, selectedModuleName) => {
     // y축 boundarygap은 아마 위아래 조금씩 더 그래프 만드는 거인듯?
     yAxis: {
       type: 'value',
-      boundaryGap: ["1%", "1%"],
+      boundaryGap: ["0%", "1%"],
       show: true
     },
     // zoom 하는 거 start: 0 으로 둬서 시작에는 전체 데이터 보여줌
@@ -106,6 +106,8 @@ const Graph = (selectedcompoData, selectedMachineName, selectedModuleName) => {
 
 
   const prevdata = (resultArr, nameArr) => {
+    console.log(nameArr);
+    console.log(resultArr)
     const t0 = performance.now();
     setOptions(prev => ({
       ...prev,
@@ -130,7 +132,7 @@ const Graph = (selectedcompoData, selectedMachineName, selectedModuleName) => {
 
 const onGraphHandler = () => {
   const time1 = performance.now();
-    axios.post('http://3.36.125.122:8082/data/graph',
+    axios.post('http://3.36.125.122:8082/data/parameter',
     {
       "componentName": "root-006-000",
       "endDate": endDate,
@@ -138,40 +140,101 @@ const onGraphHandler = () => {
       "moduleName": "root-006",
       "startDate": startDate
     }
-    ).then((res) => {
-      console.log(res)
-
-      let nameArr = [];
-      let resultArr = [];
-
+    ).then((res1) => {
+      //------------------------ 두번째 방법
       const t0 = performance.now();
       const minus = time1 - t0;
-      console.log("api문",minus);
+      console.log("name api문",minus);
+      console.log(res1.data)
+      let nameArr = []
+      for (let i = 0; i < res1.data.length; i++){
+        nameArr.push(res1.data[i].name);
+      }
 
-      for (let j = 0; j < res.data.length; j++){
-          let dataArr = [];
-          nameArr.push(res.data[j].name)
-        for (let i = 0; i<res.data[j].data.length; i++){
-          dataArr.push([new Date(res.data[j].data[i].date).toISOString(),res.data[j].data[i].value])
+      let machineName = "machine_B"
+      let moduleName = "root-006";
+      let componentName = "root-006-000";
+      nameArr.push(componentName);
+      console.log(nameArr);
+      let resultArr = [];
+
+      const t1 = performance.now();
+
+      Promise.all(nameArr.map(async (name) => {
+        let parent = componentName;
+        if(name == componentName){
+          parent = moduleName;
         }
-        resultArr.push({        
-          name: res.data[j].name,
+        const res2 = await axios.post("http://3.36.125.122:8082/data/pgraph", {
+          "endDate": endDate,
+          "startDate": startDate,
+          "machineName": machineName,
+          "componentName": parent,
+          "parameterName": name
+        });
+        let dataArr = [];
+        const perfor1 = performance.now();
+        for (let j = 0; j < res2.data.length; j++) {
+          dataArr.push([new Date(res2.data[j].date).toISOString(), res2.data[j].value]);
+        }
+        const perfor2 = performance.now();
+        console.log("for문 시간 : ", perfor2 - perfor1)
+        return {
+          name: name,
           type: 'line',
           symbol: 'none',
           sampling: 'average',
           colorBy: "series",
           large: true,
           data: dataArr
-        });
-      }
-      const t1 = performance.now();
-      const elapsed = t1 - t0;
-      console.log("for문",elapsed);
-      console.log("result: ", resultArr)
-      console.log("name: ", nameArr)
-      prevdata(resultArr,nameArr);
+        };
+      })).then((result) => {
+        console.log(result)
+        resultArr.push(result)
+        const prev1 = performance.now();
+        prevdata(resultArr[0], nameArr)
+        const prev2 = performance.now();
+        console.log("그래프시간 시간 : ", prev2 - prev1)
+      })
+      
+      const t2 = performance.now();
+      console.log("Promise 문 ", t2-t1);
     })
-}
+  }
+
+
+// ------------------------첫번째 방법
+//       let nameArr = [];
+//       let resultArr = [];
+
+//       const t0 = performance.now();
+//       const minus = time1 - t0;
+//       console.log("api문",minus);
+
+//       for (let j = 0; j < res1.data.length; j++){
+//           let dataArr = [];
+//           nameArr.push(res1.data[j].name)
+//         for (let i = 0; i<res1.data[j].data.length; i++){
+//           dataArr.push([new Date(res1.data[j].data[i].date).toISOString(),res1.data[j].data[i].value])
+//         }
+//         resultArr.push({        
+//           name: res1.data[j].name,
+//           type: 'line',
+//           symbol: 'none',
+//           sampling: 'average',
+//           colorBy: "series",
+//           large: true,
+//           data: dataArr
+//         });
+//       }
+//       const t1 = performance.now();
+//       const elapsed = t1 - t0;
+//       console.log("for문",elapsed);
+//       console.log("result: ", resultArr)
+//       console.log("name: ", nameArr)
+//       prevdata(resultArr,nameArr);
+//   })
+// }
 
 
 //------------------------------------박해준 그래프-----------------------------------------------------
