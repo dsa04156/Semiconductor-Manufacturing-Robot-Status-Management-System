@@ -2,25 +2,22 @@ package com.ssafy.wonik.repository;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.ssafy.wonik.domain.dto.*;
 import com.ssafy.wonik.domain.entity.Machine;
-import net.bytebuddy.asm.Advice;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Array;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
@@ -28,7 +25,11 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 public class MachineRepository {
     @Autowired
     private MongoTemplate mongoTemplate;
+    private final MongoDatabase mongoDatabase;
 
+    public MachineRepository(MongoDatabase mongoDatabase) {
+        this.mongoDatabase = mongoDatabase;
+    }
     public List<MachineToModuleDto> findRecentModuleData(String machineName) {
         MongoCollection<Document> collection = mongoTemplate.getCollection(machineName);
 
@@ -108,6 +109,33 @@ public class MachineRepository {
 
         return result.getMappedResults();
     }
+
+	public List<Document> findGraphData2(GraphInputDto graphInputDto) {
+	    Aggregation aggregation = Aggregation.newAggregation(
+	            Aggregation.sort(Sort.by(Sort.Direction.DESC, "date")),
+	            Aggregation.match(Criteria.where("date").gte(graphInputDto.getStartDate()).lt(graphInputDto.getEndDate())
+	                        .and("parent").is(graphInputDto.getComponentName())
+	                        .and("name").is(graphInputDto.getParameterName())),
+	            Aggregation.project("_id", "parent","name").andExclude("_id", "parent","name")
+	    );
+//	    AggregateIterable<Document> result = collection.aggregate(Arrays.asList(new Document("$sort", 
+//	    	    new Document("date", -1L)), 
+//	    	    new Document("$match", 
+//	    	    new Document("$and", Arrays.asList(new Document("date", 
+//	    	                new Document("$gte", 
+//	    	                new java.util.Date(1641033117942L))
+//	    	                        .append("$lt", 
+//	    	                new java.util.Date(1672482717942L))), 
+//	    	                new Document("parent", "root-006-000"), 
+//	    	                new Document("name", "pump_pressure_022")))), 
+//	    	    new Document("$project", 
+//	    	    new Document("_id", 0L)
+//	    	            .append("parent", 0L))));
+	    AggregationResults<Document> rawResult =
+	            mongoTemplate.aggregate(aggregation, "machine_A", Document.class);
+	    return rawResult.getMappedResults();
+        
+	}
 
 
 

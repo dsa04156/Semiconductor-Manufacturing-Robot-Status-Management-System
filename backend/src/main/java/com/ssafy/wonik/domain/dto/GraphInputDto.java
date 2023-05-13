@@ -15,6 +15,7 @@ public class GraphInputDto {
     private String machineName;
     private String moduleName;
     private String ComponentName;
+    private String parameterName;
 //    private LocalDateTime startDate;
 //    private LocalDateTime endDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate;

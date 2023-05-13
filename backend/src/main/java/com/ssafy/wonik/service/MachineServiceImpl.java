@@ -4,6 +4,8 @@ import com.ssafy.wonik.domain.dto.*;
 import com.ssafy.wonik.domain.entity.Machine;
 import com.ssafy.wonik.repository.MachineRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.bson.Document;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,4 +34,9 @@ public class MachineServiceImpl implements MachineService{
     public List<MachineToModuleDto> findRecentComponentData(ModuleToComponentInputDto moduleToComponentInputDto) {
         return machineRepository.findRecentComponentData(moduleToComponentInputDto);
     }
+
+	@Override
+	public List<Document> findGraphData2(GraphInputDto graphInputDto) {
+		return machineRepository.findGraphData2(graphInputDto);
+	}
 }

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bson.Document;
+
 public interface MachineService {
 
     List<MachineToModuleDto> findRecentModuleData(String machineName);
@@ -14,4 +16,6 @@ public interface MachineService {
     List<ResultDataDto> findGraphData(GraphInputDto graphInputDto);
 
     List<MachineToModuleDto> findRecentComponentData(ModuleToComponentInputDto moduleToComponentInputDto);
+
+	List<Document> findGraphData2(GraphInputDto graphInputDto);
 }
