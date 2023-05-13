@@ -138,8 +138,7 @@ const Graph = ({
 
     if (
       !selectedcompoData ||
-      !selectedcompoData.selectedcompoData ||
-      !selectedcompoData.selectedcompoData.name
+      !selectedcompoData.name
     ) {
       alert('값을 선택해주세요');
       return;
@@ -147,10 +146,10 @@ const Graph = ({
       const time1 = performance.now();
       axios
         .post('http://3.36.125.122:8082/data/graph', {
-          componentName: selectedcompoData.selectedcompoData.name,
+          componentName: selectedcompoData.name,
           endDate: endDate,
-          machineName: selectedcompoData.selectedMachineName,
-          moduleName: selectedcompoData.selectedModuleName,
+          machineName: selectedMachineName,
+          moduleName: selectedModuleName,
           startDate: startDate,
         })
         .then((res) => {
@@ -212,50 +211,50 @@ const Graph = ({
     setRealGraphBtnState(realGraphBtn); // 버튼 true false를 Main(부모)로 올려줌
   };
 
-  useEffect(() => {
-    const eventSource = new EventSource(
-      'http://3.36.125.122:8082/sse/connect',
-      { headers: { accept: 'text/event-stream' } },
-      { withCredentials: true }
-    );
+  // useEffect(() => {
+  //   const eventSource = new EventSource(
+  //     'http://3.36.125.122:8082/sse/connect',
+  //     { headers: { accept: 'text/event-stream' } },
+  //     { withCredentials: true }
+  //   );
 
-    eventSource.addEventListener('machine', (event) => {
-      const newMachineData = event.data;
-      console.log(newMachineData);
+  //   eventSource.addEventListener('machine', (event) => {
+  //     const newMachineData = event.data;
+  //     console.log(newMachineData);
 
-      if (newMachineData == selectedMachineName && realGraphBtn == true) {
-        axios
-          .post('http://3.36.125.122:8082/data/graph', {
-            componentName: selectedcompoData.name,
-            machineName: selectedMachineName,
-            moduleName: selectedModuleName,
-          })
-          .then((res) => {
-            let newData = [];
-            for (let i = 0; i < res.data.length; i++) {
-              newData.push([
-                new Date(res.data[i].data).toISOString(),
-                res.data[i].value,
-              ]);
-            }
-            setSaveResultArr((prevResultArr) => {
-              let updatedResultArr = [...prevResultArr];
-              for (let i = 0; i < updatedResultArr.length; i++) {
-                if (updatedResultArr[i].name === res.data[0].name) {
-                  //???
-                  updatedResultArr[i].data = [
-                    ...updatedResultArr[i].data,
-                    ...newData,
-                  ];
-                }
-              }
-              return updatedResultArr;
-            });
-            prevdata(saveResultArr, nameArr);
-          });
-      }
-    });
-  }, []);
+  //     if (newMachineData == selectedMachineName && realGraphBtn == true) {
+  //       axios
+  //         .post('http://3.36.125.122:8082/data/graph', {
+  //           componentName: selectedcompoData.name,
+  //           machineName: selectedMachineName,
+  //           moduleName: selectedModuleName,
+  //         })
+  //         .then((res) => {
+  //           let newData = [];
+  //           for (let i = 0; i < res.data.length; i++) {
+  //             newData.push([
+  //               new Date(res.data[i].data).toISOString(),
+  //               res.data[i].value,
+  //             ]);
+  //           }
+  //           setSaveResultArr((prevResultArr) => {
+  //             let updatedResultArr = [...prevResultArr];
+  //             for (let i = 0; i < updatedResultArr.length; i++) {
+  //               if (updatedResultArr[i].name === res.data[0].name) {
+  //                 //???
+  //                 updatedResultArr[i].data = [
+  //                   ...updatedResultArr[i].data,
+  //                   ...newData,
+  //                 ];
+  //               }
+  //             }
+  //             return updatedResultArr;
+  //           });
+  //           prevdata(saveResultArr, nameArr);
+  //         });
+  //     }
+  //   });
+  // }, []);
 
   //------------------------------------박해준 그래프-----------------------------------------------------
 
