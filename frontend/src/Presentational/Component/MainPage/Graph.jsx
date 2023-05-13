@@ -5,11 +5,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { ko } from "date-fns/esm/locale";
 import { Icon } from "@iconify/react";
 import { Oval } from "react-loader-spinner";
-
-//----------------- 박해준 그래프 -----------------------
 import ECharts, { EchartsReactprops } from "echarts-for-react";
 import axios from "axios";
-//----------------- 박해준 그래프 -----------------------
 
 const Graph = ({
   selectedcompoData,
@@ -124,7 +121,6 @@ const Graph = ({
           startDate: startDate,
         })
         .then((res1) => {
-          //------------------------ 두번째 방법
           if (res1.data.length === 0) {
             alert("해당 기간에는 데이터가 없습니다");
           } else {
@@ -292,13 +288,12 @@ const Graph = ({
 
         <div
           style={{
-            position: "relative", // Make this a positioned parent
+            position: "relative",
           }}
         >
           <ECharts
             ref={chartRef}
             option={options}
-            //renderer: 'svg',
             opts={{ width: "auto", height: "auto" }}
           />
 
@@ -310,10 +305,10 @@ const Graph = ({
                 alignItems: "center",
                 height: "100%",
                 width: "100%",
-                position: "absolute", // Position this element absolutely
-                top: 0, // Align to the top
-                left: 0, // Align to the left
-                background: "rgba(255, 255, 255, 0.5)", // Optional: Add some color and opacity
+                position: "absolute",
+                top: 0,
+                left: 0,
+                background: "rgba(255, 255, 255, 0.5)",
               }}
             >
               <Oval color="#00BFFF" height={100} width={100} timeout={3000} />
