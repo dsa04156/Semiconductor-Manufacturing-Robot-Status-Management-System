@@ -15,9 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors());
-app.get('/api/host', (req, res) => {
-    res.send({ host : 'sejun' });
-})
+
 
 
 app.get('/api/test', (req, res) => {

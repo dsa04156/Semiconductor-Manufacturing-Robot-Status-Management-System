@@ -123,6 +123,7 @@ const Graph = ({
         .then((res1) => {
           if (res1.data.length === 0) {
             alert("해당 기간에는 데이터가 없습니다");
+            setIsLoading(false);
           } else {
             const t0 = performance.now();
             const minus = time1 - t0;

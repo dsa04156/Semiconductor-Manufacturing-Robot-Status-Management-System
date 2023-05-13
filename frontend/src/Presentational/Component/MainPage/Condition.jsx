@@ -34,26 +34,19 @@ const Condition = ({
 
     eventSource.addEventListener("connect", (event) => {
       const { data: received } = event;
-      console.log("connect", received);
-      console.log(event.data);
+      //   console.log("connect", received);
+      //   console.log(event.data);
     });
 
     eventSource.addEventListener("machine", (event) => {
       const newMachineData = event.data;
-      //   console.log(newMachineData);
-      //  console.log(newMachineData, currentMachineName);
-      //   console.log(currentModuleName);
 
       if (newMachineData == currentMachineName) {
-        //  console.log('장비 갱신 콘솔은 됨');
-
         api
           .post(`/data/${currentMachineName}`, JSON.stringify({})) // 추후 root 자리에 변수 넣어서 변경. 현재는 root로 그냥 테스트.
           .then((response) => {
-            // console.log(response.data);
             const modulelist = []; // 모듈인 애들 담아 놓는 리스트.
             for (const a of response.data) {
-              //    console.log(a);
               if (a.name === currentMachineName) {
                 setMachineData(a);
                 const value = a.value;
@@ -71,7 +64,6 @@ const Condition = ({
               }
             }
             setModuleData(modulelist);
-            //   console.log('--------------------', currentModuleName);
 
             api
               .post(
@@ -79,7 +71,6 @@ const Condition = ({
                 JSON.stringify({})
               )
               .then((response) => {
-                //     console.log(response.data);
                 setModuleChild(response.data);
               })
               .catch((err) => {
