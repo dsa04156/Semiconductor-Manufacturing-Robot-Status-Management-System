@@ -257,26 +257,34 @@ const Graph = ({
           </AlignPeriod>
         </PeriodBox>
 
-        <div>
-          {/* ... */}
-          {isLoading ? (
+        <div
+          style={{
+            position: "relative", // Make this a positioned parent
+          }}
+        >
+          <ECharts
+            ref={chartRef}
+            option={options}
+            //renderer: 'svg',
+            opts={{ width: "auto", height: "auto" }}
+          />
+
+          {isLoading && (
             <div
               style={{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                height: "30vh",
+                height: "100%",
+                width: "100%",
+                position: "absolute", // Position this element absolutely
+                top: 0, // Align to the top
+                left: 0, // Align to the left
+                background: "rgba(255, 255, 255, 0.5)", // Optional: Add some color and opacity
               }}
             >
               <Oval color="#00BFFF" height={100} width={100} timeout={3000} />
             </div>
-          ) : (
-            <ECharts
-              ref={chartRef}
-              option={options}
-              //renderer: 'svg',
-              opts={{ width: "auto", height: "auto" }}
-            />
           )}
         </div>
       </Box>
