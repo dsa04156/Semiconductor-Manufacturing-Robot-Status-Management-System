@@ -178,3 +178,6 @@ tr {
 
   color: gray;
 }
+.react-datepicker-wrapper{
+  width: 100%;
+}

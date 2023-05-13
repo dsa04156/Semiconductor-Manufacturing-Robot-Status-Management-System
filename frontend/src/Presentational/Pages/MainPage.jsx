@@ -1,7 +1,6 @@
 import Condition from "../Component/MainPage/Condition";
 import ComponentList from "../Component/MainPage/ComponentList";
-import Graph from '../../Presentational/Component/MainPage/Graph';
-import Graphtest from "../Pages/Graphtest";
+import Graph from "../Component/MainPage/Graph";
 import react, { useState } from "react";
 
 const Mainpage = () => {

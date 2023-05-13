@@ -12,19 +12,20 @@ const Condition = ({
   const [machineData, setMachineData] = useState({});
   const [moduleData, setModuleData] = useState([]);
   const [componentData, setComponentData] = useState([]);
-  const [status, setStatus] = useState('');
-  const [currentMachineName, setCurrentMachineName] = useState('');
-  const [currentModuleName, setCurrentModuleName] = useState('');
+  const [status, setStatus] = useState("");
+  const [currentMachineName, setCurrentMachineName] = useState("");
+  const [currentModuleName, setCurrentModuleName] = useState("");
 
-  const collectionJSON = localStorage.getItem('collectionNames');
+  const collectionJSON = localStorage.getItem("collectionNames");
   const collectionNames = JSON.parse(collectionJSON);
 
   const secondSelect = useRef();
 
   useEffect(() => {
     const eventSource = new EventSource(
-      'http://3.36.125.122:8082/sse/connect',
-      { headers: { accept: 'text/event-stream' }}, { withCredentials: true}
+      "http://3.36.125.122:8082/sse/connect",
+      { headers: { accept: "text/event-stream" } },
+      { withCredentials: true }
     );
 
     eventSource.onmessage = (e) => {
@@ -36,7 +37,7 @@ const Condition = ({
       console.log("connect", received);
       console.log(event.data);
     });
-    
+
     eventSource.addEventListener("machine", (event) => {
       const newMachineData = event.data;
       //   console.log(newMachineData);
@@ -91,8 +92,8 @@ const Condition = ({
       }
     });
 
-    eventSource.addEventListener('error', (error) => {
-      console.log('SSE Error: ', error);
+    eventSource.addEventListener("error", (error) => {
+      console.log("SSE Error: ", error);
     });
 
     return () => {
@@ -133,7 +134,7 @@ const Condition = ({
         }
         setModuleData(modulelist);
       });
-  }
+  };
 
   const handleChangeModule = (event) => {
     const selectModuleName = event.target.value;
@@ -160,22 +161,17 @@ const Condition = ({
           <Fontrmargin size={24}>Module</Fontrmargin>
         </div>
         <div className="d-flex mt-3 ms-5 me-5 space-between">
-          <Form.Select
+          <CustomSelect
             size="sm"
             defaultValue=""
-            style={{ margin: '0 20px 0 0' }}
             onChange={handleChangeMachine}
           >
-            <option value="" disabled>
-              ---------
-            </option>
             {collectionNames &&
               collectionNames.map((data) => <option key={data}>{data}</option>)}
-          </Form.Select>
-          <Form.Select
+          </CustomSelect>
+          <CustomrSelect
             size="sm"
             defaultValue=""
-            style={{ margin: '0 0 0 20px' }}
             onChange={handleChangeModule}
             ref={secondSelect}
           >
@@ -185,7 +181,7 @@ const Condition = ({
             {moduleData.map((data) => (
               <option key={data.name}>{data.name}</option>
             ))}
-          </Form.Select>
+          </CustomrSelect>
         </div>
         <div className="mt-4 d-flex justify-content-center align-items-center">
           <Conbox mstate={status} width={200} fontsize={24} />
@@ -193,11 +189,9 @@ const Condition = ({
       </Big>
     </div>
   );
-  
-}
+};
 
 export default Condition;
-
 
 const Big = styled.div`
   position: absolute;
@@ -211,14 +205,14 @@ const Big = styled.div`
   border-radius: 20px;
 `;
 const Fontst = styled.div`
-  font-family: 'Domine';
+  font-family: "Domine";
   font-style: normal;
   font-size: ${(props) => props.size}px;
   color: #ffffff;
   margin-left: 5px;
 `;
 const Fontrmargin = styled.div`
-  font-family: 'Domine';
+  font-family: "Domine";
   font-style: normal;
   font-size: ${(props) => props.size}px;
   color: #ffffff;
@@ -229,4 +223,94 @@ const SelectContainer = styled.div`
   flex: 1; /* 추가 */
   display: flex; /* 추가 */
   justify-content: space-between; /* 추가 */
+`;
+const CustomSelect = styled.select`
+  background-color: transparent;
+  color: #ffffff;
+  border: none;
+  padding: 5px;
+  position: relative;
+  margin-left: 20px;
+  border-bottom: solid;
+  border-bottom-color: #ffffff;
+
+  & option {
+    color: black;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 5px solid #ffffff;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+  }
+  option::before {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #ffffff;
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    width: 4px;
+    height: 1px;
+    background-color: transparent;
+  }
+`;
+const CustomrSelect = styled.select`
+  background-color: transparent;
+  color: #ffffff;
+  border: none;
+  padding: 5px;
+  position: relative;
+  margin-left: 70px;
+  border-bottom: solid;
+  border-bottom-color: #ffffff;
+
+  & option {
+    color: black;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 5px solid #ffffff;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+  }
+  option::before {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #ffffff;
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    width: 4px;
+    height: 1px;
+    background-color: transparent;
+  }
 `;
