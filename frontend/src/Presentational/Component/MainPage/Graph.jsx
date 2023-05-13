@@ -39,7 +39,7 @@ const Graph = ({
       chartInstance.clear();
       chartInstance.setOption(getInitialOptions());
     }
-  }, [selectedMachineName, selectedModuleName]);
+  }, [selectedMachineName, selectedModuleName, selectedcompoData]);
 
   // 이 옵션으로 chart를 만듦
   const getInitialOptions = () => {
@@ -113,6 +113,8 @@ const Graph = ({
       alert("값을 선택해주세요");
     } else {
       const time1 = performance.now();
+
+      setIsLoading(true);
       axios
         .post("http://3.36.125.122:8082/data/parameter", {
           componentName: selectedcompoData.name,
@@ -150,7 +152,6 @@ const Graph = ({
                 if (name == componentName) {
                   parent = moduleName;
                 }
-                setIsLoading(true);
                 const res2 = await axios.post(
                   "http://3.36.125.122:8082/data/pgraph",
                   {
