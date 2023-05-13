@@ -1,30 +1,51 @@
-import React, { useState, useEffect, useRef } from "react";
-import styled from "styled-components";
-import Form from "react-bootstrap/Form";
-import Conbox from "../Condition/Conbox";
-import api from "../../../redux/api";
+import React, { useState, useEffect, useRef } from 'react';
+import styled from 'styled-components';
+import Form from 'react-bootstrap/Form';
+import Conbox from '../Condition/Conbox';
+import api from '../../../redux/api';
 
 const Condition = ({
   setModuleChild,
   setSelectedMachineName,
   setSelectedModuleName,
+  selectedcompoDate,
+  realGraphBtnState,
 }) => {
   const [machineData, setMachineData] = useState({});
   const [moduleData, setModuleData] = useState([]);
   const [componentData, setComponentData] = useState([]);
-  const [status, setStatus] = useState("");
-  const [currentMachineName, setCurrentMachineName] = useState("");
-  const [currentModuleName, setCurrentModuleName] = useState("");
+  const [status, setStatus] = useState('');
+  const [currentMachineName, setCurrentMachineName] = useState('');
+  const [currentModuleName, setCurrentModuleName] = useState('');
+  const [realtimeBtn, setRealtimeBtn] = useState(false);
 
-  const collectionJSON = localStorage.getItem("collectionNames");
+  const collectionJSON = localStorage.getItem('collectionNames');
   const collectionNames = JSON.parse(collectionJSON);
 
   const secondSelect = useRef();
 
+  //------------실시간 그래프 api 보내기 위해 startdate 설정.(현재시간 - 1)-------
+  let startDate = new Date();
+  startDate = new Date(startDate.getTime() - (startDate.getTimezoneOffset() * 60000));
+  startDate.setHours(startDate.getHours() - 1);
+  // 날짜를 ISO 8601 형식의 문자열로 변환합니다.
+  let realtimeAnHourAgo = startDate.toISOString();
+  // 초 이하의 정보를 제거합니다.
+  realtimeAnHourAgo = realtimeAnHourAgo.slice(0, 19);
+  console.log(realtimeAnHourAgo);
+  //----------------------------------------------------------------------------
+  //-------------실시간 그래프 api 보내기 위해 endDate 설정-----------------------
+  let endDate = new Date();
+  endDate = new Date(endDate.getTime() - (endDate.getTimezoneOffset() * 60000));
+  let realtime = endDate.toISOString();
+  realtime = realtime.slice(0, 19);
+  console.log(realtime);
+  //-----------------------------------------------------------------------------
+
   useEffect(() => {
     const eventSource = new EventSource(
-      "http://3.36.125.122:8082/sse/connect",
-      { headers: { accept: "text/event-stream" } },
+      'http://3.36.125.122:8082/sse/connect',
+      { headers: { accept: 'text/event-stream' } },
       { withCredentials: true }
     );
 
@@ -32,13 +53,13 @@ const Condition = ({
       console.log(e);
     };
 
-    eventSource.addEventListener("connect", (event) => {
+    eventSource.addEventListener('connect', (event) => {
       const { data: received } = event;
-      console.log("connect", received);
+      console.log('connect', received);
       console.log(event.data);
     });
 
-    eventSource.addEventListener("machine", (event) => {
+    eventSource.addEventListener('machine', (event) => {
       const newMachineData = event.data;
       //   console.log(newMachineData);
       //  console.log(newMachineData, currentMachineName);
@@ -58,13 +79,13 @@ const Condition = ({
                 setMachineData(a);
                 const value = a.value;
                 if (value < 0) {
-                  setStatus((a) => "unacceptable");
+                  setStatus((a) => 'unacceptable');
                 } else if (value < 0.03) {
-                  setStatus((a) => "unsatisfactory");
+                  setStatus((a) => 'unsatisfactory');
                 } else if (value < 0.48) {
-                  setStatus((a) => "satisfactory");
+                  setStatus((a) => 'satisfactory');
                 } else {
-                  setStatus((a) => "Good");
+                  setStatus((a) => 'Good');
                 }
               } else {
                 modulelist.push(a);
@@ -72,28 +93,41 @@ const Condition = ({
             }
             setModuleData(modulelist);
             //   console.log('--------------------', currentModuleName);
-
-            api
-              .post(
-                `data/machine/module?machineName=${currentMachineName}&moduleName=${currentModuleName}`,
-                JSON.stringify({})
-              )
-              .then((response) => {
-                //     console.log(response.data);
-                setModuleChild(response.data);
-              })
-              .catch((err) => {
-                console.log(err);
-              });
           })
           .catch((error) => {
             console.log(error);
           });
+        api
+          .post(
+            `data/machine/module?machineName=${currentMachineName}&moduleName=${currentModuleName}`,
+            JSON.stringify({})
+          )
+          .then((response) => {
+            //     console.log(response.data);
+            setModuleChild(response.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        // if(realGraphBtnState == true){
+        //   api
+        //   .post(
+        //     `data/graph`, {
+        //       componentName: selectedcompoDate?.name,
+        //       endDate: realtime,
+        //       machineName: currentMachineName,
+        //       moduleName: currentModuleName,
+        //       startDate: realtimeAnHourAgo,
+        //     }
+        //   )
+        //   .then()
+
+        // }
       }
     });
 
-    eventSource.addEventListener("error", (error) => {
-      console.log("SSE Error: ", error);
+    eventSource.addEventListener('error', (error) => {
+      console.log('SSE Error: ', error);
     });
 
     return () => {
@@ -106,7 +140,7 @@ const Condition = ({
     // console.log(secondSelect.current.value)
     setCurrentMachineName(selectMachineName);
     setModuleChild([]); // 장비 드롭다운에서 다른 장비 선택 시 컴포넌트 리스트 출력 되는 것 초기화.
-    secondSelect.current.value = ""; // 장비 드롭다운에서 다른 장비 선택 시 모듈 드롭다운 초기화
+    secondSelect.current.value = ''; // 장비 드롭다운에서 다른 장비 선택 시 모듈 드롭다운 초기화
     setSelectedMachineName(selectMachineName);
 
     api
@@ -120,13 +154,13 @@ const Condition = ({
             setMachineData(a);
             const value = a.value;
             if (value < 0) {
-              setStatus((a) => "unacceptable");
+              setStatus((a) => 'unacceptable');
             } else if (value < 0.03) {
-              setStatus((a) => "unsatisfactory");
+              setStatus((a) => 'unsatisfactory');
             } else if (value < 0.48) {
-              setStatus((a) => "satisfactory");
+              setStatus((a) => 'satisfactory');
             } else {
-              setStatus((a) => "Good");
+              setStatus((a) => 'Good');
             }
           } else {
             modulelist.push(a);
@@ -149,7 +183,7 @@ const Condition = ({
       )
       .then((response) => {
         setModuleChild(response.data);
-        // console.log(response.data);
+        console.log(response.data);
       });
   };
 
@@ -166,6 +200,9 @@ const Condition = ({
             defaultValue=""
             onChange={handleChangeMachine}
           >
+            <option value="" disabled>
+              ---------
+            </option>
             {collectionNames &&
               collectionNames.map((data) => <option key={data}>{data}</option>)}
           </CustomSelect>
@@ -205,14 +242,14 @@ const Big = styled.div`
   border-radius: 20px;
 `;
 const Fontst = styled.div`
-  font-family: "Domine";
+  font-family: 'Domine';
   font-style: normal;
   font-size: ${(props) => props.size}px;
   color: #ffffff;
   margin-left: 5px;
 `;
 const Fontrmargin = styled.div`
-  font-family: "Domine";
+  font-family: 'Domine';
   font-style: normal;
   font-size: ${(props) => props.size}px;
   color: #ffffff;
@@ -239,7 +276,7 @@ const CustomSelect = styled.select`
   }
 
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     top: 50%;
     right: 10px;
@@ -251,7 +288,7 @@ const CustomSelect = styled.select`
     border-right: 4px solid transparent;
   }
   option::before {
-    content: "";
+    content: '';
     position: absolute;
     bottom: -1px;
     left: 0;
@@ -260,7 +297,7 @@ const CustomSelect = styled.select`
     background-color: #ffffff;
   }
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     bottom: 0;
     right: 10px;
@@ -284,7 +321,7 @@ const CustomrSelect = styled.select`
   }
 
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     top: 50%;
     right: 10px;
@@ -296,7 +333,7 @@ const CustomrSelect = styled.select`
     border-right: 4px solid transparent;
   }
   option::before {
-    content: "";
+    content: '';
     position: absolute;
     bottom: -1px;
     left: 0;
@@ -305,7 +342,7 @@ const CustomrSelect = styled.select`
     background-color: #ffffff;
   }
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     bottom: 0;
     right: 10px;

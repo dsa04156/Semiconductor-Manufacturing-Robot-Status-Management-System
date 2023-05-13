@@ -8,6 +8,7 @@ const Mainpage = () => {
   const [selectComponentData, setSelectComponentData] = useState([]); // ComponentList에서 선택한 컴포넌트(name, value) 들고옴
   const [selectedMachineName, setSelectedMachineName] = useState();
   const [selectedModuleName, setSelectedModuleName] = useState();
+  const [realGraphBtnState, setRealGraphBtnState] = useState();
 
   return (
     <div>
@@ -15,6 +16,8 @@ const Mainpage = () => {
         setModuleChild={setModuleChild}
         setSelectedMachineName={setSelectedMachineName}
         setSelectedModuleName={setSelectedModuleName}
+        selectedcompoDate={selectComponentData}
+        realGraphBtnState={realGraphBtnState}
       />
       <ComponentList
         child={moduleChild}
@@ -24,6 +27,7 @@ const Mainpage = () => {
         selectedcompoData={selectComponentData}
         selectedMachineName={selectedMachineName}
         selectedModuleName={selectedModuleName}
+        setRealGraphBtnState={setRealGraphBtnState}
       />
     </div>
   );

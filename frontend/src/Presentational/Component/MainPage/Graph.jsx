@@ -10,14 +10,17 @@ import ECharts, { EchartsReactprops } from "echarts-for-react";
 import axios from "axios";
 //----------------- 박해준 그래프 -----------------------
 
-const Graph = (selectedcompoData) => {
-  console.log(selectedcompoData.selectedMachineName);
+const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setRealGraphBtnState}) => {
+  console.log(selectedcompoData)
+  console.log(selectedcompoData?.name);
   const [startDate, setStartDate] = useState(
     new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   );
   const [endDate, setendDate] = useState(new Date());
   const [startDateOpen, setStartDateOpen] = useState(false);
   const [endDateOpen, setEndDateOpen] = useState(false);
+  const [realGraphBtn, setRealGraphBtn] = useState(false); // 실시간 그래프 버튼상태
+  const [saveResultArr, setSaveResultArr] = useState();
 
   //------------------------------------박해준 그래프-----------------------------------------------------
 
@@ -128,14 +131,17 @@ const Graph = (selectedcompoData) => {
     
     axios
       .post("http://3.36.125.122:8082/data/graph", {
-        componentName: selectedcompoData.selectedcompoData.name,
+        componentName: selectedcompoData.name,
         endDate: endDate,
-        machineName: selectedcompoData.selectedMachineName,
-        moduleName: selectedcompoData.selectedModuleName,
+        machineName: selectedMachineName,
+        moduleName: selectedModuleName,
         startDate: startDate,
       })
       .then((res) => {
         console.log(res);
+        let dateObj = new Date(res.data.date);
+        let utcString = dateObj.toUTCString();
+        console.log(utcString);
 
         let nameArr = [];
         let resultArr = [];
@@ -153,6 +159,8 @@ const Graph = (selectedcompoData) => {
               res.data[j].data[i].value,
             ]);
           }
+
+          // 얘를 어디다 저장해. sse 쏴서 받아. 최신 데이터만 받아. resultArr를 불러와서 data
           resultArr.push({
             name: res.data[j].name,
             type: "line",
@@ -160,9 +168,12 @@ const Graph = (selectedcompoData) => {
             sampling: "average",
             colorBy: "series",
             large: true,
-            data: dataArr,
+            data: dataArr
           });
         }
+
+        setSaveResultArr(resultArr);
+        
         const t1 = performance.now();
         const elapsed = t1 - t0;
         console.log("for문", elapsed);
@@ -172,13 +183,59 @@ const Graph = (selectedcompoData) => {
       });
   };
 
+  const realGraphHandler = () => {
+    setRealGraphBtn(!realGraphBtn);
+    setRealGraphBtnState(realGraphBtn) // 버튼 true false를 Main(부모)로 올려줌
+  }
+
+  
+  useEffect(() => {
+    const eventSource = new EventSource(
+      'http://3.36.125.122:8082/sse/connect',
+      { headers: { accept: 'text/event-stream' } },
+      { withCredentials: true }
+    );
+
+    eventSource.addEventListener('machine', (event) => {
+      const newMachineData = event.data;
+      console.log(newMachineData)
+
+      if((newMachineData == selectedMachineName) && (realGraphBtn == true)){
+        axios.post("http://3.36.125.122:8082/data/graph", {
+          componentName: selectedcompoData.name,
+          machineName: selectedMachineName,
+          moduleName: selectedModuleName,
+        })
+        .then((res) => {
+          let newData = [];
+          for (let i=0; i < res.data.length; i++){
+            newData.push([
+              new Date(res.data[i].data).toISOString(),
+              res.data[i].value,
+            ]);
+          }
+          setSaveResultArr((prevResultArr) => {
+            let updatedResultArr = [...prevResultArr];
+            for (let i=0; i < updatedResultArr.length; i++){
+              if(updatedResultArr[i].name === res.data[0].name){  //???
+                updatedResultArr[i].data = [...updatedResultArr[i].data, ...newData];
+              }
+            }
+            return updatedResultArr;
+          });
+          prevdata(saveResultArr, nameArr);
+        })
+      }
+    })
+  }, [])
+
   //------------------------------------박해준 그래프-----------------------------------------------------
 
   return (
     <div>
       <Box>
         <PeriodBox>
-          <Font>pump</Font>
+          <Font>{selectedcompoData?.name}</Font>
           <Line></Line>
           <AlignPeriod>
             <PFont>PERIOD</PFont>{" "}
@@ -255,7 +312,8 @@ const Graph = (selectedcompoData) => {
                 ],
               }}
             />
-            <Button onClick={onGraphHandler}></Button>
+            <Button onClick={onGraphHandler}>조회</Button>
+            <Button onClick={realGraphHandler}>실시간</Button>
           </AlignPeriod>
         </PeriodBox>
         {/* ----------------------------------박해준 그래프--------------------------------- */}
@@ -332,11 +390,12 @@ const SDatePicker = styled(DatePicker)`
   border: none;
 `;
 const Button = styled.button`
-  background-color: blue;
+  margin: 0px 5px 0px 5px;
+  background-color: #5a8ceb;
   color: white;
   padding: 3px 10px;
   border: none;
   border-radius: 5px;
-  width : 30px
+  width : auto;
   cursor: pointer;
 `;
