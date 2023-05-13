@@ -112,7 +112,7 @@ public class MachineRepository {
 	            Aggregation.match(Criteria.where("date").gte(graphInputDto.getStartDate()).lt(graphInputDto.getEndDate())
 	                        .and("parent").is(graphInputDto.getComponentName())
 	                        .and("name").is(graphInputDto.getParameterName()))
-//	            ,Aggregation.project("_id", "parent","name").andExclude("_id", "parent","name")
+	            ,Aggregation.project("_id", "parent","name").andExclude("_id", "parent","name")
 	    );
 
 	    AggregationResults<Document> rawResult =
