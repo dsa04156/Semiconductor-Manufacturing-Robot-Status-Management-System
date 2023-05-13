@@ -109,61 +109,93 @@ const Graph = ({
   };
 
   const onGraphHandler = () => {
-    const time1 = performance.now();
-
     if (!selectedcompoData || !selectedcompoData.name) {
       alert("값을 선택해주세요");
     } else {
       const time1 = performance.now();
-      setIsLoading(true);
       axios
-        .post("http://3.36.125.122:8082/data/graph", {
+        .post("http://3.36.125.122:8082/data/parameter", {
           componentName: selectedcompoData.name,
           endDate: endDate,
           machineName: selectedMachineName,
           moduleName: selectedModuleName,
           startDate: startDate,
         })
-        .then((res) => {
-          //    console.log(res.data);
-          if (res.data.length === 0) {
+        .then((res1) => {
+          //------------------------ 두번째 방법
+          if (res1.data.length === 0) {
             alert("해당 기간에는 데이터가 없습니다");
-          }
-          let nameArr = [];
-          let resultArr = [];
-
-          const t0 = performance.now();
-          const minus = time1 - t0;
-          console.log("api문", minus);
-
-          for (let j = 0; j < res.data.length; j++) {
-            let dataArr = [];
-            nameArr.push(res.data[j].name);
-            for (let i = 0; i < res.data[j].data.length; i++) {
-              dataArr.push([
-                new Date(res.data[j].data[i].date).toISOString(),
-                res.data[j].data[i].value,
-              ]);
+          } else {
+            const t0 = performance.now();
+            const minus = time1 - t0;
+            console.log("name api문", minus);
+            console.log(res1.data);
+            let nameArr = [];
+            for (let i = 0; i < res1.data.length; i++) {
+              nameArr.push(res1.data[i].name);
             }
-            resultArr.push({
-              name: res.data[j].name,
-              type: "line",
-              symbol: "none",
-              sampling: "average",
-              colorBy: "series",
-              large: true,
-              data: dataArr,
-            });
+
+            let machineName = selectedMachineName;
+            let moduleName = selectedModuleName;
+            let componentName = selectedcompoData.name;
+            nameArr.push(componentName);
+
+            let resultArr = [];
+
+            const t1 = performance.now();
+
+            Promise.all(
+              nameArr.map(async (name) => {
+                let parent = componentName;
+                if (name == componentName) {
+                  parent = moduleName;
+                }
+                setIsLoading(true);
+                const res2 = await axios.post(
+                  "http://3.36.125.122:8082/data/pgraph",
+                  {
+                    endDate: endDate,
+                    startDate: startDate,
+                    machineName: machineName,
+                    componentName: parent,
+                    parameterName: name,
+                  }
+                );
+                let dataArr = [];
+                const perfor1 = performance.now();
+                for (let j = 0; j < res2.data.length; j++) {
+                  dataArr.push([
+                    new Date(res2.data[j].date).toISOString(),
+                    res2.data[j].value,
+                  ]);
+                }
+                const perfor2 = performance.now();
+                console.log("for문 시간 : ", perfor2 - perfor1);
+                return {
+                  name: name,
+                  type: "line",
+                  symbol: "none",
+                  sampling: "average",
+                  colorBy: "series",
+                  large: true,
+                  data: dataArr,
+                };
+              })
+            )
+              .then((result) => {
+                console.log(result);
+                resultArr.push(result);
+                const prev1 = performance.now();
+                prevdata(resultArr[0], nameArr);
+                const prev2 = performance.now();
+                console.log("그래프시간 시간 : ", prev2 - prev1);
+              })
+              .finally(() => {
+                setIsLoading(false);
+              });
+            const t2 = performance.now();
+            console.log("Promise 문 ", t2 - t1);
           }
-          const t1 = performance.now();
-          const elapsed = t1 - t0;
-          console.log("for문", elapsed);
-          console.log("result: ", resultArr);
-          console.log("name: ", nameArr);
-          prevdata(resultArr, nameArr);
-        })
-        .finally(() => {
-          setIsLoading(false);
         });
     }
   };
