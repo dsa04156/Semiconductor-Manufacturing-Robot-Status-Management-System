@@ -112,7 +112,7 @@ public class MachineRepository {
 
 	public List<Document> findGraphData2(GraphInputDto graphInputDto) {
 	    Aggregation aggregation = Aggregation.newAggregation(
-	            Aggregation.sort(Sort.by(Sort.Direction.DESC, "date")),
+//	            Aggregation.sort(Sort.by(Sort.Direction.DESC, "date")),
 	            Aggregation.match(Criteria.where("date").gte(graphInputDto.getStartDate()).lt(graphInputDto.getEndDate())
 	                        .and("parent").is(graphInputDto.getComponentName())
 	                        .and("name").is(graphInputDto.getParameterName())),
