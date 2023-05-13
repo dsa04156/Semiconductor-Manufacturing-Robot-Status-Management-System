@@ -111,8 +111,8 @@ public class MachineRepository {
 //	            Aggregation.sort(Sort.by(Sort.Direction.DESC, "date")),
 	            Aggregation.match(Criteria.where("date").gte(graphInputDto.getStartDate()).lt(graphInputDto.getEndDate())
 	                        .and("parent").is(graphInputDto.getComponentName())
-	                        .and("name").is(graphInputDto.getParameterName())),
-	            Aggregation.project("_id", "parent","name").andExclude("_id", "parent","name")
+	                        .and("name").is(graphInputDto.getParameterName()))
+//	            ,Aggregation.project("_id", "parent","name").andExclude("_id", "parent","name")
 	    );
 
 	    AggregationResults<Document> rawResult =
