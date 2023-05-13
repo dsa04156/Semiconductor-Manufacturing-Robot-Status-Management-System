@@ -38,86 +38,71 @@ const Graph = ({
     sample: 1,
   };
 
-  // 이 옵션으로 chart를 만듦
-  const [options, setOptions] = useState({
-    // trigger를 걸어서 값을 볼 수 있게 해줌 axis는 기본이라 바로 값이 뜸
-    tooltip: {
-      trigger: 'axis',
-    },
-    // 범례, selectmode는 클릭시 사라졌다 나왔다 하는거
-    // legend: {
-    //   data: ["Email"],
-    //   selectedMode: true,
-    // },
-    // 제목
-    // title: {
-    //   text: "Large Area Chart",
-    // },
-    // y축 확대 안함, 고정
-    toolbox: {
-      feature: {
-        dataZoom: {
-          yAxisIndex: 'none',
-          bottom: 0,
-        },
-        restore: {},
-      },
-      right: 0,
-      top: 30,
-    },
-    // x축 시간 기준으로 만듦
-    xAxis: {
-      type: 'time',
-      min: new Date('2021-12-31T23:59:59.999Z').getTime(),
-      max: new Date('2023-12-31T23:59:59.999Z').getTime(),
-      show: true,
-    },
-    // y축 boundarygap은 아마 위아래 조금씩 더 그래프 만드는 거인듯?
-    yAxis: {
-      type: 'value',
-      boundaryGap: ['1%', '1%'],
-      show: true,
-    },
-    // zoom 하는 거 start: 0 으로 둬서 시작에는 전체 데이터 보여줌
-    dataZoom: [
-      {
-        type: 'slider',
-        show: true,
-        start: 0,
-        end: 100,
-        handleSize: 8,
-      },
-      // 안에 확대하는 거인듯
-      {
-        type: 'inside',
-        start: 0,
-        end: 100,
-      },
-    ],
-    // 여기에 데이터 넣어서 차트 만드는 거임/ sampling: avergae등등 있으니 찾아보시면 될듯
-    // series: [
-    //   {
-    //     name: "Email",
-    //     type: "line",
-    //     symbol: "none",
-    //     sampling: "lttb",
-    //     colorBy: "series",
-    //     large: samplingOpt,
-    //     data: [
-    //       ["2022-06-31T23:59:59.999Z", 0.5],
-    //       ["2022-09-31T23:59:59.999Z", 0.5],
-    //       ["2022-10-31T23:59:59.999Z", 0.5],
-    //     ],
-    //   },
-    // ],
-  });
+  useEffect(() => {
+    const resetGraphData = () => {
+      setOptions(getInitialOptions());
+      setStartDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+      setendDate(new Date());
+      setNameList([]);
+    };
 
+    resetGraphData();
+  }, [
+    selectedMachineName,
+    selectedModuleName,
+    setNameList,
+  ]);
+
+  // 이 옵션으로 chart를 만듦
+  const getInitialOptions = () => {
+    return {
+      tooltip: {
+        trigger: "axis",
+      },
+      toolbox: {
+        feature: {
+          dataZoom: {
+            yAxisIndex: "none",
+          },
+          restore: {},
+          saveAsImage: {},
+        },
+      },
+      xAxis: {
+        type: "time",
+        min: new Date("2021-12-31T23:59:59.999Z").getTime(),
+        max: new Date("2022-12-31T23:59:59.999Z").getTime(),
+        show: true,
+      },
+      yAxis: {
+        type: "value",
+        boundaryGap: ["1%", "1%"],
+        show: true,
+      },
+      dataZoom: [
+        {
+          type: "slider",
+          show: true,
+          start: 0,
+          end: 100,
+          handleSize: 8,
+        },
+        {
+          type: "inside",
+          start: 0,
+          end: 100,
+        },
+      ],
+      series: [],
+    };
+  };
+  const [options, setOptions] = useState(getInitialOptions());
   const prevdata = (resultArr, nameArr) => {
     const t0 = performance.now();
     setOptions((prev) => ({
       ...prev,
       xAxis: {
-        type: 'time',
+        type: "time",
         min: startDate.getTime(),
         max: endDate.getTime(),
         show: true,
@@ -343,7 +328,9 @@ const Graph = ({
                 ],
               }}
             />
-            <Button onClick={onGraphHandler}>조회</Button>
+            <Button style={{ width: "100px" }} onClick={onGraphHandler}>
+              실행
+            </Button>
             <Button onClick={realGraphHandler}>실시간</Button>
           </AlignPeriod>
         </PeriodBox>
@@ -434,6 +421,6 @@ const Button = styled.button`
   padding: 3px 10px;
   border: none;
   border-radius: 5px;
-  width: auto;
+  width : 30px
   cursor: pointer;
 `;

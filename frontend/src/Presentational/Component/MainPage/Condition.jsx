@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import Form from 'react-bootstrap/Form';
-import Conbox from '../Condition/Conbox';
-import api from '../../../redux/api';
+import React, { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import Form from "react-bootstrap/Form";
+import Conbox from "../Condition/Conbox";
+import api from "../../../redux/api";
 
 const Condition = ({
   setModuleChild,
@@ -79,13 +79,13 @@ const Condition = ({
                 setMachineData(a);
                 const value = a.value;
                 if (value < 0) {
-                  setStatus((a) => 'unacceptable');
+                  setStatus((a) => "unacceptable");
                 } else if (value < 0.03) {
-                  setStatus((a) => 'unsatisfactory');
+                  setStatus((a) => "unsatisfactory");
                 } else if (value < 0.48) {
-                  setStatus((a) => 'satisfactory');
+                  setStatus((a) => "satisfactory");
                 } else {
-                  setStatus((a) => 'Good');
+                  setStatus((a) => "Good");
                 }
               } else {
                 modulelist.push(a);
@@ -140,7 +140,7 @@ const Condition = ({
     // console.log(secondSelect.current.value)
     setCurrentMachineName(selectMachineName);
     setModuleChild([]); // 장비 드롭다운에서 다른 장비 선택 시 컴포넌트 리스트 출력 되는 것 초기화.
-    secondSelect.current.value = ''; // 장비 드롭다운에서 다른 장비 선택 시 모듈 드롭다운 초기화
+    secondSelect.current.value = ""; // 장비 드롭다운에서 다른 장비 선택 시 모듈 드롭다운 초기화
     setSelectedMachineName(selectMachineName);
 
     api
@@ -154,13 +154,13 @@ const Condition = ({
             setMachineData(a);
             const value = a.value;
             if (value < 0) {
-              setStatus((a) => 'unacceptable');
+              setStatus((a) => "unacceptable");
             } else if (value < 0.03) {
-              setStatus((a) => 'unsatisfactory');
+              setStatus((a) => "unsatisfactory");
             } else if (value < 0.48) {
-              setStatus((a) => 'satisfactory');
+              setStatus((a) => "satisfactory");
             } else {
-              setStatus((a) => 'Good');
+              setStatus((a) => "Good");
             }
           } else {
             modulelist.push(a);
@@ -183,7 +183,7 @@ const Condition = ({
       )
       .then((response) => {
         setModuleChild(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       });
   };
 
@@ -242,14 +242,14 @@ const Big = styled.div`
   border-radius: 20px;
 `;
 const Fontst = styled.div`
-  font-family: 'Domine';
+  font-family: "Domine";
   font-style: normal;
   font-size: ${(props) => props.size}px;
   color: #ffffff;
   margin-left: 5px;
 `;
 const Fontrmargin = styled.div`
-  font-family: 'Domine';
+  font-family: "Domine";
   font-style: normal;
   font-size: ${(props) => props.size}px;
   color: #ffffff;
@@ -276,7 +276,7 @@ const CustomSelect = styled.select`
   }
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     right: 10px;
@@ -288,7 +288,7 @@ const CustomSelect = styled.select`
     border-right: 4px solid transparent;
   }
   option::before {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -1px;
     left: 0;
@@ -297,7 +297,7 @@ const CustomSelect = styled.select`
     background-color: #ffffff;
   }
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     right: 10px;
@@ -321,7 +321,7 @@ const CustomrSelect = styled.select`
   }
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     right: 10px;
@@ -333,7 +333,7 @@ const CustomrSelect = styled.select`
     border-right: 4px solid transparent;
   }
   option::before {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -1px;
     left: 0;
@@ -342,7 +342,7 @@ const CustomrSelect = styled.select`
     background-color: #ffffff;
   }
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     right: 10px;

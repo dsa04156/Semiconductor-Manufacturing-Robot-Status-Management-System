@@ -6,9 +6,6 @@ function CreateTable({ setTest, data, test, child }) {
   const [selected, setSelected] = useState(test);
   const [selectedComponentData, setSelectedComponentData] = useState();
 
-  useEffect(() => {
-    console.log(selected);
-  }, [selected]);
 
   const idxHandler = (idx) => {
     setSelected(idx);
@@ -31,12 +28,16 @@ function CreateTable({ setTest, data, test, child }) {
     }
 
     return (
-      <tr className="tableBody" key={idx}>
+      <tr
+        className={`tableBody ${idx === selected ? "selected" : ""}`}
+        key={idx}
+        onClick={() => idxHandler(idx)}
+      >
         <td style={{ width: "30px" }}>
           <input
             type="radio"
             checked={idx === selected}
-            onChange={() => idxHandler(idx)}
+            onChange={() => {}}
             onClick={idxClickHandler}
           />
         </td>
