@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import DatePicker from "react-datepicker";
+import { DatePicker } from 'antd';
 import "react-datepicker/dist/react-datepicker.css";
 import { ko } from "date-fns/esm/locale";
 import { Icon } from "@iconify/react";
@@ -17,6 +17,7 @@ const Graph = (selectedcompoData) => {
   const [endDate, setendDate] = useState(new Date());
   const [startDateOpen, setStartDateOpen] = useState(false);
   const [endDateOpen, setEndDateOpen] = useState(false);
+  
 
 
   //------------------------------------박해준 그래프-----------------------------------------------------
@@ -207,7 +208,7 @@ const Graph = (selectedcompoData) => {
               showPopperArrow={false}
               selected={startDate}
               open={startDateOpen}
-              // onSelect={() => setStartDateOpen(false)}
+              onSelect={() => setStartDateOpen(false)}
               onChange={(date) => setStartDate(date)}
               locale={ko}
               selectsStart
