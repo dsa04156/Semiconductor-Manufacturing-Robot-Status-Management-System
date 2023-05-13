@@ -11,13 +11,13 @@ import axios from "axios";
 //----------------- 박해준 그래프 -----------------------
 
 const Graph = (selectedcompoData) => {
-  console.log(selectedcompoData.selectedMachineName);
   const [startDate, setStartDate] = useState(
     new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   );
   const [endDate, setendDate] = useState(new Date());
   const [startDateOpen, setStartDateOpen] = useState(false);
   const [endDateOpen, setEndDateOpen] = useState(false);
+
 
   //------------------------------------박해준 그래프-----------------------------------------------------
 
@@ -50,16 +50,18 @@ const Graph = (selectedcompoData) => {
       feature: {
         dataZoom: {
           yAxisIndex: "none",
+          bottom: 0,
         },
         restore: {},
-        saveAsImage: {},
       },
+      right: 0,
+      top: 30,
     },
     // x축 시간 기준으로 만듦
     xAxis: {
       type: "time",
       min: new Date("2021-12-31T23:59:59.999Z").getTime(),
-      max: new Date("2022-12-31T23:59:59.999Z").getTime(),
+      max: new Date("2023-12-31T23:59:59.999Z").getTime(),
       show: true,
     },
     // y축 boundarygap은 아마 위아래 조금씩 더 그래프 만드는 거인듯?
@@ -125,51 +127,61 @@ const Graph = (selectedcompoData) => {
 
   const onGraphHandler = () => {
     const time1 = performance.now();
-    
-    axios
-      .post("http://3.36.125.122:8082/data/graph", {
-        componentName: selectedcompoData.selectedcompoData.name,
-        endDate: endDate,
-        machineName: selectedcompoData.selectedMachineName,
-        moduleName: selectedcompoData.selectedModuleName,
-        startDate: startDate,
-      })
-      .then((res) => {
-        console.log(res);
 
-        let nameArr = [];
-        let resultArr = [];
+    if (
+      !selectedcompoData ||
+      !selectedcompoData.selectedcompoData ||
+      !selectedcompoData.selectedcompoData.name
+    ) {
+      alert("값을 선택해주세요");
+      return;
+    } else {
+      const time1 = performance.now();
+      axios
+        .post("http://3.36.125.122:8082/data/graph", {
+          componentName: selectedcompoData.selectedcompoData.name,
+          endDate: endDate,
+          machineName: selectedcompoData.selectedMachineName,
+          moduleName: selectedcompoData.selectedModuleName,
+          startDate: startDate,
+        })
+        .then((res) => {
+          console.log(res);
 
-        const t0 = performance.now();
-        const minus = time1 - t0;
-        console.log("api문", minus);
+          let nameArr = [];
+          let resultArr = [];
 
-        for (let j = 0; j < res.data.length; j++) {
-          let dataArr = [];
-          nameArr.push(res.data[j].name);
-          for (let i = 0; i < res.data[j].data.length; i++) {
-            dataArr.push([
-              new Date(res.data[j].data[i].date).toISOString(),
-              res.data[j].data[i].value,
-            ]);
+          const t0 = performance.now();
+          const minus = time1 - t0;
+          console.log("api문", minus);
+
+          for (let j = 0; j < res.data.length; j++) {
+            let dataArr = [];
+            nameArr.push(res.data[j].name);
+            for (let i = 0; i < res.data[j].data.length; i++) {
+              dataArr.push([
+                new Date(res.data[j].data[i].date).toISOString(),
+                res.data[j].data[i].value,
+              ]);
+            }
+            resultArr.push({
+              name: res.data[j].name,
+              type: "line",
+              symbol: "none",
+              sampling: "average",
+              colorBy: "series",
+              large: true,
+              data: dataArr,
+            });
           }
-          resultArr.push({
-            name: res.data[j].name,
-            type: "line",
-            symbol: "none",
-            sampling: "average",
-            colorBy: "series",
-            large: true,
-            data: dataArr,
-          });
-        }
-        const t1 = performance.now();
-        const elapsed = t1 - t0;
-        console.log("for문", elapsed);
-        console.log("result: ", resultArr);
-        console.log("name: ", nameArr);
-        prevdata(resultArr, nameArr);
-      });
+          const t1 = performance.now();
+          const elapsed = t1 - t0;
+          console.log("for문", elapsed);
+          console.log("result: ", resultArr);
+          console.log("name: ", nameArr);
+          prevdata(resultArr, nameArr);
+        });
+    }
   };
 
   //------------------------------------박해준 그래프-----------------------------------------------------
@@ -191,9 +203,11 @@ const Graph = (selectedcompoData) => {
               />
             </SIconContainer>
             <SDatePicker
+              preventOpenFocus={true}
               showPopperArrow={false}
               selected={startDate}
               open={startDateOpen}
+              // onSelect={() => setStartDateOpen(false)}
               onChange={(date) => setStartDate(date)}
               locale={ko}
               selectsStart
@@ -232,7 +246,9 @@ const Graph = (selectedcompoData) => {
               selected={endDate}
               open={endDateOpen}
               onChange={(date) => setendDate(date)}
+              onSelect={() => setEndDateOpen(false)}
               locale={ko}
+              minDate={startDate}
               selectsEnd
               showTimeSelect
               timeFormat="HH:mm"
@@ -255,7 +271,7 @@ const Graph = (selectedcompoData) => {
                 ],
               }}
             />
-            <Button onClick={onGraphHandler}></Button>
+            <Button onClick={onGraphHandler}>set</Button>
           </AlignPeriod>
         </PeriodBox>
         {/* ----------------------------------박해준 그래프--------------------------------- */}
@@ -277,6 +293,7 @@ export default Graph;
 const SIconContainer = styled.div`
   width: 20px;
   color: blue;
+  cursor: pointer;
 `;
 
 const Box = styled.div`
@@ -330,6 +347,12 @@ const AlignPeriod = styled.div`
 `;
 const SDatePicker = styled(DatePicker)`
   border: none;
+
+  .react-datepicker__day--selected,
+  .react-datepicker__day--in-selecting-range,
+  .react-datepicker__day--in-range {
+    background-color: #a8dadc;
+  }
 `;
 const Button = styled.button`
   background-color: blue;

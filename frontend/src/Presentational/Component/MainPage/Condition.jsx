@@ -166,6 +166,9 @@ const Condition = ({
             defaultValue=""
             onChange={handleChangeMachine}
           >
+            <option value="" disabled>
+              ---------
+            </option>
             {collectionNames &&
               collectionNames.map((data) => <option key={data}>{data}</option>)}
           </CustomSelect>
