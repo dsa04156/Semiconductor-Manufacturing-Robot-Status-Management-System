@@ -1,17 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { ko } from "date-fns/esm/locale";
-import { Icon } from "@iconify/react";
+import React, { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { ko } from 'date-fns/esm/locale';
+import { Icon } from '@iconify/react';
 
 //----------------- 박해준 그래프 -----------------------
-import ECharts, { EchartsReactprops } from "echarts-for-react";
-import axios from "axios";
+import ECharts, { EchartsReactprops } from 'echarts-for-react';
+import axios from 'axios';
 //----------------- 박해준 그래프 -----------------------
 
-const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setRealGraphBtnState}) => {
-  console.log(selectedcompoData)
+const Graph = ({
+  selectedcompoData,
+  selectedMachineName,
+  selectedModuleName,
+  setRealGraphBtnState,
+}) => {
+  console.log(selectedcompoData);
   console.log(selectedcompoData?.name);
   const [startDate, setStartDate] = useState(
     new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
@@ -37,7 +42,7 @@ const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setR
   const [options, setOptions] = useState({
     // trigger를 걸어서 값을 볼 수 있게 해줌 axis는 기본이라 바로 값이 뜸
     tooltip: {
-      trigger: "axis",
+      trigger: 'axis',
     },
     // 범례, selectmode는 클릭시 사라졌다 나왔다 하는거
     // legend: {
@@ -52,29 +57,31 @@ const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setR
     toolbox: {
       feature: {
         dataZoom: {
-          yAxisIndex: "none",
+          yAxisIndex: 'none',
+          bottom: 0,
         },
         restore: {},
-        saveAsImage: {},
       },
+      right: 0,
+      top: 30,
     },
     // x축 시간 기준으로 만듦
     xAxis: {
-      type: "time",
-      min: new Date("2021-12-31T23:59:59.999Z").getTime(),
-      max: new Date("2022-12-31T23:59:59.999Z").getTime(),
+      type: 'time',
+      min: new Date('2021-12-31T23:59:59.999Z').getTime(),
+      max: new Date('2023-12-31T23:59:59.999Z').getTime(),
       show: true,
     },
     // y축 boundarygap은 아마 위아래 조금씩 더 그래프 만드는 거인듯?
     yAxis: {
-      type: "value",
-      boundaryGap: ["1%", "1%"],
+      type: 'value',
+      boundaryGap: ['1%', '1%'],
       show: true,
     },
     // zoom 하는 거 start: 0 으로 둬서 시작에는 전체 데이터 보여줌
     dataZoom: [
       {
-        type: "slider",
+        type: 'slider',
         show: true,
         start: 0,
         end: 100,
@@ -82,7 +89,7 @@ const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setR
       },
       // 안에 확대하는 거인듯
       {
-        type: "inside",
+        type: 'inside',
         start: 0,
         end: 100,
       },
@@ -110,7 +117,7 @@ const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setR
     setOptions((prev) => ({
       ...prev,
       xAxis: {
-        type: "time",
+        type: 'time',
         min: startDate.getTime(),
         max: endDate.getTime(),
         show: true,
@@ -128,67 +135,83 @@ const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setR
 
   const onGraphHandler = () => {
     const time1 = performance.now();
-    
-    axios
-      .post("http://3.36.125.122:8082/data/graph", {
-        componentName: selectedcompoData.name,
-        endDate: endDate,
-        machineName: selectedMachineName,
-        moduleName: selectedModuleName,
-        startDate: startDate,
-      })
-      .then((res) => {
-        console.log(res);
-        let dateObj = new Date(res.data.date);
-        let utcString = dateObj.toUTCString();
-        console.log(utcString);
 
-        let nameArr = [];
-        let resultArr = [];
+    if (
+      !selectedcompoData ||
+      !selectedcompoData.selectedcompoData ||
+      !selectedcompoData.selectedcompoData.name
+    ) {
+      alert('값을 선택해주세요');
+      return;
+    } else {
+      const time1 = performance.now();
+      axios
+        .post('http://3.36.125.122:8082/data/graph', {
+          componentName: selectedcompoData.selectedcompoData.name,
+          endDate: endDate,
+          machineName: selectedcompoData.selectedMachineName,
+          moduleName: selectedcompoData.selectedModuleName,
+          startDate: startDate,
+        })
+        .then((res) => {
+          console.log(res);
 
-        const t0 = performance.now();
-        const minus = time1 - t0;
-        console.log("api문", minus);
+          let nameArr = [];
+          let resultArr = [];
 
-        for (let j = 0; j < res.data.length; j++) {
-          let dataArr = [];
-          nameArr.push(res.data[j].name);
-          for (let i = 0; i < res.data[j].data.length; i++) {
-            dataArr.push([
-              new Date(res.data[j].data[i].date).toISOString(),
-              res.data[j].data[i].value,
-            ]);
+          const t0 = performance.now();
+          const minus = time1 - t0;
+          console.log('api문', minus);
+
+          for (let j = 0; j < res.data.length; j++) {
+            let dataArr = [];
+            nameArr.push(res.data[j].name);
+            for (let i = 0; i < res.data[j].data.length; i++) {
+              dataArr.push([
+                new Date(res.data[j].data[i].date).toISOString(),
+                res.data[j].data[i].value,
+              ]);
+            }
+            resultArr.push({
+              name: res.data[j].name,
+              type: 'line',
+              symbol: 'none',
+              sampling: 'average',
+              colorBy: 'series',
+              large: true,
+              data: dataArr,
+            });
           }
 
           // 얘를 어디다 저장해. sse 쏴서 받아. 최신 데이터만 받아. resultArr를 불러와서 data
-          resultArr.push({
-            name: res.data[j].name,
-            type: "line",
-            symbol: "none",
-            sampling: "average",
-            colorBy: "series",
-            large: true,
-            data: dataArr
-          });
-        }
+          //   resultArr.push({
+          //     name: res.data[j].name,
+          //     type: "line",
+          //     symbol: "none",
+          //     sampling: "average",
+          //     colorBy: "series",
+          //     large: true,
+          //     data: dataArr
+          //   });
+          // }
 
-        setSaveResultArr(resultArr);
-        
-        const t1 = performance.now();
-        const elapsed = t1 - t0;
-        console.log("for문", elapsed);
-        console.log("result: ", resultArr);
-        console.log("name: ", nameArr);
-        prevdata(resultArr, nameArr);
-      });
+          setSaveResultArr(resultArr);
+
+          const t1 = performance.now();
+          const elapsed = t1 - t0;
+          console.log('for문', elapsed);
+          console.log('result: ', resultArr);
+          console.log('name: ', nameArr);
+          prevdata(resultArr, nameArr);
+        });
+    }
   };
 
   const realGraphHandler = () => {
     setRealGraphBtn(!realGraphBtn);
-    setRealGraphBtnState(realGraphBtn) // 버튼 true false를 Main(부모)로 올려줌
-  }
+    setRealGraphBtnState(realGraphBtn); // 버튼 true false를 Main(부모)로 올려줌
+  };
 
-  
   useEffect(() => {
     const eventSource = new EventSource(
       'http://3.36.125.122:8082/sse/connect',
@@ -198,36 +221,41 @@ const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setR
 
     eventSource.addEventListener('machine', (event) => {
       const newMachineData = event.data;
-      console.log(newMachineData)
+      console.log(newMachineData);
 
-      if((newMachineData == selectedMachineName) && (realGraphBtn == true)){
-        axios.post("http://3.36.125.122:8082/data/graph", {
-          componentName: selectedcompoData.name,
-          machineName: selectedMachineName,
-          moduleName: selectedModuleName,
-        })
-        .then((res) => {
-          let newData = [];
-          for (let i=0; i < res.data.length; i++){
-            newData.push([
-              new Date(res.data[i].data).toISOString(),
-              res.data[i].value,
-            ]);
-          }
-          setSaveResultArr((prevResultArr) => {
-            let updatedResultArr = [...prevResultArr];
-            for (let i=0; i < updatedResultArr.length; i++){
-              if(updatedResultArr[i].name === res.data[0].name){  //???
-                updatedResultArr[i].data = [...updatedResultArr[i].data, ...newData];
-              }
+      if (newMachineData == selectedMachineName && realGraphBtn == true) {
+        axios
+          .post('http://3.36.125.122:8082/data/graph', {
+            componentName: selectedcompoData.name,
+            machineName: selectedMachineName,
+            moduleName: selectedModuleName,
+          })
+          .then((res) => {
+            let newData = [];
+            for (let i = 0; i < res.data.length; i++) {
+              newData.push([
+                new Date(res.data[i].data).toISOString(),
+                res.data[i].value,
+              ]);
             }
-            return updatedResultArr;
+            setSaveResultArr((prevResultArr) => {
+              let updatedResultArr = [...prevResultArr];
+              for (let i = 0; i < updatedResultArr.length; i++) {
+                if (updatedResultArr[i].name === res.data[0].name) {
+                  //???
+                  updatedResultArr[i].data = [
+                    ...updatedResultArr[i].data,
+                    ...newData,
+                  ];
+                }
+              }
+              return updatedResultArr;
+            });
+            prevdata(saveResultArr, nameArr);
           });
-          prevdata(saveResultArr, nameArr);
-        })
       }
-    })
-  }, [])
+    });
+  }, []);
 
   //------------------------------------박해준 그래프-----------------------------------------------------
 
@@ -238,7 +266,7 @@ const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setR
           <Font>{selectedcompoData?.name}</Font>
           <Line></Line>
           <AlignPeriod>
-            <PFont>PERIOD</PFont>{" "}
+            <PFont>PERIOD</PFont>{' '}
             <SIconContainer>
               <Icon
                 icon="material-symbols:calendar-today-outline-rounded"
@@ -248,9 +276,11 @@ const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setR
               />
             </SIconContainer>
             <SDatePicker
+              preventOpenFocus={true}
               showPopperArrow={false}
               selected={startDate}
               open={startDateOpen}
+              // onSelect={() => setStartDateOpen(false)}
               onChange={(date) => setStartDate(date)}
               locale={ko}
               selectsStart
@@ -261,21 +291,21 @@ const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setR
               popperProps={{
                 modifiers: [
                   {
-                    name: "flip",
+                    name: 'flip',
                     enabled: false,
                   },
                   {
-                    name: "preventOverflow",
+                    name: 'preventOverflow',
                     options: {
                       enabled: true,
                       escapeWithReference: false,
-                      boundary: "viewport",
+                      boundary: 'viewport',
                     },
                   },
                 ],
               }}
             />
-            {"   "}~{"  "}
+            {'   '}~{'  '}
             <SIconContainer>
               <Icon
                 icon="material-symbols:calendar-today-outline-rounded"
@@ -289,7 +319,9 @@ const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setR
               selected={endDate}
               open={endDateOpen}
               onChange={(date) => setendDate(date)}
+              onSelect={() => setEndDateOpen(false)}
               locale={ko}
+              minDate={startDate}
               selectsEnd
               showTimeSelect
               timeFormat="HH:mm"
@@ -298,15 +330,15 @@ const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setR
               popperProps={{
                 modifiers: [
                   {
-                    name: "flip",
+                    name: 'flip',
                     enabled: false,
                   },
                   {
-                    name: "preventOverflow",
+                    name: 'preventOverflow',
                     options: {
                       enabled: true,
                       escapeWithReference: false,
-                      boundary: "viewport",
+                      boundary: 'viewport',
                     },
                   },
                 ],
@@ -321,7 +353,7 @@ const Graph = ({selectedcompoData, selectedMachineName, selectedModuleName, setR
           <ECharts
             option={options}
             //renderer: 'svg',
-            opts={{ width: "auto", height: "auto" }}
+            opts={{ width: 'auto', height: 'auto' }}
           />
         </div>
         {/* ----------------------------------박해준 그래프--------------------------------- */}
@@ -335,6 +367,7 @@ export default Graph;
 const SIconContainer = styled.div`
   width: 20px;
   color: blue;
+  cursor: pointer;
 `;
 
 const Box = styled.div`
@@ -351,7 +384,7 @@ const Box = styled.div`
 `;
 const Font = styled.div`
   margin: 10px 0px 10px 20px;
-  font-family: "Inter";
+  font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
   font-size: 15px;
@@ -370,7 +403,7 @@ const PFont = styled.div`
   margin-left: 30px;
   margin-right: 5px;
 
-  font-family: "Inter";
+  font-family: 'Inter';
   font-style: normal;
   font-size: 13px;
   color: #707070;
@@ -388,6 +421,12 @@ const AlignPeriod = styled.div`
 `;
 const SDatePicker = styled(DatePicker)`
   border: none;
+
+  .react-datepicker__day--selected,
+  .react-datepicker__day--in-selecting-range,
+  .react-datepicker__day--in-range {
+    background-color: #a8dadc;
+  }
 `;
 const Button = styled.button`
   margin: 0px 5px 0px 5px;
@@ -396,6 +435,6 @@ const Button = styled.button`
   padding: 3px 10px;
   border: none;
   border-radius: 5px;
-  width : auto;
+  width: auto;
   cursor: pointer;
 `;
