@@ -64,6 +64,16 @@ public class MachineController {
         return ResponseEntity.ok().body(machineToModuleDto);
     }
     
+    @PostMapping("/parameter")
+    public ResponseEntity<?> parameterList(@RequestBody GraphInputDto graphInputDto) throws IOException{
+    	StopWatch sw = new StopWatch();
+    	sw.start();
+    	List<Document> list = machineService.findParameter(graphInputDto);
+    	sw.stop();
+      System.out.println("파라미터"+sw.getTotalTimeSeconds());
+      return ResponseEntity.ok().body(list);
+    }
+    
     @PostMapping("/pgraph")
     public ResponseEntity<?> pfindGraphData(@RequestBody GraphInputDto graphInputDto) throws IOException{
 
@@ -89,8 +99,8 @@ public class MachineController {
       System.out.println(data + " " +headers);
       sw.stop();
       System.out.println("그래프 데이터"+sw.getTotalTimeSeconds());
-      return ResponseEntity.ok().body(list);
-//      return new ResponseEntity<>(data,headers, HttpStatus.OK);
+//      return ResponseEntity.ok().body(list);
+      return new ResponseEntity<>(data,headers, HttpStatus.OK);
     }
 
 
