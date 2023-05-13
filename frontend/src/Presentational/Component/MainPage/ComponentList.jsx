@@ -4,7 +4,7 @@ import CreateTable from "../../common/CreateTable";
 import HealthStatus from "./HealthStatus";
 
 const ComponentList = ({ child, setSelectComponentData }) => {
-  const [test, setTest] = useState(); //component list idx 값 저장
+  const [test, setTest] = useState(0); //component list idx 값 저장
   setSelectComponentData(child[test]);
 
   return (

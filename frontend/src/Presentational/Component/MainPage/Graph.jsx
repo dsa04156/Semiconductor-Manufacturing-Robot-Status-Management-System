@@ -26,6 +26,7 @@ const Graph = ({
   const [endDateOpen, setEndDateOpen] = useState(false);
   const [realGraphBtn, setRealGraphBtn] = useState(false); // 실시간 그래프 버튼상태
   const [saveResultArr, setSaveResultArr] = useState();
+  const [nameList, setNameList] = useState([]);
 
   //------------------------------------박해준 그래프-----------------------------------------------------
 
@@ -63,10 +64,12 @@ const Graph = ({
         feature: {
           dataZoom: {
             yAxisIndex: "none",
+            bottom: 0,
           },
           restore: {},
-          saveAsImage: {},
         },
+        right: 0,
+        top: 30,
       },
       xAxis: {
         type: "time",
@@ -138,59 +141,61 @@ const Graph = ({
           startDate: startDate,
         })
         .then((res) => {
-          console.log(res);
+          //    console.log(res.data);
+          if (res.data.length === 0) {
+            alert("해당 기간에는 데이터가 없습니다");
+          } else {
+            let nameArr = [];
+            let resultArr = [];
 
-          let nameArr = [];
-          let resultArr = [];
+            const t0 = performance.now();
+            const minus = time1 - t0;
+            console.log("api문", minus);
 
-          const t0 = performance.now();
-          const minus = time1 - t0;
-          console.log('api문', minus);
-
-          for (let j = 0; j < res.data.length; j++) {
-            let dataArr = [];
-            nameArr.push(res.data[j].name);
-            for (let i = 0; i < res.data[j].data.length; i++) {
-              dataArr.push([
-                new Date(res.data[j].data[i].date).toISOString(),
-                res.data[j].data[i].value,
-              ]);
+            for (let j = 0; j < res.data.length; j++) {
+              let dataArr = [];
+              nameArr.push(res.data[j].name);
+              for (let i = 0; i < res.data[j].data.length; i++) {
+                dataArr.push([
+                  new Date(res.data[j].data[i].date).toISOString(),
+                  res.data[j].data[i].value,
+                ]);
+              }
+              resultArr.push({
+                name: res.data[j].name,
+                type: "line",
+                symbol: "none",
+                sampling: "average",
+                colorBy: "series",
+                large: true,
+                data: dataArr,
+              });
             }
-            resultArr.push({
-              name: res.data[j].name,
-              type: 'line',
-              symbol: 'none',
-              sampling: 'average',
-              colorBy: 'series',
-              large: true,
-              data: dataArr,
-            });
+            const t1 = performance.now();
+            const elapsed = t1 - t0;
+            console.log("for문", elapsed);
+            //    console.log("result: ", resultArr);
+            //  console.log("name: ", nameArr);
+            prevdata(resultArr, nameArr);
+            setNameList(nameArr);
           }
-
-          // 얘를 어디다 저장해. sse 쏴서 받아. 최신 데이터만 받아. resultArr를 불러와서 data
-          //   resultArr.push({
-          //     name: res.data[j].name,
-          //     type: "line",
-          //     symbol: "none",
-          //     sampling: "average",
-          //     colorBy: "series",
-          //     large: true,
-          //     data: dataArr
-          //   });
-          // }
-
-          setSaveResultArr(resultArr);
-
-          const t1 = performance.now();
-          const elapsed = t1 - t0;
-          console.log('for문', elapsed);
-          console.log('result: ', resultArr);
-          console.log('name: ', nameArr);
-          prevdata(resultArr, nameArr);
         });
-    }
-  };
+      }
+    };
+    // 얘를 어디다 저장해. sse 쏴서 받아. 최신 데이터만 받아. resultArr를 불러와서 data
+    //   resultArr.push({
+    //     name: res.data[j].name,
+    //     type: "line",
+    //     symbol: "none",
+    //     sampling: "average",
+    //     colorBy: "series",
+    //     large: true,
+    //     data: dataArr
+    //   });
+    // }
 
+    // setSaveResultArr(resultArr);
+    
   const realGraphHandler = () => {
     setRealGraphBtn(!realGraphBtn);
     setRealGraphBtnState(realGraphBtn); // 버튼 true false를 Main(부모)로 올려줌
@@ -328,10 +333,11 @@ const Graph = ({
                 ],
               }}
             />
-            <Button style={{ width: "100px" }} onClick={onGraphHandler}>
+            {/* <Button style={{ width: "100px" }} onClick={onGraphHandler}>
               실행
-            </Button>
-            <Button onClick={realGraphHandler}>실시간</Button>
+            </Button> */}
+            <Button onClick={onGraphHandler}>set</Button>
+            <Button onClick={onGraphHandler}>realtime</Button>
           </AlignPeriod>
         </PeriodBox>
         {/* ----------------------------------박해준 그래프--------------------------------- */}
@@ -370,7 +376,7 @@ const Box = styled.div`
 `;
 const Font = styled.div`
   margin: 10px 0px 10px 20px;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 400;
   font-size: 15px;
@@ -389,7 +395,7 @@ const PFont = styled.div`
   margin-left: 30px;
   margin-right: 5px;
 
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-size: 13px;
   color: #707070;
@@ -415,8 +421,7 @@ const SDatePicker = styled(DatePicker)`
   }
 `;
 const Button = styled.button`
-  margin: 0px 5px 0px 5px;
-  background-color: #5a8ceb;
+  background-color: blue;
   color: white;
   padding: 3px 10px;
   border: none;
