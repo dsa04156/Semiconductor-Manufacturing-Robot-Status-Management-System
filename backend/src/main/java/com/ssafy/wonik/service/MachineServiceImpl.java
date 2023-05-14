@@ -40,6 +40,11 @@ public class MachineServiceImpl implements MachineService{
 		return machineRepository.findGraphData2(graphInputDto);
 	}
 
+    @Override
+    public MachineToModuleDto findNowGraph(NowGraphInputDto nowGraphInputDto) {
+        return machineRepository.findNowGraphData(nowGraphInputDto);
+    }
+
 	@Override
 	public List<Document> findParameter(GraphInputDto graphInputDto) {
 		// TODO Auto-generated method stub
