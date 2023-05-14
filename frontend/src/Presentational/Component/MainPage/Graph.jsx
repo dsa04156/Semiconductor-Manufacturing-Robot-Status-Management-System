@@ -26,35 +26,56 @@ const Graph = ({
   const [startTime, setstartTime] = useState(new Date());
   const [endTime, setendTime] = useState(new Date());
 
-
-
-  
-
   const [realGraphBtn, setRealGraphBtn] = useState(false); // 실시간 그래프 버튼상태
   const [saveResultArr, setSaveResultArr] = useState();
   const [nameList, setNameList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const chartRef = useRef(null);
 
-
   const onStartDateChange = (value, dateString) => {
     setStartDate(new Date(dateString));
+    console.log("시작날짜: ");
+    console.log(dateString);
   };
 
   const onEndDateChange = (value, dateString) => {
     setendDate(new Date(dateString));
+    console.log("종료날짜: ");
+    console.log(dateString);
   };
 
-  const onStartTimeChange = (time,timeString) => {
-    const [hours, minutes, seconds] = timeString.split(':');
-    const updatedTime= new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), hours, minutes, seconds);
+  const onStartTimeChange = (time, timeString) => {
+    const [hours, minutes, seconds] = timeString.split(":");
+    console.log("시작시분: ");
+    console.log(timeString);
+    const updatedTime = new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate(),
+      hours,
+      minutes,
+      seconds
+    );
     setstartTime(updatedTime);
+    console.log("시작 전체 시간 : ");
+    console.log(updatedTime);
   };
 
   const onEndTimeChange = (time, timeString) => {
-    const [hours, minutes, seconds] = timeString.split(':');
-    const updatedTime = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), hours, minutes, seconds);
+    const [hours, minutes, seconds] = timeString.split(":");
+    console.log("종료 시분 : ");
+    console.log(timeString);
+    const updatedTime = new Date(
+      endDate.getFullYear(),
+      endDate.getMonth(),
+      endDate.getDate(),
+      hours,
+      minutes,
+      seconds
+    );
     setendTime(updatedTime);
+    console.log("종료 전체 시간 :");
+    console.log(updatedTime);
   };
 
   //------------------------------------박해준 그래프-----------------------------------------------------
@@ -147,85 +168,91 @@ const Graph = ({
     if (!selectedcompoData || !selectedcompoData.name) {
       alert("값을 선택해주세요");
     } else {
-
-    const time1 = performance.now();
-    setIsLoading(true);
-      axios.post('http://3.36.125.122:8082/data/parameter',
-      {
-        componentName: selectedcompoData.name,
-        endDate: endTime,
-        machineName: selectedMachineName,
-        moduleName: selectedModuleName,
-        startDate: startTime,
-
-      }
-      ).then((res1) => {
-        //------------------------ 두번째 방법
-        const t0 = performance.now();
-        const minus = time1 - t0;
-        console.log("name api문",minus);
-        console.log(res1.data)
-        let nameArr = []
-        for (let i = 0; i < res1.data.length; i++){
-          nameArr.push(res1.data[i].name);
-        }
-  
-        let machineName = selectedMachineName;
-        let moduleName = selectedModuleName;
-        let componentName = selectedcompoData.name;
-
-        nameArr.push(componentName);
-        console.log(nameArr);
-        let resultArr = [];
-  
-        const t1 = performance.now();
-  
-        Promise.all(nameArr.map(async (name) => {
-          let parent = componentName;
-          if(name == componentName){
-            parent = moduleName;
-          }
-          const res2 = await axios.post("http://3.36.125.122:8082/data/pgraph", {
-            "endDate": endDate,
-            "startDate": startDate,
-            "machineName": machineName,
-            "componentName": parent,
-            "parameterName": name
-          });
-          let dataArr = [];
-          const perfor1 = performance.now();
-          for (let j = 0; j < res2.data.length; j++) {
-            dataArr.push([new Date(res2.data[j].date).toISOString(), res2.data[j].value]);
-          }
-          const perfor2 = performance.now();
-          console.log("for문 시간 : ", perfor2 - perfor1)
-          return {
-            name: name,
-            type: 'line',
-            symbol: 'none',
-            sampling: 'average',
-            colorBy: "series",
-            large: true,
-            data: dataArr
-          };
-        })).then((result) => {
-          console.log(result)
-          resultArr.push(result)
-          const prev1 = performance.now();
-          prevdata(resultArr[0], nameArr)
-          const prev2 = performance.now();
-          console.log("그래프시간 시간 : ", prev2 - prev1)
+      const time1 = performance.now();
+      setIsLoading(true);
+      axios
+        .post("http://3.36.125.122:8082/data/parameter", {
+          componentName: selectedcompoData.name,
+          endDate: endTime,
+          machineName: selectedMachineName,
+          moduleName: selectedModuleName,
+          startDate: startTime,
         })
-        
-        const t2 = performance.now();
-        console.log("Promise 문 ", t2-t1);
-      })
+        .then((res1) => {
+          console.log("보낸 시작 시간 : ");
+          console.log(startTime);
+          console.log("보낸 종료 시간 :");
+          console.log(endTime);
+          //------------------------ 두번째 방법
+          const t0 = performance.now();
+          const minus = time1 - t0;
+          console.log("name api문", minus);
+          console.log(res1.data);
+          let nameArr = [];
+          for (let i = 0; i < res1.data.length; i++) {
+            nameArr.push(res1.data[i].name);
+          }
+
+          let machineName = selectedMachineName;
+          let moduleName = selectedModuleName;
+          let componentName = selectedcompoData.name;
+
+          nameArr.push(componentName);
+          console.log(nameArr);
+          let resultArr = [];
+
+          const t1 = performance.now();
+
+          Promise.all(
+            nameArr.map(async (name) => {
+              let parent = componentName;
+              if (name == componentName) {
+                parent = moduleName;
+              }
+              const res2 = await axios.post(
+                "http://3.36.125.122:8082/data/pgraph",
+                {
+                  endDate: endTime,
+                  startDate: startTime,
+                  machineName: machineName,
+                  componentName: parent,
+                  parameterName: name,
+                }
+              );
+              let dataArr = [];
+              const perfor1 = performance.now();
+              for (let j = 0; j < res2.data.length; j++) {
+                dataArr.push([
+                  new Date(res2.data[j].date).toISOString(),
+                  res2.data[j].value,
+                ]);
+              }
+              const perfor2 = performance.now();
+              console.log("for문 시간 : ", perfor2 - perfor1);
+              return {
+                name: name,
+                type: "line",
+                symbol: "none",
+                sampling: "average",
+                colorBy: "series",
+                large: true,
+                data: dataArr,
+              };
+            })
+          ).then((result) => {
+            console.log(result);
+            resultArr.push(result);
+            const prev1 = performance.now();
+            prevdata(resultArr[0], nameArr);
+            const prev2 = performance.now();
+            console.log("그래프시간 시간 : ", prev2 - prev1);
+          });
+
+          const t2 = performance.now();
+          console.log("Promise 문 ", t2 - t1);
+        });
     }
-  }
-  
-  
-
-
+  };
 
   //------------------------------------박해준 그래프-----------------------------------------------------
 
@@ -346,5 +373,4 @@ const Button = styled.button`
   border-radius: 5px;
   width : 30px
   cursor: pointer;
-  margin-left : 10px;
-`;
+`
