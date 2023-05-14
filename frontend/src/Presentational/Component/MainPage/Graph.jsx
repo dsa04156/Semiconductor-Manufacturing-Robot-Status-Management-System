@@ -3,14 +3,13 @@ import styled from "styled-components";
 import { DatePicker, TimePicker } from "antd";
 import "react-datepicker/dist/react-datepicker.css";
 import { Oval } from "react-loader-spinner";
-import locale from 'antd/es/date-picker/locale/ko_KR';
-import { Icon } from "@iconify/react";
+import locale from "antd/es/date-picker/locale/ko_KR";
+import dayjs from "dayjs";
 
 //----------------- 박해준 그래프 -----------------------
 import ECharts, { EchartsReactprops } from "echarts-for-react";
 import axios from "axios";
 //----------------- 박해준 그래프 -----------------------
-
 
 const Graph = ({
   selectedcompoData,
@@ -18,13 +17,12 @@ const Graph = ({
   selectedModuleName,
   setRealGraphBtnState,
 }) => {
-  // const [startDate, setStartDate] = useState(
-  //   new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  // );
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setendDate] = useState(new Date());
-  const [startTime, setstartTime] = useState(new Date());
-  const [endTime, setendTime] = useState(new Date());
+  const [startTime, setstartTime] = useState(
+    new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  );
+  const [endTime, setendTime] = useState(new Date(Date.now()));
 
   const [realGraphBtn, setRealGraphBtn] = useState(false); // 실시간 그래프 버튼상태
   const [saveResultArr, setSaveResultArr] = useState();
@@ -100,22 +98,15 @@ const Graph = ({
   };
 
   useEffect(() => {
-    if (chartRef.current) {
+    if (!selectedcompoData || !selectedMachineName || !selectedModuleName) {
+      setOptions(getInitialOptions());
+    } else {
       const chartInstance = chartRef.current.getEchartsInstance();
       chartInstance.clear();
       chartInstance.setOption(getInitialOptions());
+      setOptions(getInitialOptions()); // options 상태를 초기값으로 설정
     }
-    const initialStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    const initialEndDate = new Date();
-    const initialStartTime = new Date();
-    const initialEndTime = new Date();
-
-    setStartDate(initialStartDate);
-    setendDate(initialEndDate);
-    setstartTime(initialStartTime);
-    setendTime(initialEndTime);
-
-  }, [selectedMachineName, selectedModuleName, selectedcompoData]);
+  }, [selectedcompoData, selectedMachineName, selectedModuleName]);
 
   // 이 옵션으로 chart를 만듦
   const getInitialOptions = () => {
@@ -126,8 +117,9 @@ const Graph = ({
       toolbox: {
         feature: {
           dataZoom: {
+            show: true,
             yAxisIndex: "none",
-            bottom: 0,
+            bottom: "0%",
           },
           restore: {},
         },
@@ -191,7 +183,6 @@ const Graph = ({
       const time1 = performance.now();
       setIsLoading(true);
 
-
       axios
         .post("http://3.36.125.122:8082/data/parameter", {
           componentName: selectedcompoData.name,
@@ -242,6 +233,7 @@ const Graph = ({
                   parameterName: name,
                 }
               );
+              setIsLoading(false);
               console.log(res2);
               let dataArr = [];
               const perfor1 = performance.now();
@@ -271,7 +263,14 @@ const Graph = ({
             const prev2 = performance.now();
             console.log("그래프시간 시간 : ", prev2 - prev1);
           });
+          if (chartRef.current) {
+            const chartInstance = chartRef.current.getEchartsInstance();
+            if (chartInstance) {
+              chartInstance.clear();
+            }
+          }
 
+          setOptions(getInitialOptions());
           const t2 = performance.now();
           console.log("Promise 문 ", t2 - t1);
         });
@@ -288,22 +287,47 @@ const Graph = ({
           <Line></Line>
           <AlignPeriod>
             <PFont>PERIOD</PFont>
-            <DatePicker value={startDate} locale={locale } onChange={onStartDateChange} />
-            <TimePicker value={startTime} locale={locale } onChange={onStartTimeChange} format="HH:mm:ss" />
+            <DatePicker
+              defaultValue={dayjs(startTime)}
+              locale={locale}
+              onChange={onStartDateChange}
+            />
+            <TimePicker
+              defaultValue={dayjs(startTime)}
+              locale={locale}
+              onChange={onStartTimeChange}
+              format="HH:mm:ss"
+            />
             ~
-            <DatePicker value={endDate} locale={locale } onChange={onEndDateChange} />
-            <TimePicker value={endTime} locale={locale } onChange={onEndTimeChange} format="HH:mm:ss" />
+            <DatePicker
+              defaultValue={dayjs(endTime)}
+              locale={locale}
+              onChange={onEndDateChange}
+            />
+            <TimePicker
+              defaultValue={dayjs(endTime)}
+              locale={locale}
+              onChange={onEndTimeChange}
+              format="HH:mm:ss"
+            />
             <Button onClick={onGraphHandler}>set</Button>
           </AlignPeriod>
         </PeriodBox>
 
         {/* ----------------------------------박해준 그래프--------------------------------- */}
         <div>
-          <ECharts
-            option={options}
-            //renderer: 'svg',
-            opts={{ width: "auto", height: "auto" }}
-          />
+          {isLoading ? (
+            <LoadingIndicator>
+              <Oval  color="#00BFFF" height={100} width={100} timeout={5000} />
+            </LoadingIndicator>
+          ) : (
+            <ECharts
+              option={options}
+              ref={chartRef}
+              //renderer: 'svg',
+              opts={{ width: "auto", height: "auto" }}
+            />
+          )}
         </div>
 
         {/* ----------------------------------박해준 그래프--------------------------------- */}
@@ -314,7 +338,12 @@ const Graph = ({
 
 export default Graph;
 
-
+const LoadingIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px; /* Adjust the height as needed */
+`;
 const Box = styled.div`
   position: absolute;
   top: 260px;
