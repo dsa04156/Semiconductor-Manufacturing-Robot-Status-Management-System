@@ -140,7 +140,7 @@ public class MachineController {
 
     @PostMapping("/graph/now")
     public ResponseEntity<?> findNowGraph(@RequestBody NowGraphInputDto nowGraphInputDto){
-        MachineToModuleDto result = machineService.findNowGraph(nowGraphInputDto);
+        List<MachineToModuleDto> result = machineService.findNowGraph(nowGraphInputDto);
 
         return ResponseEntity.ok().body(result);
     }

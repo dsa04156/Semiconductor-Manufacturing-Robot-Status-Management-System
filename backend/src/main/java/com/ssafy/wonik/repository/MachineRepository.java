@@ -167,25 +167,34 @@ public class MachineRepository {
 
 	}
 
-    public MachineToModuleDto findNowGraphData(NowGraphInputDto nowGraphInputDto) {
+    public List<MachineToModuleDto> findNowGraphData(NowGraphInputDto nowGraphInputDto) {
         MongoCollection<Document> collection = mongoTemplate.getCollection(nowGraphInputDto.getMachineName());
-
+        List<MachineToModuleDto> result = new ArrayList<>();
         Document latestDateDoc = collection.find().sort(new Document("date",-1)).first();
         Date latestDate = latestDateDoc.getDate("date");
-        MachineToModuleDto data = new MachineToModuleDto();
         try (MongoCursor<Document> cursor = collection.find(
                 Filters.and(
-                        Filters.eq("parent", nowGraphInputDto.getComponentName()),
-                        Filters.eq("date", latestDate),
-                        Filters.eq("name",nowGraphInputDto.getParameterName())
-                )).iterator()){
-            Document doc = cursor.next();
-            data.setName(doc.getString("name"));
-            data.setDate(doc.getDate("date"));
-            data.setValue(doc.getDouble("value"));
-            }
+                        Filters.or(
+                                Filters.eq("parent", nowGraphInputDto.getComponentName()),
+                                Filters.and(
+                                        Filters.eq("parent", nowGraphInputDto.getModuleName()),
+                                        Filters.eq("name", nowGraphInputDto.getComponentName())
+                                )
 
-        return data ;
+                        ),
+                        Filters.eq("date", latestDate)
+                )).iterator()) {
+            while (cursor.hasNext()) {
+                Document doc = cursor.next();
+                MachineToModuleDto data = new MachineToModuleDto();
+                data.setName(doc.getString("name"));
+                data.setDate(doc.getDate("date"));
+                data.setValue(doc.getDouble("value"));
+                result.add(data);
+            }
+        }
+
+        return result ;
     }
 
 
