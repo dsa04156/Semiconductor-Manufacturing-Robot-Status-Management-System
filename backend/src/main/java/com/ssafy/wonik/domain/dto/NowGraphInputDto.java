@@ -14,5 +14,4 @@ public class NowGraphInputDto {
 
     private String ComponentName;
 
-    private String parameterName;
 }

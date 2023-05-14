@@ -41,7 +41,7 @@ public class MachineServiceImpl implements MachineService{
 	}
 
     @Override
-    public MachineToModuleDto findNowGraph(NowGraphInputDto nowGraphInputDto) {
+    public List<MachineToModuleDto> findNowGraph(NowGraphInputDto nowGraphInputDto) {
         return machineRepository.findNowGraphData(nowGraphInputDto);
     }
 
