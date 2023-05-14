@@ -26,11 +26,7 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 public class MachineRepository {
     @Autowired
     private MongoTemplate mongoTemplate;
-    private final MongoDatabase mongoDatabase;
 
-    public MachineRepository(MongoDatabase mongoDatabase) {
-        this.mongoDatabase = mongoDatabase;
-    }
     public List<MachineToModuleDto> findRecentModuleData(String machineName) {
         MongoCollection<Document> collection = mongoTemplate.getCollection(machineName);
 
@@ -116,8 +112,8 @@ public class MachineRepository {
 //	            Aggregation.sort(Sort.by(Sort.Direction.DESC, "date")),
 	            Aggregation.match(Criteria.where("date").gte(graphInputDto.getStartDate()).lt(graphInputDto.getEndDate())
 	                        .and("parent").is(graphInputDto.getComponentName())
-	                        .and("name").is(graphInputDto.getParameterName())),
-	            Aggregation.project("_id", "parent","name").andExclude("_id", "parent","name")
+	                        .and("name").is(graphInputDto.getParameterName()))
+	            ,Aggregation.project("_id", "parent","name").andExclude("_id", "parent","name")
 	    );
 //	    AggregateIterable<Document> result = collection.aggregate(Arrays.asList(new Document("$sort",
 //	    	    new Document("date", -1L)), 
@@ -133,9 +129,42 @@ public class MachineRepository {
 //	    	    new Document("_id", 0L)
 //	    	            .append("parent", 0L))));
 	    AggregationResults<Document> rawResult =
-	            mongoTemplate.aggregate(aggregation, "machine_A", Document.class);
+	            mongoTemplate.aggregate(aggregation, graphInputDto.getMachineName(), Document.class);
 	    return rawResult.getMappedResults();
         
+	}
+	public List<Document> findParameter(GraphInputDto graphInputDto) {
+	    Aggregation aggregation = Aggregation.newAggregation(
+	            Aggregation.match(Criteria.where("date")
+	            		.gte(graphInputDto.getStartDate())
+	            		.lt(graphInputDto.getEndDate())
+	                    .and("parent")
+	                    .is(graphInputDto.getComponentName())),
+                Aggregation.group("name")
+                    .first("name").as("name"),
+                Aggregation.project("_id").andExclude("_id")
+        );
+
+	    
+	    AggregationResults<Document> rawResult =
+	            mongoTemplate.aggregate(aggregation, graphInputDto.getMachineName(), Document.class);
+	    return rawResult.getMappedResults();
+//	    public List<Document> aggregate(MongoTemplate mongoTemplate) {
+//	        Aggregation aggregation = Aggregation.newAggregation(
+//	                Aggregation.match(Criteria.where("date")
+//	                            .gte(new Date(1641033117942L))
+//	                            .lt(new Date(1672482717942L))
+//	                            .and("parent")
+//	                            .is("root-006-000")),
+//	                Aggregation.group("name")
+//	                            .first("name").as("name")
+//	        );
+//
+//	        AggregationResults<Document> rawResult =
+//	                mongoTemplate.aggregate(aggregation, "machine_A", Document.class);
+//	        return rawResult.getMappedResults();
+//	    }
+
 	}
 
     public MachineToModuleDto findNowGraphData(NowGraphInputDto nowGraphInputDto) {

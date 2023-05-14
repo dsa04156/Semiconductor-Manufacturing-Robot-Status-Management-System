@@ -19,5 +19,8 @@ public interface MachineService {
 
 	List<Document> findGraphData2(GraphInputDto graphInputDto);
 
+
     MachineToModuleDto findNowGraph(NowGraphInputDto nowGraphInputDto);
+
+	List<Document> findParameter(GraphInputDto graphInputDto);
 }

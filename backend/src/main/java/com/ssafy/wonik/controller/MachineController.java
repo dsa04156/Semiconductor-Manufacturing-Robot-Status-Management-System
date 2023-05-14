@@ -2,6 +2,8 @@ package com.ssafy.wonik.controller;
 
 import com.ssafy.wonik.domain.dto.*;
 import com.ssafy.wonik.service.MachineService;
+
+import io.swagger.annotations.ApiOperation;
 import io.swagger.models.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +66,19 @@ public class MachineController {
         return ResponseEntity.ok().body(machineToModuleDto);
     }
     
+    @PostMapping("/parameter")
+    @ApiOperation("시간 컴포넌트이름 머신이름 만 있으면 됩니다")
+    public ResponseEntity<?> parameterList(@RequestBody GraphInputDto graphInputDto) throws IOException{
+    	StopWatch sw = new StopWatch();
+    	sw.start();
+    	List<Document> list = machineService.findParameter(graphInputDto);
+    	sw.stop();
+      System.out.println("파라미터"+sw.getTotalTimeSeconds());
+      return ResponseEntity.ok().body(list);
+    }
+    
     @PostMapping("/pgraph")
+    @ApiOperation("모듈빼고 다 적어야 합니다")
     public ResponseEntity<?> pfindGraphData(@RequestBody GraphInputDto graphInputDto) throws IOException{
 
     	StopWatch sw = new StopWatch();
@@ -89,8 +103,8 @@ public class MachineController {
       System.out.println(data + " " +headers);
       sw.stop();
       System.out.println("그래프 데이터"+sw.getTotalTimeSeconds());
-      return ResponseEntity.ok().body(list);
-//      return new ResponseEntity<>(data,headers, HttpStatus.OK);
+//      return ResponseEntity.ok().body(list);
+      return new ResponseEntity<>(data,headers, HttpStatus.OK);
     }
 
 
