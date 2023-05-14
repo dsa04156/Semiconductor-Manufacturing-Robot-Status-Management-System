@@ -16,6 +16,7 @@ const Mainpage = () => {
         setModuleChild={setModuleChild}
         setSelectedMachineName={setSelectedMachineName}
         setSelectedModuleName={setSelectedModuleName}
+        selectedcompoDate={selectComponentData}
       />
       <ComponentList
         child={moduleChild}

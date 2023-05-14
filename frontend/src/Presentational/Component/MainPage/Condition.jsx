@@ -8,23 +8,44 @@ const Condition = ({
   setModuleChild,
   setSelectedMachineName,
   setSelectedModuleName,
+  selectedcompoDate,
+
 }) => {
   const [machineData, setMachineData] = useState({});
   const [moduleData, setModuleData] = useState([]);
   const [componentData, setComponentData] = useState([]);
-  const [status, setStatus] = useState("");
-  const [currentMachineName, setCurrentMachineName] = useState("");
-  const [currentModuleName, setCurrentModuleName] = useState("");
+  const [status, setStatus] = useState('');
+  const [currentMachineName, setCurrentMachineName] = useState('');
+  const [currentModuleName, setCurrentModuleName] = useState('');
+  const [realtimeBtn, setRealtimeBtn] = useState(false);
 
-  const collectionJSON = localStorage.getItem("collectionNames");
+  const collectionJSON = localStorage.getItem('collectionNames');
   const collectionNames = JSON.parse(collectionJSON);
 
   const secondSelect = useRef();
 
+  //------------실시간 그래프 api 보내기 위해 startdate 설정.(현재시간 - 1)-------
+  let startDate = new Date();
+  startDate = new Date(startDate.getTime() - (startDate.getTimezoneOffset() * 60000));
+  startDate.setHours(startDate.getHours() - 1);
+  // 날짜를 ISO 8601 형식의 문자열로 변환합니다.
+  let realtimeAnHourAgo = startDate.toISOString();
+  // 초 이하의 정보를 제거합니다.
+  realtimeAnHourAgo = realtimeAnHourAgo.slice(0, 19);
+  console.log(realtimeAnHourAgo);
+  //----------------------------------------------------------------------------
+  //-------------실시간 그래프 api 보내기 위해 endDate 설정-----------------------
+  let endDate = new Date();
+  endDate = new Date(endDate.getTime() - (endDate.getTimezoneOffset() * 60000));
+  let realtime = endDate.toISOString();
+  realtime = realtime.slice(0, 19);
+  console.log(realtime);
+  //-----------------------------------------------------------------------------
+
   useEffect(() => {
     const eventSource = new EventSource(
-      "http://3.36.125.122:8082/sse/connect",
-      { headers: { accept: "text/event-stream" } },
+      'http://3.36.125.122:8082/sse/connect',
+      { headers: { accept: 'text/event-stream' } },
       { withCredentials: true }
     );
 
@@ -32,13 +53,13 @@ const Condition = ({
       console.log(e);
     };
 
-    eventSource.addEventListener("connect", (event) => {
+    eventSource.addEventListener('connect', (event) => {
       const { data: received } = event;
-      console.log("connect", received);
+      console.log('connect', received);
       console.log(event.data);
     });
 
-    eventSource.addEventListener("machine", (event) => {
+    eventSource.addEventListener('machine', (event) => {
       const newMachineData = event.data;
       //   console.log(newMachineData);
       //  console.log(newMachineData, currentMachineName);
@@ -72,28 +93,41 @@ const Condition = ({
             }
             setModuleData(modulelist);
             //   console.log('--------------------', currentModuleName);
-
-            api
-              .post(
-                `data/machine/module?machineName=${currentMachineName}&moduleName=${currentModuleName}`,
-                JSON.stringify({})
-              )
-              .then((response) => {
-                //     console.log(response.data);
-                setModuleChild(response.data);
-              })
-              .catch((err) => {
-                console.log(err);
-              });
           })
           .catch((error) => {
             console.log(error);
           });
+        api
+          .post(
+            `data/machine/module?machineName=${currentMachineName}&moduleName=${currentModuleName}`,
+            JSON.stringify({})
+          )
+          .then((response) => {
+            //     console.log(response.data);
+            setModuleChild(response.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        // if(realGraphBtnState == true){
+        //   api
+        //   .post(
+        //     `data/graph`, {
+        //       componentName: selectedcompoDate?.name,
+        //       endDate: realtime,
+        //       machineName: currentMachineName,
+        //       moduleName: currentModuleName,
+        //       startDate: realtimeAnHourAgo,
+        //     }
+        //   )
+        //   .then()
+
+        // }
       }
     });
 
-    eventSource.addEventListener("error", (error) => {
-      console.log("SSE Error: ", error);
+    eventSource.addEventListener('error', (error) => {
+      console.log('SSE Error: ', error);
     });
 
     return () => {
