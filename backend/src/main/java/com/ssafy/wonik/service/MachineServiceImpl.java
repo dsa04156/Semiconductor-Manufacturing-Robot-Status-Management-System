@@ -39,4 +39,9 @@ public class MachineServiceImpl implements MachineService{
 	public List<Document> findGraphData2(GraphInputDto graphInputDto) {
 		return machineRepository.findGraphData2(graphInputDto);
 	}
+
+    @Override
+    public MachineToModuleDto findNowGraph(NowGraphInputDto nowGraphInputDto) {
+        return machineRepository.findNowGraphData(nowGraphInputDto);
+    }
 }

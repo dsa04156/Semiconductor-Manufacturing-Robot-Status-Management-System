@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
+import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -118,7 +119,7 @@ public class MachineRepository {
 	                        .and("name").is(graphInputDto.getParameterName())),
 	            Aggregation.project("_id", "parent","name").andExclude("_id", "parent","name")
 	    );
-//	    AggregateIterable<Document> result = collection.aggregate(Arrays.asList(new Document("$sort", 
+//	    AggregateIterable<Document> result = collection.aggregate(Arrays.asList(new Document("$sort",
 //	    	    new Document("date", -1L)), 
 //	    	    new Document("$match", 
 //	    	    new Document("$and", Arrays.asList(new Document("date", 
@@ -136,6 +137,27 @@ public class MachineRepository {
 	    return rawResult.getMappedResults();
         
 	}
+
+    public MachineToModuleDto findNowGraphData(NowGraphInputDto nowGraphInputDto) {
+        MongoCollection<Document> collection = mongoTemplate.getCollection(nowGraphInputDto.getMachineName());
+
+        Document latestDateDoc = collection.find().sort(new Document("date",-1)).first();
+        Date latestDate = latestDateDoc.getDate("date");
+        MachineToModuleDto data = new MachineToModuleDto();
+        try (MongoCursor<Document> cursor = collection.find(
+                Filters.and(
+                        Filters.eq("parent", nowGraphInputDto.getComponentName()),
+                        Filters.eq("date", latestDate),
+                        Filters.eq("name",nowGraphInputDto.getParameterName())
+                )).iterator()){
+            Document doc = cursor.next();
+            data.setName(doc.getString("name"));
+            data.setDate(doc.getDate("date"));
+            data.setValue(doc.getDouble("value"));
+            }
+
+        return data ;
+    }
 
 
 

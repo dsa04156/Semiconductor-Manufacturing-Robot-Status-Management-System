@@ -18,4 +18,6 @@ public interface MachineService {
     List<MachineToModuleDto> findRecentComponentData(ModuleToComponentInputDto moduleToComponentInputDto);
 
 	List<Document> findGraphData2(GraphInputDto graphInputDto);
+
+    MachineToModuleDto findNowGraph(NowGraphInputDto nowGraphInputDto);
 }
