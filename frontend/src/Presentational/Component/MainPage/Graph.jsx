@@ -6,10 +6,11 @@ import { Oval } from "react-loader-spinner";
 import locale from "antd/es/date-picker/locale/ko_KR";
 import dayjs from "dayjs";
 
-//----------------- 박해준 그래프 -----------------------
+
+
 import ECharts, { EchartsReactprops } from "echarts-for-react";
 import axios from "axios";
-//----------------- 박해준 그래프 -----------------------
+
 
 const Graph = ({
   selectedcompoData,
@@ -28,7 +29,90 @@ const Graph = ({
   const [saveResultArr, setSaveResultArr] = useState();
   const [nameList, setNameList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  
   const chartRef = useRef(null);
+ 
+
+
+    // 이 옵션으로 chart를 만듦
+    const getInitialOptions = () => {
+      return {
+        tooltip: {
+          trigger: "axis",
+        },
+        toolbox: {
+          feature: {
+            dataZoom: {
+              show: true,
+              yAxisIndex: "none",
+              bottom: "0%",
+            },
+            restore: {},
+          },
+          right: 0,
+          top: 30,
+        },
+        legend:{
+          show:true,
+        },
+        xAxis: {
+          type: "time",
+          min: new Date("2021-12-31T23:59:59.999Z").getTime(),
+          max: new Date("2022-12-31T23:59:59.999Z").getTime(),
+          show: true,
+        },
+        yAxis: {
+          type: "value",
+          boundaryGap: ["1%", "1%"],
+          show: true,
+        },
+        dataZoom: [
+          {
+            type: "slider",
+            show: true,
+            start: 0,
+            end: 100,
+            handleSize: 8,
+          },
+          {
+            type: "inside",
+            start: 0,
+            end: 100,
+          },
+        ],
+        series: [],
+      };
+    };
+    const [options, setOptions] = useState(getInitialOptions());
+
+// ----------------실시간 데이터 추가 부분----------------------------
+  // const updateGraphOptions = (currentOptions, data) => {
+
+  //   const updatedSeriesData = [...currentOptions.series[0].data, ...data];
+  //   const updatedOptions = {
+  //     ...currentOptions,
+  //     series: [{ ...currentOptions.series[0], data: updatedSeriesData }],
+  //   };
+  
+  //   return updatedOptions;
+  // };
+  // const resetGraph = () => {
+  //   const chartInstance = chartRef.current.getEchartsInstance();
+  //   if (chartInstance) {
+  //     chartInstance.clear();
+  //     chartInstance.setOption(getInitialOptions());
+  //   }
+  // };
+
+  // const handleSSEUpdate = (data) => {
+  //   const chartInstance = chartRef.current?.getEchartsInstance();
+  //   if (chartInstance) {
+  //     const updatedOptions = updateGraphOptions(options, data);
+  //     chartInstance.setOption(updatedOptions);
+  //   }
+  // };
+
+  // -----------------------------------------------------------------
 
   const onStartDateChange = (value, dateString) => {
     const newStartDate = new Date(dateString);
@@ -86,6 +170,9 @@ const Graph = ({
     setendTime(updatedTime);
   };
 
+  
+
+
   //------------------------------------박해준 그래프-----------------------------------------------------
 
   const samplingOpt = {
@@ -100,61 +187,18 @@ const Graph = ({
   useEffect(() => {
     if (!selectedcompoData || !selectedMachineName || !selectedModuleName) {
       setOptions(getInitialOptions());
+      // resetGraph();
     } else {
       const chartInstance = chartRef.current.getEchartsInstance();
       chartInstance.clear();
       chartInstance.setOption(getInitialOptions());
-      setOptions(getInitialOptions()); // options 상태를 초기값으로 설정
+      setOptions(getInitialOptions()); 
+      // setOptions(getInitialOptions());
     }
   }, [selectedcompoData, selectedMachineName, selectedModuleName]);
 
-  // 이 옵션으로 chart를 만듦
-  const getInitialOptions = () => {
-    return {
-      tooltip: {
-        trigger: "axis",
-      },
-      toolbox: {
-        feature: {
-          dataZoom: {
-            show: true,
-            yAxisIndex: "none",
-            bottom: "0%",
-          },
-          restore: {},
-        },
-        right: 0,
-        top: 30,
-      },
-      xAxis: {
-        type: "time",
-        min: new Date("2021-12-31T23:59:59.999Z").getTime(),
-        max: new Date("2022-12-31T23:59:59.999Z").getTime(),
-        show: true,
-      },
-      yAxis: {
-        type: "value",
-        boundaryGap: ["1%", "1%"],
-        show: true,
-      },
-      dataZoom: [
-        {
-          type: "slider",
-          show: true,
-          start: 0,
-          end: 100,
-          handleSize: 8,
-        },
-        {
-          type: "inside",
-          start: 0,
-          end: 100,
-        },
-      ],
-      series: [],
-    };
-  };
-  const [options, setOptions] = useState(getInitialOptions());
+
+  
   const prevdata = (resultArr, nameArr) => {
     const t0 = performance.now();
     setOptions((prev) => ({
@@ -192,6 +236,7 @@ const Graph = ({
           startDate: startTime,
         })
         .then((res1) => {
+          
           console.log("보낸 시작 시간 : ");
           console.log(startTime);
           console.log("보낸 종료 시간 :");
