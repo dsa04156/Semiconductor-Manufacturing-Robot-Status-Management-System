@@ -167,6 +167,7 @@ const Graph = ({
       minutes,
       seconds
     );
+
     setendTime(updatedTime);
   };
 
@@ -185,7 +186,7 @@ const Graph = ({
   };
 
   useEffect(() => {
-    if (!selectedcompoData || !selectedMachineName || !selectedModuleName) {
+    if ( !selectedMachineName || !selectedModuleName) {
       setOptions(getInitialOptions());
       // resetGraph();
     } else {
@@ -195,7 +196,7 @@ const Graph = ({
       setOptions(getInitialOptions()); 
       // setOptions(getInitialOptions());
     }
-  }, [selectedcompoData, selectedMachineName, selectedModuleName]);
+  }, [ selectedMachineName, selectedModuleName]);
 
 
   
