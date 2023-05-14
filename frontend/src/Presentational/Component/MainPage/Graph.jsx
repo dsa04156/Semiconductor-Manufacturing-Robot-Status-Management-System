@@ -2,15 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { DatePicker, TimePicker } from "antd";
 import "react-datepicker/dist/react-datepicker.css";
-// import { Oval } from "react-loader-spinner";
-import { ko } from "date-fns/esm/locale";
-import { Icon } from "@iconify/react";
 import { Oval } from "react-loader-spinner";
+import locale from 'antd/es/date-picker/locale/ko_KR';
+import { Icon } from "@iconify/react";
 
 //----------------- 박해준 그래프 -----------------------
 import ECharts, { EchartsReactprops } from "echarts-for-react";
 import axios from "axios";
 //----------------- 박해준 그래프 -----------------------
+
 
 const Graph = ({
   selectedcompoData,
@@ -33,21 +33,36 @@ const Graph = ({
   const chartRef = useRef(null);
 
   const onStartDateChange = (value, dateString) => {
-    setStartDate(new Date(dateString));
-    console.log("시작날짜: ");
-    console.log(dateString);
+    const newStartDate = new Date(dateString);
+    const updatedStartTime = new Date(
+      newStartDate.getFullYear(),
+      newStartDate.getMonth(),
+      newStartDate.getDate(),
+      startTime.getHours(),
+      startTime.getMinutes(),
+      startTime.getSeconds()
+    );
+    setStartDate(newStartDate);
+    setstartTime(updatedStartTime);
   };
 
   const onEndDateChange = (value, dateString) => {
-    setendDate(new Date(dateString));
-    console.log("종료날짜: ");
-    console.log(dateString);
+    const newEndDate = new Date(dateString);
+    const updatedEndTime = new Date(
+      newEndDate.getFullYear(),
+      newEndDate.getMonth(),
+      newEndDate.getDate(),
+      endTime.getHours(),
+      endTime.getMinutes(),
+      endTime.getSeconds()
+    );
+    setendDate(newEndDate);
+    setendTime(updatedEndTime);
   };
 
   const onStartTimeChange = (time, timeString) => {
     const [hours, minutes, seconds] = timeString.split(":");
-    console.log("시작시분: ");
-    console.log(timeString);
+
     const updatedTime = new Date(
       startDate.getFullYear(),
       startDate.getMonth(),
@@ -57,14 +72,11 @@ const Graph = ({
       seconds
     );
     setstartTime(updatedTime);
-    console.log("시작 전체 시간 : ");
-    console.log(updatedTime);
   };
 
   const onEndTimeChange = (time, timeString) => {
     const [hours, minutes, seconds] = timeString.split(":");
-    console.log("종료 시분 : ");
-    console.log(timeString);
+
     const updatedTime = new Date(
       endDate.getFullYear(),
       endDate.getMonth(),
@@ -74,8 +86,6 @@ const Graph = ({
       seconds
     );
     setendTime(updatedTime);
-    console.log("종료 전체 시간 :");
-    console.log(updatedTime);
   };
 
   //------------------------------------박해준 그래프-----------------------------------------------------
@@ -95,6 +105,16 @@ const Graph = ({
       chartInstance.clear();
       chartInstance.setOption(getInitialOptions());
     }
+    const initialStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const initialEndDate = new Date();
+    const initialStartTime = new Date();
+    const initialEndTime = new Date();
+
+    setStartDate(initialStartDate);
+    setendDate(initialEndDate);
+    setstartTime(initialStartTime);
+    setendTime(initialEndTime);
+
   }, [selectedMachineName, selectedModuleName, selectedcompoData]);
 
   // 이 옵션으로 chart를 만듦
@@ -170,6 +190,8 @@ const Graph = ({
     } else {
       const time1 = performance.now();
       setIsLoading(true);
+
+
       axios
         .post("http://3.36.125.122:8082/data/parameter", {
           componentName: selectedcompoData.name,
@@ -183,6 +205,7 @@ const Graph = ({
           console.log(startTime);
           console.log("보낸 종료 시간 :");
           console.log(endTime);
+
           //------------------------ 두번째 방법
           const t0 = performance.now();
           const minus = time1 - t0;
@@ -198,7 +221,7 @@ const Graph = ({
           let componentName = selectedcompoData.name;
 
           nameArr.push(componentName);
-          console.log(nameArr);
+
           let resultArr = [];
 
           const t1 = performance.now();
@@ -219,6 +242,7 @@ const Graph = ({
                   parameterName: name,
                 }
               );
+              console.log(res2);
               let dataArr = [];
               const perfor1 = performance.now();
               for (let j = 0; j < res2.data.length; j++) {
@@ -264,43 +288,22 @@ const Graph = ({
           <Line></Line>
           <AlignPeriod>
             <PFont>PERIOD</PFont>
-            <DatePicker onChange={onStartDateChange} />
-            <TimePicker onChange={onStartTimeChange} format="HH:mm:ss" />
+            <DatePicker value={startDate} locale={locale } onChange={onStartDateChange} />
+            <TimePicker value={startTime} locale={locale } onChange={onStartTimeChange} format="HH:mm:ss" />
             ~
-            <DatePicker onChange={onEndDateChange} />
-            <TimePicker onChange={onEndTimeChange} format="HH:mm:ss" />
+            <DatePicker value={endDate} locale={locale } onChange={onEndDateChange} />
+            <TimePicker value={endTime} locale={locale } onChange={onEndTimeChange} format="HH:mm:ss" />
             <Button onClick={onGraphHandler}>set</Button>
           </AlignPeriod>
         </PeriodBox>
 
         {/* ----------------------------------박해준 그래프--------------------------------- */}
-        <div
-          style={{
-            position: "relative",
-          }}
-        >
-          <EChartsWrapper
-            ref={chartRef}
+        <div>
+          <ECharts
             option={options}
+            //renderer: 'svg',
             opts={{ width: "auto", height: "auto" }}
           />
-          {isLoading && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-                width: "100%",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                background: "rgba(255, 255, 255, 0.5)",
-              }}
-            >
-              {/* <Oval color="#00BFFF" height={100} width={100} timeout={5000} /> */}
-            </div>
-          )}
         </div>
 
         {/* ----------------------------------박해준 그래프--------------------------------- */}
@@ -310,11 +313,7 @@ const Graph = ({
 };
 
 export default Graph;
-const EChartsWrapper = styled(ECharts)`
-  width: 100%; /* 가로 크기 조정 */
-  height: 200%; /* 세로 크기 조정 */
-  margin-top: 50px; /* 위쪽 여백 조정 */
-`;
+
 
 const Box = styled.div`
   position: absolute;
@@ -373,4 +372,5 @@ const Button = styled.button`
   border-radius: 5px;
   width : 30px
   cursor: pointer;
-`
+  margin-left : 5px;
+`;
