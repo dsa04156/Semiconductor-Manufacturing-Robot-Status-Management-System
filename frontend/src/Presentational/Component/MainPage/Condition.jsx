@@ -9,7 +9,7 @@ const Condition = ({
   setSelectedMachineName,
   setSelectedModuleName,
   selectedcompoDate,
-  realGraphBtnState,
+
 }) => {
   const [machineData, setMachineData] = useState({});
   const [moduleData, setModuleData] = useState([]);
