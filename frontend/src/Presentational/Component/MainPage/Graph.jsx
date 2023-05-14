@@ -1,14 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { ko } from 'date-fns/esm/locale';
-import { Icon } from '@iconify/react';
-
-//----------------- 박해준 그래프 -----------------------
-import ECharts, { EchartsReactprops } from 'echarts-for-react';
-import axios from 'axios';
-//----------------- 박해준 그래프 -----------------------
+import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { ko } from "date-fns/esm/locale";
+import { Icon } from "@iconify/react";
+import { Oval } from "react-loader-spinner";
+import ECharts, { EchartsReactprops } from "echarts-for-react";
+import axios from "axios";
 
 const Graph = ({
   selectedcompoData,
@@ -16,8 +14,6 @@ const Graph = ({
   selectedModuleName,
   setRealGraphBtnState,
 }) => {
-  console.log(selectedcompoData);
-  console.log(selectedcompoData?.name);
   const [startDate, setStartDate] = useState(
     new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   );
@@ -26,33 +22,21 @@ const Graph = ({
   const [endDateOpen, setEndDateOpen] = useState(false);
   const [realGraphBtn, setRealGraphBtn] = useState(false); // 실시간 그래프 버튼상태
   const [saveResultArr, setSaveResultArr] = useState();
-  const [nameList, setNameList] = useState([]);
-
-  //------------------------------------박해준 그래프-----------------------------------------------------
+  const chartRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const samplingOpt = {
-    // 대용량 데이터 처리를 위해 샘플링을 사용
     large: true,
-    // 데이터 샘플링 시 사용할 최소 단위 (기본값: 1)
-    // 값이 클수록 샘플링하는 데이터 개수가 줄어듬
-    // 값이 작을수록 샘플링하는 데이터 개수가 늘어남
+
     sample: 1,
   };
-
   useEffect(() => {
-    const resetGraphData = () => {
-      setOptions(getInitialOptions());
-      setStartDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
-      setendDate(new Date());
-      setNameList([]);
-    };
-
-    resetGraphData();
-  }, [
-    selectedMachineName,
-    selectedModuleName,
-    setNameList,
-  ]);
+    if (chartRef.current) {
+      const chartInstance = chartRef.current.getEchartsInstance();
+      chartInstance.clear();
+      chartInstance.setOption(getInitialOptions());
+    }
+  }, [selectedMachineName, selectedModuleName, selectedcompoData]);
 
   // 이 옵션으로 chart를 만듦
   const getInitialOptions = () => {
@@ -122,131 +106,97 @@ const Graph = ({
   };
 
   const onGraphHandler = () => {
-    const time1 = performance.now();
-
-    if (
-      !selectedcompoData ||
-      !selectedcompoData.name
-    ) {
-      alert('값을 선택해주세요');
-      return;
+    if (!selectedcompoData || !selectedcompoData.name) {
+      alert("값을 선택해주세요");
     } else {
       const time1 = performance.now();
+
+      setIsLoading(true);
       axios
-        .post('http://3.36.125.122:8082/data/graph', {
+        .post("http://3.36.125.122:8082/data/parameter", {
           componentName: selectedcompoData.name,
           endDate: endDate,
           machineName: selectedMachineName,
           moduleName: selectedModuleName,
           startDate: startDate,
         })
-        .then((res) => {
-          //    console.log(res.data);
-          if (res.data.length === 0) {
+        .then((res1) => {
+          if (res1.data.length === 0) {
             alert("해당 기간에는 데이터가 없습니다");
+            setIsLoading(false);
           } else {
-            let nameArr = [];
-            let resultArr = [];
-
             const t0 = performance.now();
             const minus = time1 - t0;
-            console.log("api문", minus);
-
-            for (let j = 0; j < res.data.length; j++) {
-              let dataArr = [];
-              nameArr.push(res.data[j].name);
-              for (let i = 0; i < res.data[j].data.length; i++) {
-                dataArr.push([
-                  new Date(res.data[j].data[i].date).toISOString(),
-                  res.data[j].data[i].value,
-                ]);
-              }
-              resultArr.push({
-                name: res.data[j].name,
-                type: "line",
-                symbol: "none",
-                sampling: "average",
-                colorBy: "series",
-                large: true,
-                data: dataArr,
-              });
+            console.log("name api문", minus);
+            console.log(res1.data);
+            let nameArr = [];
+            for (let i = 0; i < res1.data.length; i++) {
+              nameArr.push(res1.data[i].name);
             }
+
+            let machineName = selectedMachineName;
+            let moduleName = selectedModuleName;
+            let componentName = selectedcompoData.name;
+            nameArr.push(componentName);
+
+            let resultArr = [];
+
             const t1 = performance.now();
-            const elapsed = t1 - t0;
-            console.log("for문", elapsed);
-            //    console.log("result: ", resultArr);
-            //  console.log("name: ", nameArr);
-            prevdata(resultArr, nameArr);
-            setNameList(nameArr);
+
+            Promise.all(
+              nameArr.map(async (name) => {
+                let parent = componentName;
+                if (name == componentName) {
+                  parent = moduleName;
+                }
+                const res2 = await axios.post(
+                  "http://3.36.125.122:8082/data/pgraph",
+                  {
+                    endDate: endDate,
+                    startDate: startDate,
+                    machineName: machineName,
+                    componentName: parent,
+                    parameterName: name,
+                  }
+                );
+                let dataArr = [];
+                const perfor1 = performance.now();
+                for (let j = 0; j < res2.data.length; j++) {
+                  dataArr.push([
+                    new Date(res2.data[j].date).toISOString(),
+                    res2.data[j].value,
+                  ]);
+                }
+                const perfor2 = performance.now();
+                console.log("for문 시간 : ", perfor2 - perfor1);
+                return {
+                  name: name,
+                  type: "line",
+                  symbol: "none",
+                  sampling: "average",
+                  colorBy: "series",
+                  large: true,
+                  data: dataArr,
+                };
+              })
+            )
+              .then((result) => {
+                console.log(result);
+                resultArr.push(result);
+                const prev1 = performance.now();
+                prevdata(resultArr[0], nameArr);
+                const prev2 = performance.now();
+                console.log("그래프시간 시간 : ", prev2 - prev1);
+              })
+              .finally(() => {
+                setIsLoading(false);
+              });
+            const t2 = performance.now();
+            console.log("Promise 문 ", t2 - t1);
           }
         });
-      }
-    };
-    // 얘를 어디다 저장해. sse 쏴서 받아. 최신 데이터만 받아. resultArr를 불러와서 data
-    //   resultArr.push({
-    //     name: res.data[j].name,
-    //     type: "line",
-    //     symbol: "none",
-    //     sampling: "average",
-    //     colorBy: "series",
-    //     large: true,
-    //     data: dataArr
-    //   });
-    // }
-
-    // setSaveResultArr(resultArr);
-    
-  const realGraphHandler = () => {
-    setRealGraphBtn(!realGraphBtn);
-    setRealGraphBtnState(realGraphBtn); // 버튼 true false를 Main(부모)로 올려줌
+    }
   };
-
-  // useEffect(() => {
-  //   const eventSource = new EventSource(
-  //     'http://3.36.125.122:8082/sse/connect',
-  //     { headers: { accept: 'text/event-stream' } },
-  //     { withCredentials: true }
-  //   );
-
-  //   eventSource.addEventListener('machine', (event) => {
-  //     const newMachineData = event.data;
-  //     console.log(newMachineData);
-
-  //     if (newMachineData == selectedMachineName && realGraphBtn == true) {
-  //       axios
-  //         .post('http://3.36.125.122:8082/data/graph', {
-  //           componentName: selectedcompoData.name,
-  //           machineName: selectedMachineName,
-  //           moduleName: selectedModuleName,
-  //         })
-  //         .then((res) => {
-  //           let newData = [];
-  //           for (let i = 0; i < res.data.length; i++) {
-  //             newData.push([
-  //               new Date(res.data[i].data).toISOString(),
-  //               res.data[i].value,
-  //             ]);
-  //           }
-  //           setSaveResultArr((prevResultArr) => {
-  //             let updatedResultArr = [...prevResultArr];
-  //             for (let i = 0; i < updatedResultArr.length; i++) {
-  //               if (updatedResultArr[i].name === res.data[0].name) {
-  //                 //???
-  //                 updatedResultArr[i].data = [
-  //                   ...updatedResultArr[i].data,
-  //                   ...newData,
-  //                 ];
-  //               }
-  //             }
-  //             return updatedResultArr;
-  //           });
-  //           prevdata(saveResultArr, nameArr);
-  //         });
-  //     }
-  //   });
-  // }, []);
-
-  //------------------------------------박해준 그래프-----------------------------------------------------
 
   return (
     <div>
@@ -255,7 +205,7 @@ const Graph = ({
           <Font>{selectedcompoData?.name}</Font>
           <Line></Line>
           <AlignPeriod>
-            <PFont>PERIOD</PFont>{' '}
+            <PFont>PERIOD</PFont>{" "}
             <SIconContainer>
               <Icon
                 icon="material-symbols:calendar-today-outline-rounded"
@@ -269,7 +219,6 @@ const Graph = ({
               showPopperArrow={false}
               selected={startDate}
               open={startDateOpen}
-              // onSelect={() => setStartDateOpen(false)}
               onChange={(date) => setStartDate(date)}
               locale={ko}
               selectsStart
@@ -280,21 +229,21 @@ const Graph = ({
               popperProps={{
                 modifiers: [
                   {
-                    name: 'flip',
+                    name: "flip",
                     enabled: false,
                   },
                   {
-                    name: 'preventOverflow',
+                    name: "preventOverflow",
                     options: {
                       enabled: true,
                       escapeWithReference: false,
-                      boundary: 'viewport',
+                      boundary: "viewport",
                     },
                   },
                 ],
               }}
             />
-            {'   '}~{'  '}
+            {"   "}~{"  "}
             <SIconContainer>
               <Icon
                 icon="material-symbols:calendar-today-outline-rounded"
@@ -319,43 +268,64 @@ const Graph = ({
               popperProps={{
                 modifiers: [
                   {
-                    name: 'flip',
+                    name: "flip",
                     enabled: false,
                   },
                   {
-                    name: 'preventOverflow',
+                    name: "preventOverflow",
                     options: {
                       enabled: true,
                       escapeWithReference: false,
-                      boundary: 'viewport',
+                      boundary: "viewport",
                     },
                   },
                 ],
               }}
             />
-            {/* <Button style={{ width: "100px" }} onClick={onGraphHandler}>
-              실행
-            </Button> */}
             <Button onClick={onGraphHandler}>set</Button>
             <Button onClick={onGraphHandler}>realtime</Button>
           </AlignPeriod>
         </PeriodBox>
-        {/* ----------------------------------박해준 그래프--------------------------------- */}
-        <div>
-          <ECharts
+
+        <div
+          style={{
+            position: "relative",
+          }}
+        >
+          <EChartsWrapper
+            ref={chartRef}
             option={options}
-            //renderer: 'svg',
-            opts={{ width: 'auto', height: 'auto' }}
+            opts={{ width: "auto", height: "auto" }}
           />
+          {isLoading && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+                width: "100%",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                background: "rgba(255, 255, 255, 0.5)",
+              }}
+            >
+              <Oval color="#00BFFF" height={100} width={100} timeout={5000} />
+            </div>
+          )}
         </div>
-        {/* ----------------------------------박해준 그래프--------------------------------- */}
       </Box>
     </div>
   );
 };
 
 export default Graph;
-
+const EChartsWrapper = styled(ECharts)`
+  width: 100%; /* 가로 크기 조정 */
+  height: 200%; /* 세로 크기 조정 */
+  margin-top: 50px; /* 위쪽 여백 조정 */
+`;
 const SIconContainer = styled.div`
   width: 20px;
   color: blue;
@@ -375,11 +345,11 @@ const Box = styled.div`
   overflow: hidden;
 `;
 const Font = styled.div`
-  margin: 10px 0px 10px 20px;
+  margin: 5px 0px 0px 20px;
   font-family: "Inter";
   font-style: normal;
-  font-weight: 400;
-  font-size: 15px;
+  font-weight: bold;
+  font-size: 17px;
   color: #707070;
 `;
 const Line = styled.div`
@@ -387,7 +357,7 @@ const Line = styled.div`
   width: 810px;
   height: 0px;
   left: 25px;
-  top: 45px;
+  top: 30px;
   border: 1px solid #eff1f5;
 `;
 
@@ -407,7 +377,7 @@ const PeriodBox = styled.div`
   font-size: 12px;
 `;
 const AlignPeriod = styled.div`
-  margin-top: 40px;
+  margin-top: 15px;
   display: flex;
   width: 450px;
 `;
@@ -429,3 +399,70 @@ const Button = styled.button`
   width : 30px
   cursor: pointer;
 `;
+
+
+
+
+
+      // 얘를 어디다 저장해. sse 쏴서 받아. 최신 데이터만 받아. resultArr를 불러와서 data
+      //   resultArr.push({
+      //     name: res.data[j].name,
+      //     type: "line",
+      //     symbol: "none",
+      //     sampling: "average",
+      //     colorBy: "series",
+      //     large: true,
+      //     data: dataArr
+      //   });
+      // }
+
+      // setSaveResultArr(resultArr);
+      // const realGraphHandler = () => {
+      //   setRealGraphBtn(!realGraphBtn);
+      //   setRealGraphBtnState(realGraphBtn); // 버튼 true false를 Main(부모)로 올려줌
+      // };
+      
+    // useEffect(() => {
+    //   const eventSource = new EventSource(
+    //     'http://3.36.125.122:8082/sse/connect',
+    //     { headers: { accept: 'text/event-stream' } },
+    //     { withCredentials: true }
+    //   );
+
+    //   eventSource.addEventListener('machine', (event) => {
+    //     const newMachineData = event.data;
+    //     console.log(newMachineData);
+
+    //     if (newMachineData == selectedMachineName && realGraphBtn == true) {
+    //       axios
+    //         .post('http://3.36.125.122:8082/data/graph', {
+    //           componentName: selectedcompoData.name,
+    //           machineName: selectedMachineName,
+    //           moduleName: selectedModuleName,
+    //         })
+    //         .then((res) => {
+    //           let newData = [];
+    //           for (let i = 0; i < res.data.length; i++) {
+    //             newData.push([
+    //               new Date(res.data[i].data).toISOString(),
+    //               res.data[i].value,
+    //             ]);
+    //           }
+    //           setSaveResultArr((prevResultArr) => {
+    //             let updatedResultArr = [...prevResultArr];
+    //             for (let i = 0; i < updatedResultArr.length; i++) {
+    //               if (updatedResultArr[i].name === res.data[0].name) {
+    //                 //???
+    //                 updatedResultArr[i].data = [
+    //                   ...updatedResultArr[i].data,
+    //                   ...newData,
+    //                 ];
+    //               }
+    //             }
+    //             return updatedResultArr;
+    //           });
+    //           prevdata(saveResultArr, nameArr);
+    //         });
+    //     }
+    //   });
+    // }, []);
