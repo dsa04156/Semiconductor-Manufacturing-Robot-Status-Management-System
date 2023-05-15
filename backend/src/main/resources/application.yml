@@ -5,8 +5,9 @@ spring:
       
   data:
     mongodb:
-      uri: mongodb://k8s1011.p.ssafy.io:20000/
-      database: wonik
+      uri: mongodb://ssafy:ssafy1111@3.36.125.122:27017/admin?authMechanism=SCRAM-SHA-256&authSource=admin
+      database: admin
+
 
 
   jpa:
