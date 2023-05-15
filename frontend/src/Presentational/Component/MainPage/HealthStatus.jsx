@@ -13,7 +13,7 @@ const HealthStatus = ({ componentData }) => {
   });
 
   const unaccep_compodata = compodata.reduce((unaccep_count, data) => {
-    if (data.eval === "unacceptable") {
+    if (data.eval === "UNACCEPTABLE") {
       unaccep_count++;
     }
     return unaccep_count;
@@ -23,7 +23,7 @@ const HealthStatus = ({ componentData }) => {
   const unaccep_colors = ["#FF5172", "#F2D8DF"];
 
   const unsat_compodata = compodata.reduce((unsat_count, data) => {
-    if (data.eval === "unsatisfactory") {
+    if (data.eval === "UNSATISFACTORY") {
       unsat_count++;
     }
     return unsat_count;
@@ -32,7 +32,7 @@ const HealthStatus = ({ componentData }) => {
   const unsat_colors = ["#FFEE32", "#F4E4C4"];
 
   const sat_compodata = compodata.reduce((sat_count, data) => {
-    if (data.eval === "satisfactory") {
+    if (data.eval === "SATISFACTORY") {
       sat_count++;
     }
     return sat_count;
@@ -41,7 +41,7 @@ const HealthStatus = ({ componentData }) => {
   const sat_colors = ["#30ADF3", "#C4E2F4"];
 
   const good_compodata = compodata.reduce((good_count, data) => {
-    if (data.eval === "Good") {
+    if (data.eval === "GOOD") {
       good_count++;
     }
     return good_count;
@@ -209,7 +209,7 @@ const HealthStatus = ({ componentData }) => {
             width={220}
           />
 
-          <Label size={275}>unacceptable</Label>
+          <Label size={278}>unacceptable</Label>
 
           <Box size={260}>
             <InBox color={"#ffcece"}>
@@ -233,7 +233,7 @@ const HealthStatus = ({ componentData }) => {
             />
           </Box>
 
-          <Label size={435}>unsatisfactory</Label>
+          <Label size={437}>unsatisfactory</Label>
 
           <Box size={420}>
             <InBox color={"#FFE7BC"}>
@@ -256,7 +256,7 @@ const HealthStatus = ({ componentData }) => {
             />
           </Box>
 
-          <Label size={610}>satisfactory</Label>
+          <Label size={606}>satisfactory</Label>
 
           <Box size={580}>
             <InBox color={"#CBFFFD"}>
@@ -275,7 +275,7 @@ const HealthStatus = ({ componentData }) => {
             />
           </Box>
 
-          <Label size={790}>Good</Label>
+          <Label size={785}>Good</Label>
 
           <Box size={740}>
             <InBox color={"#C6FFDD"}>
@@ -303,12 +303,12 @@ export default HealthStatus;
 
 const Head = styled.div`
   margin-left: 30px;
-  margin-top: 12px;
+  margin-top: 15px;
   margin-bottom: 10px;
   font-family: "Inter";
   font-style: normal;
-  font-weight: bold;
-  font-size: 15px;
+  font-weight: 400;
+  font-size: 18px;
   color: #707070;
   line-height: 22px;
 `;

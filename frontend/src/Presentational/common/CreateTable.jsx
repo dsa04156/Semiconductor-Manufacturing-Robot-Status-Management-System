@@ -6,7 +6,6 @@ function CreateTable({ setTest, data, test, child }) {
   const [selected, setSelected] = useState(test);
   const [selectedComponentData, setSelectedComponentData] = useState();
 
-
   const idxHandler = (idx) => {
     setSelected(idx);
     setTest(idx);
@@ -17,14 +16,14 @@ function CreateTable({ setTest, data, test, child }) {
   };
 
   const dataTable = data?.map((elem, idx) => {
-    if (elem.value < 0) {
-      elem.eval = "unacceptable";
-    } else if (elem.value < 0.03) {
-      elem.eval = "unsatisfactory";
+    if (elem.value < 0.1) {
+      elem.eval = "UNACCEPTABLE";
+    } else if (elem.value < 0.2) {
+      elem.eval = "UNSATISFACTORY";
     } else if (elem.value < 0.3) {
-      elem.eval = "satisfactory";
+      elem.eval = "SATISFACTORY";
     } else {
-      elem.eval = "Good";
+      elem.eval = "GOOD";
     }
 
     return (
@@ -41,16 +40,15 @@ function CreateTable({ setTest, data, test, child }) {
             onClick={idxClickHandler}
           />
         </td>
-        <td>{elem.name}</td>
-        <td>
+        <StyledTd>{elem.name}</StyledTd>
+        <StyledTd>
           <EvalStatus evalValue={elem.eval} />
-        </td>
-        <td>{elem.value}</td>
+        </StyledTd>
+        <StyledTd>{parseFloat(elem.value).toFixed(2)}</StyledTd>
       </tr>
     );
   });
 
-  // Render the UI for your table
   return (
     <Styles>
       <table className="table">
@@ -69,7 +67,13 @@ function CreateTable({ setTest, data, test, child }) {
 }
 
 export default CreateTable;
+const StyledTd = styled.td`
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
 
+  font-size: 12px;
+  color: #707070;
+`;
 const Styles = styled.div`
   table {
     border-spacing: 0;
