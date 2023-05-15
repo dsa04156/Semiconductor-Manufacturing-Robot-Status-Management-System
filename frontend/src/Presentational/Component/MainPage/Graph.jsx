@@ -98,9 +98,6 @@ const Graph = ({
   )
 
   const [option2, setOption2] = useState({
-    title: {
-      text: 'Real time Graph',
-  },
   tooltip: {
       trigger: 'axis',
   },
@@ -198,6 +195,7 @@ const Graph = ({
     });
 
     const newRealGraph = (newData) => {
+      console.log("newRealGraph함수 실행")
       setOption2((prev) => {
         const newOption = {...prev}; // 깊은 복사
         let minTime = new Date(newOption.series[0].data[0][0])
@@ -238,11 +236,13 @@ const Graph = ({
   
     };
   const prevdata = (realTimeFlag, resultArr, nameArr) => {
+    console.log("prevdata함수 실행")
     let  realStart= new Date();
     realStart = new Date(realStart.getTime() - (realStart.getTimezoneOffset() * 60000));
     realStart.setHours(realStart.getHours() - 10);
     console.log(realStart)
     if(realTimeFlag){
+      console.log("prevdata 안 if문 실행")
       console.log("실시간 결과 값들",resultArr)
       const newOption2 = option2
       newOption2.xAxis = {
@@ -297,6 +297,7 @@ const Graph = ({
       console.log(elapsed);
 
       if (chartRef.current){
+        console.log("prevdata else 문 안에 if(cahrtRef.current문) 실행")
         const myChart = chartRef.current.getEchartsInstance();
         myChart.setOption(option)
       }
@@ -304,12 +305,14 @@ const Graph = ({
   };
 
   const onGraphHandler = () => {
+    console.log("onGraphHandler함수 실행")
     if (!selectedcompoData || !selectedcompoData.name) {
       alert("값을 선택해주세요");
     } else {
       const time1 = performance.now();
 
       setRealGraphBtn(false);
+      console.log(realGraphBtn);
       setIsLoading(true);
       axios
         .post("http://3.36.125.122:8082/data/parameter", {
@@ -403,10 +406,11 @@ const Graph = ({
     }
   };
 
-  const onRealtimeGraphHandler = () => { 
+  const onRealtimeGraphHandler = () => {
+    console.log("onRealtimeGraphHandler함수 실행")
     if(!realGraphBtn){
       console.log(!realGraphBtn)
-      console.log("실행됨!")
+      console.log("onRealtimeGraphHandler if문 실행됨!")
       if (!selectedcompoData || !selectedcompoData.name) {
         alert("값을 선택해주세요");
       } else {
@@ -525,7 +529,7 @@ const Graph = ({
       }
     }
     console.log("얘밖에 없는데")
-    setRealGraphBtn(true);
+    setRealGraphBtn(true); 
     
   }
 
@@ -544,16 +548,20 @@ const Graph = ({
 
       eventSource.addEventListener('machine', (event) => {
         const newMachineData = event.data;
+        console.log(event.data);
         console.log(newMachineData);
         console.log("이벤트 머신이름: ", newMachineData)
         console.log("선택 머신이름: ", selectedMachineName)
         console.log("버튼 머신이름: ", realGraphBtn)
 
         if ((newMachineData == selectedMachineName) && (realGraphBtn === true)) {
-          console.log(" 실시간 실행 된다잉 ")
+          console.log("실시간 useEffect문 안 if문((newMachineData == selectedMachineName) && (realGraphBtn === true)) 실행 ")
           realGraphMove();
         }
       });
+      return () => {
+        eventSource.close();
+      };
     }, [realGraphBtn]);
 
     const realGraphMove = () => {
