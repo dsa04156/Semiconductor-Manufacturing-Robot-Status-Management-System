@@ -6,7 +6,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://k8s1011.p.ssafy.io:20000/
-      database: admin
+      database: wonik
 
 
   jpa:
