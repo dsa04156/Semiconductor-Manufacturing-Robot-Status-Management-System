@@ -64,6 +64,52 @@ const HealthStatus = ({ componentData }) => {
   const sat_data = [datas[2], totalcount - datas[2]];
   const good_data = [datas[3], totalcount - datas[3]];
 
+  let goodPercent = parseFloat(((unsat_compodata * 100) / totalcount).toFixed(2));
+  let good= "";
+  
+  if ( goodPercent % 1 === 0) {
+   good =  goodPercent.toFixed(0);
+  } else if ( goodPercent.toFixed(1).endsWith("0")) {
+    good =  goodPercent.toFixed(1);
+  } else {
+    good=  goodPercent.toFixed(2);
+  }
+
+  let satPercent = parseFloat(((unsat_compodata * 100) / totalcount).toFixed(2));
+  let sat= "";
+  
+  if ( satPercent % 1 === 0) {
+   sat =  satPercent.toFixed(0);
+  } else if ( satPercent.toFixed(1).endsWith("0")) {
+    sat =  satPercent.toFixed(1);
+  } else {
+    sat=  satPercent.toFixed(2);
+  }
+
+  let unaccepPercent = parseFloat(((unsat_compodata * 100) / totalcount).toFixed(2));
+  let unaccep = "";
+  
+  if (unaccepPercent % 1 === 0) {
+    unaccep = unaccepPercent.toFixed(0);
+  } else if (unaccepPercent.toFixed(1).endsWith("0")) {
+    unaccep = unaccepPercent.toFixed(1);
+  } else {
+    unaccep= unaccepPercent.toFixed(2);
+  }
+
+
+  let unsatPercent = parseFloat(((unsat_compodata * 100) / totalcount).toFixed(2));
+  let unsat = "";
+  
+  if (unsatPercent % 1 === 0) {
+    unsat = unsatPercent.toFixed(0);
+  } else if (unsatPercent.toFixed(1).endsWith("0")) {
+    unsat = unsatPercent.toFixed(1);
+  } else {
+    unsat= unsatPercent.toFixed(2);
+  }
+
+
   const TotdonutData = {
     series: datas,
     options: {
@@ -217,6 +263,7 @@ const HealthStatus = ({ componentData }) => {
               type="donut"
               width={130}
             />
+            <Percent>{unaccep}%</Percent>
           </Box>
 
           <Label size={435}>unsatisfactory</Label>
@@ -237,6 +284,7 @@ const HealthStatus = ({ componentData }) => {
               type="donut"
               width={130}
             />
+            <Percent>{unsat}%</Percent>
           </Box>
 
           <Label size={610}>satisfactory</Label>
@@ -252,6 +300,7 @@ const HealthStatus = ({ componentData }) => {
               type="donut"
               width={130}
             />
+            <Percent>{sat}%</Percent>
           </Box>
 
           <Label size={790}>Good</Label>
@@ -267,6 +316,7 @@ const HealthStatus = ({ componentData }) => {
               type="donut"
               width={130}
             />
+            <Percent>{good}%</Percent>
           </Box>
         </HealthStatusTitle>
       </Big>
@@ -289,12 +339,12 @@ const Head = styled.div`
 `;
 const Big = styled.div`
   position: absolute;
-  top: 20px;
+  top: 10px;
   left: 120px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
   width: 900px;
-  height: 210px;
+  height: 230px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   align-items: center;
@@ -306,7 +356,7 @@ const HealthStatusTitle = styled.div`
 const Box = styled.div`
   position: absolute;
   width: 130px;
-  height: 130px;
+  height: 148px;
   left: ${(props) => props.size}px;
   top: 55px;
   box-sizing: border-box;
@@ -348,7 +398,7 @@ const TLabel = styled.div`
 `;
 const Label = styled.div`
   position: absolute;
-  top: 183px;
+  top: 200px;
   left: ${(props) => props.size}px;
   font-size: 16px;
   color: #adb1b8;
@@ -369,3 +419,11 @@ const Value = styled.div`
   color: black;
   z-index:2;
 `;
+const Percent = styled.div`
+  position : relative;
+  display : flex;
+  justify-content : center;
+  align-items : center;
+  height : 0px;
+  margin-left : 12px;
+`

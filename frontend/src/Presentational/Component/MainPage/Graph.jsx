@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { DatePicker, TimePicker } from "antd";
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { ko } from "date-fns/esm/locale";
+import { Icon } from "@iconify/react";
 import { Oval } from "react-loader-spinner";
-import locale from "antd/es/date-picker/locale/ko_KR";
-// import dayjs from "dayjs";
 import ECharts, { EchartsReactprops } from "echarts-for-react";
 import axios from "axios";
 import * as echarts from "echarts";
@@ -12,17 +12,35 @@ import * as echarts from "echarts";
 import { cloneDeep } from "lodash";
 
 const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) => {
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
   const [endDate, setendDate] = useState(new Date());
-  const [startTime, setstartTime] = useState(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
-  const [endTime, setendTime] = useState(new Date(Date.now()));
-
+  const [startDateOpen, setStartDateOpen] = useState(false);
+  const [endDateOpen, setEndDateOpen] = useState(false);
   const [realGraphBtn, setRealGraphBtn] = useState(false); // 실시간 그래프 버튼상태
   const [saveResultArr, setSaveResultArr] = useState();
-  const [nameList, setNameList] = useState([]);
+  const chartRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const chartRef = useRef(null);
+  // window.onload = function () {
+  //   window.myChart = echarts.init(document.getElementById('main'));
+
+  //   //scroll datazoom
+  //   window.myChart.on('dataZoom', function(event){
+  //       if(event.batch){
+  //           option.dataZoom[0].startValue = event.batch[0].startValue;
+  //           option.dataZoom[1].startValue = event.batch[0].startValue;
+  //           option.dataZoom[0].endValue = event.batch[0].endValue;
+  //           option.dataZoom[1].endValue = event.batch[0].endValue;
+  //       } else {
+  //           option.dataZoom[0].startValue = event.startValue;
+  //           option.dataZoom[1].startValue = event.startValue;
+  //           option.dataZoom[0].endValue = event.endValue;
+  //           option.dataZoom[1].endValue = event.endValue;
+  //       };
+  //   });
+
+  // window.myChart.setOption(option);
+  // }
 
   const [option, setOption] = useState({
     tooltip: {
@@ -77,83 +95,32 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
     legend: {
       data: [],
     },
-    dataZoom: {
-      show: false,
-      start: 0,
-      end: 100,
-      disabled: true, // 줌 비활성화
+    xAxis: {
+      type: "time",
+      min: new Date("2021-12-31T23:59:59.999Z").getTime(),
+      max: new Date("2022-12-31T23:59:59.999Z").getTime(),
     },
-    xAxis: [
-      {
-        type: "time",
-        min: new Date("2021-12-31T23:59:59.999Z").getTime(),
-        max: new Date("2022-12-31T23:59:59.999Z").getTime(),
-      },
-    ],
     yAxis: {
       type: "value",
       boundaryGap: [0, "1%"],
       show: true,
     },
+    grid: {
+      top: 60,
+      bottom: 60,
+    },
+
     series: [],
   });
 
-  const onStartDateChange = (value, dateString) => {
-    const newStartDate = new Date(dateString);
-    const updatedStartTime = new Date(
-      newStartDate.getFullYear(),
-      newStartDate.getMonth(),
-      newStartDate.getDate(),
-      startTime.getHours(),
-      startTime.getMinutes(),
-      startTime.getSeconds()
-    );
-    setStartDate(newStartDate);
-    setstartTime(updatedStartTime);
-  };
-
-  const onEndDateChange = (value, dateString) => {
-    const newEndDate = new Date(dateString);
-    const updatedEndTime = new Date(
-      newEndDate.getFullYear(),
-      newEndDate.getMonth(),
-      newEndDate.getDate(),
-      endTime.getHours(),
-      endTime.getMinutes(),
-      endTime.getSeconds()
-    );
-    setendDate(newEndDate);
-    setendTime(updatedEndTime);
-  };
-
-  const onStartTimeChange = (time, timeString) => {
-    const [hours, minutes, seconds] = timeString.split(":");
-
-    const updatedTime = new Date(
-      startDate.getFullYear(),
-      startDate.getMonth(),
-      startDate.getDate(),
-      hours,
-      minutes,
-      seconds
-    );
-    setstartTime(updatedTime);
-  };
-
-  const onEndTimeChange = (time, timeString) => {
-    const [hours, minutes, seconds] = timeString.split(":");
-
-    const updatedTime = new Date(
-      endDate.getFullYear(),
-      endDate.getMonth(),
-      endDate.getDate(),
-      hours,
-      minutes,
-      seconds
-    );
-
-    setendTime(updatedTime);
-  };
+  // option 상태가 변경될 때마다 이 effect가 실행됩니다.
+  // useEffect(() => {
+  //   // chartRef.current가 유효한 경우에만 setOption을 호출합니다.
+  //   if(chartRef.current) {
+  //   const myChart = chartRef.current.getEchartsInstance();
+  //   myChart.setOption(option)
+  //   }
+  // }, [option]);  // option이 변경될 때마다 이 effect가 실행됩니다.
 
   let resultArrData = [];
 
@@ -162,9 +129,63 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
     sample: 1,
   };
 
+  // useEffect(() => {
+  //   if (chartRef.current) {
+  //     const chartInstance = chartRef.current.getEchartsInstance();
+  //     chartInstance.clear();
+  //     chartInstance.setOption(getInitialOptions());
+  //   }
+  // }, [selectedMachineName, selectedModuleName, selectedcompoData]);
+
+  // 이 옵션으로 chart를 만듦
+  const getInitialOptions = () => ({
+    tooltip: {
+      trigger: "axis",
+    },
+    toolbox: {
+      feature: {
+        dataZoom: {
+          yAxisIndex: "none",
+          bottom: 0,
+        },
+        restore: {},
+      },
+      right: 0,
+      top: 30,
+    },
+    xAxis: {
+      type: "time",
+      min: new Date("2021-12-31T23:59:59.999Z").getTime(),
+      max: new Date("2022-12-31T23:59:59.999Z").getTime(),
+      show: true,
+    },
+    yAxis: {
+      type: "value",
+      boundaryGap: ["1%", "1%"],
+      show: true,
+    },
+    dataZoom: [
+      {
+        type: "slider",
+        show: true,
+        start: 0,
+        end: 100,
+        handleSize: 8,
+      },
+      {
+        type: "inside",
+        start: 0,
+        end: 100,
+      },
+    ],
+    series: [],
+  });
+
   const newRealGraph = (newData) => {
+    console.log("newRealGraph함수 실행");
     setOption2((prev) => {
       const newOption = { ...prev }; // 깊은 복사
+
       let minTime = new Date(newOption.series[0].data[0][0]);
       let minTimeIndex = 0;
       for (let i = 0; i < newOption.series.length; i++) {
@@ -203,25 +224,14 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
       return newOption;
     });
   };
-  // useEffect(() => {
-  //   if (!selectedMachineName || !selectedModuleName) {
-  //     setOptions(getInitialOptions());
-  //     // resetGraph();
-  //   } else {
-  //     const chartInstance = chartRef.current.getEchartsInstance();
-  //     chartInstance.clear();
-  //     chartInstance.setOption(getInitialOptions());
-  //     setOptions(getInitialOptions());
-  //     setOptions(getInitialOptions());
-  //   }
-  // }, [selectedMachineName, selectedModuleName]);
-
   const prevdata = (realTimeFlag, resultArr, nameArr) => {
+    console.log("prevdata함수 실행");
     let realStart = new Date();
     realStart = new Date(realStart.getTime() - realStart.getTimezoneOffset() * 60000);
     realStart.setHours(realStart.getHours() - 10);
     console.log(realStart);
     if (realTimeFlag) {
+      console.log("prevdata 안 if문 실행");
       console.log("실시간 결과 값들", resultArr);
       const newOption2 = option2;
       newOption2.xAxis = {
@@ -274,6 +284,7 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
       console.log(elapsed);
 
       if (chartRef.current) {
+        console.log("prevdata else 문 안에 if(cahrtRef.current문) 실행");
         const myChart = chartRef.current.getEchartsInstance();
         myChart.setOption(option);
       }
@@ -281,20 +292,22 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
   };
 
   const onGraphHandler = () => {
+    console.log("onGraphHandler함수 실행");
     if (!selectedcompoData || !selectedcompoData.name) {
       alert("값을 선택해주세요");
     } else {
       const time1 = performance.now();
 
       setRealGraphBtn(false);
+      console.log(realGraphBtn);
       setIsLoading(true);
       axios
         .post("http://3.36.125.122:8082/data/parameter", {
           componentName: selectedcompoData.name,
-          endDate: endTime,
+          endDate: endDate,
           machineName: selectedMachineName,
           moduleName: selectedModuleName,
-          startDate: startTime,
+          startDate: startDate,
         })
         .then((res1) => {
           if (res1.data.length === 0) {
@@ -325,11 +338,11 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
                 if (name == componentName) {
                   parent = moduleName;
                 }
-                console.log(startTime);
-                console.log(endTime);
+                console.log(startDate);
+                console.log(endDate);
                 const res2 = await axios.post("http://3.36.125.122:8082/data/pgraph", {
-                  endDate: endTime,
-                  startDate: startTime,
+                  endDate: endDate,
+                  startDate: startDate,
                   machineName: machineName,
                   componentName: parent,
                   parameterName: name,
@@ -375,9 +388,10 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
   };
 
   const onRealtimeGraphHandler = () => {
+    console.log("onRealtimeGraphHandler함수 실행");
     if (!realGraphBtn) {
       console.log(!realGraphBtn);
-      console.log("실행됨!");
+      console.log("onRealtimeGraphHandler if문 실행됨!");
       if (!selectedcompoData || !selectedcompoData.name) {
         alert("값을 선택해주세요");
       } else {
@@ -507,16 +521,22 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
 
     eventSource.addEventListener("machine", (event) => {
       const newMachineData = event.data;
+      console.log(event.data);
       console.log(newMachineData);
       console.log("이벤트 머신이름: ", newMachineData);
       console.log("선택 머신이름: ", selectedMachineName);
       console.log("버튼 머신이름: ", realGraphBtn);
 
       if (newMachineData == selectedMachineName && realGraphBtn === true) {
-        console.log(" 실시간 실행 된다잉 ");
+        console.log(
+          "실시간 useEffect문 안 if문((newMachineData == selectedMachineName) && (realGraphBtn === true)) 실행 "
+        );
         realGraphMove();
       }
     });
+    return () => {
+      eventSource.close();
+    };
   }, [realGraphBtn]);
 
   const realGraphMove = () => {
@@ -541,42 +561,98 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
           <Line></Line>
           <AlignPeriod>
             <PFont>PERIOD</PFont>{" "}
-            <DatePicker
-              // defaultValue={dayjs(startTime)}
-              locale={locale}
-              onChange={onStartDateChange}
-            />
-            <TimePicker
-              // defaultValue={dayjs(startTime)}
-              locale={locale}
-              onChange={onStartTimeChange}
-              format="HH:mm:ss"
+            <SIconContainer>
+              <Icon
+                icon="material-symbols:calendar-today-outline-rounded"
+                width="20"
+                color="blue"
+                onClick={() => setStartDateOpen(!startDateOpen)}
+              />
+            </SIconContainer>
+            <SDatePicker
+              preventOpenFocus={true}
+              showPopperArrow={false}
+              selected={startDate}
+              open={startDateOpen}
+              onChange={(date) => setStartDate(date)}
+              locale={ko}
+              selectsStart
+              showTimeSelect
+              timeFormat="HH:mm"
+              timeIntervals={1}
+              dateFormat="yyyy-MM-dd HH:mm"
+              popperProps={{
+                modifiers: [
+                  {
+                    name: "flip",
+                    enabled: false,
+                  },
+                  {
+                    name: "preventOverflow",
+                    options: {
+                      enabled: true,
+                      escapeWithReference: false,
+                      boundary: "viewport",
+                    },
+                  },
+                ],
+              }}
             />
             {"   "}~{"  "}
-            <DatePicker
-              // defaultValue={dayjs(endTime)}
-              locale={locale}
-              onChange={onEndDateChange}
-            />
-            <TimePicker
-              // defaultValue={dayjs(endTime)}
-              locale={locale}
-              onChange={onEndTimeChange}
-              format="HH:mm:ss"
+            <SIconContainer>
+              <Icon
+                icon="material-symbols:calendar-today-outline-rounded"
+                width="20"
+                color="blue"
+                onClick={() => setEndDateOpen(!endDateOpen)}
+              />
+            </SIconContainer>
+            <SDatePicker
+              showPopperArrow={false}
+              selected={endDate}
+              open={endDateOpen}
+              onChange={(date) => setendDate(date)}
+              onSelect={() => setEndDateOpen(false)}
+              locale={ko}
+              minDate={startDate}
+              selectsEnd
+              showTimeSelect
+              timeFormat="HH:mm"
+              timeIntervals={1}
+              dateFormat="yyyy-MM-dd HH:mm"
+              popperProps={{
+                modifiers: [
+                  {
+                    name: "flip",
+                    enabled: false,
+                  },
+                  {
+                    name: "preventOverflow",
+                    options: {
+                      enabled: true,
+                      escapeWithReference: false,
+                      boundary: "viewport",
+                    },
+                  },
+                ],
+              }}
             />
             <Button onClick={onGraphHandler}>set</Button>
             <Button onClick={onRealtimeGraphHandler}>realtime</Button>
           </AlignPeriod>
         </PeriodBox>
 
-        <div>
-          <ECharts
-            option={option}
+        <div
+          style={{
+            position: "relative",
+          }}
+        >
+          <EChartsWrapper
+            id="main"
             ref={chartRef}
-            //renderer: 'svg',
+            option={option}
             opts={{ width: "auto", height: "auto" }}
           />
-
           {isLoading && (
             <div
               style={{
@@ -601,12 +677,16 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
 };
 
 export default Graph;
+const EChartsWrapper = styled(ECharts)`
+  width: 100%; /* 가로 크기 조정 */
+  height: 200%; /* 세로 크기 조정 */
+  margin-top: 50px; /* 위쪽 여백 조정 */
+`;
 
-const LoadingIndicator = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 200px; /* Adjust the height as needed */
+const SIconContainer = styled.div`
+  width: 20px;
+  color: blue;
+  cursor: pointer;
 `;
 
 const Box = styled.div`
@@ -625,7 +705,7 @@ const Font = styled.div`
   margin: 5px 0px 0px 20px;
   font-family: "Inter";
   font-style: normal;
-
+  font-weight: bold;
   font-size: 17px;
   color: #707070;
 `;
@@ -656,7 +736,16 @@ const PeriodBox = styled.div`
 const AlignPeriod = styled.div`
   margin-top: 15px;
   display: flex;
-  width: 100%;
+  width: 450px;
+`;
+const SDatePicker = styled(DatePicker)`
+  border: none;
+
+  .react-datepicker__day--selected,
+  .react-datepicker__day--in-selecting-range,
+  .react-datepicker__day--in-range {
+    background-color: #a8dadc;
+  }
 `;
 const Button = styled.button`
   background-color: blue;
