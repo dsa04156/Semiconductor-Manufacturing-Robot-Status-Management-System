@@ -11,7 +11,6 @@ import * as echarts from "echarts";
 
 import { cloneDeep } from "lodash";
 
-
 const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setendDate] = useState(new Date());
@@ -204,7 +203,7 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
       return newOption;
     });
   };
- // useEffect(() => {
+  // useEffect(() => {
   //   if (!selectedMachineName || !selectedModuleName) {
   //     setOptions(getInitialOptions());
   //     // resetGraph();
@@ -216,7 +215,6 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
   //     setOptions(getInitialOptions());
   //   }
   // }, [selectedMachineName, selectedModuleName]);
-
 
   const prevdata = (realTimeFlag, resultArr, nameArr) => {
     let realStart = new Date();
@@ -554,8 +552,6 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
               onChange={onStartTimeChange}
               format="HH:mm:ss"
             />
-
-
             {"   "}~{"  "}
             <DatePicker
               // defaultValue={dayjs(endTime)}
@@ -568,27 +564,37 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
               onChange={onEndTimeChange}
               format="HH:mm:ss"
             />
-
             <Button onClick={onGraphHandler}>set</Button>
             <Button onClick={onRealtimeGraphHandler}>realtime</Button>
           </AlignPeriod>
         </PeriodBox>
 
         <div>
-          {isLoading ? (
-            <LoadingIndicator>
+          <ECharts
+            option={option}
+            ref={chartRef}
+            //renderer: 'svg',
+            opts={{ width: "auto", height: "auto" }}
+          />
+
+          {isLoading && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+                width: "100%",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                background: "rgba(255, 255, 255, 0.5)",
+              }}
+            >
               <Oval color="#00BFFF" height={100} width={100} timeout={5000} />
-            </LoadingIndicator>
-          ) : (
-            <ECharts
-              option={option}
-              ref={chartRef}
-              //renderer: 'svg',
-              opts={{ width: "auto", height: "auto" }}
-            />
+            </div>
           )}
         </div>
-
       </Box>
     </div>
   );
@@ -602,7 +608,6 @@ const LoadingIndicator = styled.div`
   justify-content: center;
   height: 200px; /* Adjust the height as needed */
 `;
-
 
 const Box = styled.div`
   position: absolute;
@@ -620,7 +625,7 @@ const Font = styled.div`
   margin: 5px 0px 0px 20px;
   font-family: "Inter";
   font-style: normal;
-  font-weight: bold;
+
   font-size: 17px;
   color: #707070;
 `;

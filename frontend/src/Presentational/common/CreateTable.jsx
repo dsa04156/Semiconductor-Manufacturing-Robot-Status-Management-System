@@ -34,13 +34,25 @@ function CreateTable({ setTest, data, test, child }) {
     }
     
     return (
-      <tr className='tableBody' key={idx}>
-        <td style={{ width: '30px' }}><input type="radio" checked={idx === selected} onChange={() => idxHandler(idx)} onClick={idxClickHandler}/></td>
+      <tr
+        className={`tableBody ${idx === selected ? "selected" : ""}`}
+        key={idx}
+        onClick={() => idxHandler(idx)}
+      >
+        <td style={{ width: "30px" }}>
+          <input
+            type="radio"
+            checked={idx === selected}
+            onChange={() => {}}
+            onClick={idxClickHandler}
+          />
+        </td>
+
         <td>{elem.name}</td>
         <td>
           <EvalStatus evalValue={elem.eval}/>
         </td>
-        <td>{elem.value}</td>
+        <td>{parseFloat(elem.value).toFixed(2)}</td>
       </tr>
     );
   });
