@@ -55,9 +55,9 @@ function CreateTable({ setTest, data, test, child }) {
         <thead>
           <tr className="tableHeader">
             <td style={{ width: "30px" }}></td>
-            <td style={{ fontSize: "14px" }}>Component</td>
-            <td style={{ fontSize: "14px" }}>Status</td>
-            <td style={{ fontSize: "14px" }}>AssetScore</td>
+            <td>Component</td>
+            <td>Status</td>
+            <td>AssetScore</td>
           </tr>
         </thead>
         <tbody>{dataTable}</tbody>
@@ -70,7 +70,7 @@ export default CreateTable;
 const StyledTd = styled.td`
   font-family: "Noto Sans KR", sans-serif;
   font-style: normal;
-  font-weight: bold;
+
   font-size: 12px;
   color: #707070;
 `;

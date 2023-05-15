@@ -2,8 +2,6 @@ import React from "react";
 import ReactApexChart from "react-apexcharts";
 import styled from "styled-components";
 import { Icon } from "@iconify/react";
-import { IoIosCheckmarkCircle } from "react-icons/io";
-import { FaRegThumbsUp } from "react-icons/fa";
 
 const HealthStatus = ({ componentData }) => {
   const compodata = componentData.map((data) => {
@@ -21,7 +19,7 @@ const HealthStatus = ({ componentData }) => {
     return unaccep_count;
   }, 0);
 
-  const unaccep_lables = ["UNACCEPTABLE", "others"];
+  const unaccep_lables = ["unacceptable", "others"];
   const unaccep_colors = ["#FF5172", "#F2D8DF"];
 
   const unsat_compodata = compodata.reduce((unsat_count, data) => {
@@ -30,7 +28,7 @@ const HealthStatus = ({ componentData }) => {
     }
     return unsat_count;
   }, 0);
-  const unsat_lables = ["UNSATISFACTORY", "others"];
+  const unsat_lables = ["unsatisfactory", "others"];
   const unsat_colors = ["#FFEE32", "#F4E4C4"];
 
   const sat_compodata = compodata.reduce((sat_count, data) => {
@@ -39,26 +37,26 @@ const HealthStatus = ({ componentData }) => {
     }
     return sat_count;
   }, 0);
-  const sat_lables = ["SATISFACTORY", "others"];
+  const sat_lables = ["satisfactory", "others"];
   const sat_colors = ["#30ADF3", "#C4E2F4"];
 
-  const GOOD_compodata = compodata.reduce((GOOD_count, data) => {
+  const good_compodata = compodata.reduce((good_count, data) => {
     if (data.eval === "GOOD") {
-      GOOD_count++;
+      good_count++;
     }
-    return GOOD_count;
+    return good_count;
   }, 0);
-  const GOOD_lables = ["GOOD", "others"];
-  const GOOD_colors = ["#A5FF32", "#D9ECC8"];
+  const good_lables = ["Good", "others"];
+  const good_colors = ["#A5FF32", "#D9ECC8"];
 
   const datas = [
     unaccep_compodata,
     unsat_compodata,
     sat_compodata,
-    GOOD_compodata,
+    good_compodata,
   ];
 
-  const labels = ["UNACCEPTABLE", "UNSATISFACTORY", "SATISFACTORY", "GOOD"];
+  const labels = ["unacceptable", "unsatisfactory", "satisfactory", "Good"];
   const colors = ["#ff3e53", "#ffb733", "#2bbfba", "#14b856"];
 
   let totalcount = componentData.reduce((acc, cur) => {
@@ -68,7 +66,7 @@ const HealthStatus = ({ componentData }) => {
   const unaccep_data = [unaccep_compodata, totalcount - unaccep_compodata];
   const unsat_data = [datas[1], totalcount - datas[1]];
   const sat_data = [datas[2], totalcount - datas[2]];
-  const GOOD_data = [datas[3], totalcount - datas[3]];
+  const good_data = [datas[3], totalcount - datas[3]];
 
   const TotdonutData = {
     series: datas,
@@ -167,8 +165,8 @@ const HealthStatus = ({ componentData }) => {
     },
   };
 
-  const GOODdonutData = {
-    series: GOOD_data,
+  const gooddonutData = {
+    series: good_data,
     options: {
       chart: {
         type: "donut",
@@ -177,7 +175,7 @@ const HealthStatus = ({ componentData }) => {
         enabled: false,
       },
       fill: {
-        colors: GOOD_colors,
+        colors: good_colors,
         type: "gradient",
       },
       legend: {
@@ -188,7 +186,7 @@ const HealthStatus = ({ componentData }) => {
           breakpoint: 480,
         },
       ],
-      labels: GOOD_lables,
+      labels: good_lables,
     },
   };
 
@@ -211,7 +209,7 @@ const HealthStatus = ({ componentData }) => {
             width={220}
           />
 
-          <Label size={270}>UNACCEPTABLE</Label>
+          <Label size={278}>unacceptable</Label>
 
           <Box size={260}>
             <InBox color={"#ffcece"}>
@@ -235,7 +233,7 @@ const HealthStatus = ({ componentData }) => {
             />
           </Box>
 
-          <Label size={423}>UNSATISFACTORY</Label>
+          <Label size={437}>unsatisfactory</Label>
 
           <Box size={420}>
             <InBox color={"#FFE7BC"}>
@@ -258,7 +256,7 @@ const HealthStatus = ({ componentData }) => {
             />
           </Box>
 
-          <Label size={593}>SATISFACTORY</Label>
+          <Label size={606}>satisfactory</Label>
 
           <Box size={580}>
             <InBox color={"#CBFFFD"}>
@@ -277,20 +275,20 @@ const HealthStatus = ({ componentData }) => {
             />
           </Box>
 
-          <Label size={782}>GOOD</Label>
+          <Label size={785}>Good</Label>
 
           <Box size={740}>
             <InBox color={"#C6FFDD"}>
-              <FaRegThumbsUp size={20} color="#14b856" />{" "}
+              <Icon icon="icon-park-solid:good-two" color="#14b856" />
             </InBox>
-            {GOOD_compodata < 10 ? (
-              <Value size={61}>{GOOD_compodata}</Value>
+            {good_compodata < 10 ? (
+              <Value size={61}>{good_compodata}</Value>
             ) : (
-              <Value size={55}>{GOOD_compodata}</Value>
+              <Value size={55}>{good_compodata}</Value>
             )}
             <ReactApexChart
-              options={GOODdonutData.options}
-              series={GOODdonutData.series}
+              options={gooddonutData.options}
+              series={gooddonutData.series}
               type="donut"
               width={130}
             />
@@ -305,12 +303,12 @@ export default HealthStatus;
 
 const Head = styled.div`
   margin-left: 30px;
-  margin-top: 12px;
+  margin-top: 15px;
   margin-bottom: 10px;
   font-family: "Inter";
   font-style: normal;
-  font-weight: bold;
-  font-size: 15px;
+  font-weight: 400;
+  font-size: 18px;
   color: #707070;
   line-height: 22px;
 `;
