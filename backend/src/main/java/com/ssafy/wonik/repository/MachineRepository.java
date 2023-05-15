@@ -134,21 +134,27 @@ public class MachineRepository {
         
 	}
 	public List<Document> findParameter(GraphInputDto graphInputDto) {
-	    Aggregation aggregation = Aggregation.newAggregation(
-	            Aggregation.match(Criteria.where("date")
-	            		.gte(graphInputDto.getStartDate())
-	            		.lt(graphInputDto.getEndDate())
-	                    .and("parent")
-	                    .is(graphInputDto.getComponentName())),
-                Aggregation.group("name")
-                    .first("name").as("name"),
-                Aggregation.project("_id").andExclude("_id")
-        );
 
-	    
+	    MongoCollection<Document> collection = mongoTemplate.getCollection(graphInputDto.getMachineName());
+        List<MachineToModuleDto> result = new ArrayList<>();
+        Document latestDateDoc = collection.find().sort(new Document("date",-1)).first();
+        Date latestDate = latestDateDoc.getDate("date");
+		
+	    Aggregation aggregation = Aggregation.newAggregation(
+        Aggregation.match(Criteria.where("date")
+        		.is(latestDate)
+                .and("parent")
+                .is(graphInputDto.getComponentName())),
+        Aggregation.group("name")
+            .first("name").as("name"),
+        Aggregation.project("_id").andExclude("_id")
+); 
+		
 	    AggregationResults<Document> rawResult =
-	            mongoTemplate.aggregate(aggregation, graphInputDto.getMachineName(), Document.class);
+	    		mongoTemplate.aggregate(aggregation, graphInputDto.getMachineName(), Document.class);
+		
 	    return rawResult.getMappedResults();
+	    
 //	    public List<Document> aggregate(MongoTemplate mongoTemplate) {
 //	        Aggregation aggregation = Aggregation.newAggregation(
 //	                Aggregation.match(Criteria.where("date")
