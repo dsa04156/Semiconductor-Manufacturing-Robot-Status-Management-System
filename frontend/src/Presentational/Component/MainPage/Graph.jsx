@@ -11,17 +11,11 @@ import * as echarts from "echarts";
 
 import { cloneDeep } from "lodash";
 
-const Graph = ({
-  selectedcompoData,
-  selectedMachineName,
-  selectedModuleName,
-  setRealGraphBtnState,
-}) => {
+
+const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setendDate] = useState(new Date());
-  const [startTime, setstartTime] = useState(
-    new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  );
+  const [startTime, setstartTime] = useState(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
   const [endTime, setendTime] = useState(new Date(Date.now()));
 
   const [realGraphBtn, setRealGraphBtn] = useState(false); // 실시간 그래프 버튼상태
@@ -31,7 +25,6 @@ const Graph = ({
 
   const chartRef = useRef(null);
 
-  // 이 옵션으로 chart를 만듦
   const [option, setOption] = useState({
     tooltip: {
       trigger: "axis",
@@ -105,35 +98,6 @@ const Graph = ({
     },
     series: [],
   });
-
-  // ----------------실시간 데이터 추가 부분----------------------------
-  // const updateGraphOptions = (currentOptions, data) => {
-
-  //   const updatedSeriesData = [...currentOptions.series[0].data, ...data];
-  //   const updatedOptions = {
-  //     ...currentOptions,
-  //     series: [{ ...currentOptions.series[0], data: updatedSeriesData }],
-  //   };
-
-  //   return updatedOptions;
-  // };
-  // const resetGraph = () => {
-  //   const chartInstance = chartRef.current.getEchartsInstance();
-  //   if (chartInstance) {
-  //     chartInstance.clear();
-  //     chartInstance.setOption(getInitialOptions());
-  //   }
-  // };
-
-  // const handleSSEUpdate = (data) => {
-  //   const chartInstance = chartRef.current?.getEchartsInstance();
-  //   if (chartInstance) {
-  //     const updatedOptions = updateGraphOptions(options, data);
-  //     chartInstance.setOption(updatedOptions);
-  //   }
-  // };
-
-  // -----------------------------------------------------------------
 
   const onStartDateChange = (value, dateString) => {
     const newStartDate = new Date(dateString);
@@ -240,8 +204,7 @@ const Graph = ({
       return newOption;
     });
   };
-
-  // useEffect(() => {
+ // useEffect(() => {
   //   if (!selectedMachineName || !selectedModuleName) {
   //     setOptions(getInitialOptions());
   //     // resetGraph();
@@ -254,11 +217,10 @@ const Graph = ({
   //   }
   // }, [selectedMachineName, selectedModuleName]);
 
+
   const prevdata = (realTimeFlag, resultArr, nameArr) => {
     let realStart = new Date();
-    realStart = new Date(
-      realStart.getTime() - realStart.getTimezoneOffset() * 60000
-    );
+    realStart = new Date(realStart.getTime() - realStart.getTimezoneOffset() * 60000);
     realStart.setHours(realStart.getHours() - 10);
     console.log(realStart);
     if (realTimeFlag) {
@@ -267,7 +229,7 @@ const Graph = ({
       newOption2.xAxis = {
         type: "time",
         min: realStart.getTime(),
-        max: endTime.getTime(),
+        max: endDate.getTime(),
       };
       newOption2.legend = {
         data: nameArr,
@@ -279,7 +241,7 @@ const Graph = ({
         xAxis: {
           type: "time",
           min: realStart.getTime(),
-          max: endTime.getTime(),
+          max: endDate.getTime(),
         },
         legend: {
           data: nameArr,
@@ -299,8 +261,8 @@ const Graph = ({
         ...prev,
         xAxis: {
           type: "time",
-          min: startTime.getTime(),
-          max: endTime.getTime(),
+          min: startDate.getTime(),
+          max: endDate.getTime(),
           show: true,
         },
         legend: {
@@ -325,9 +287,9 @@ const Graph = ({
       alert("값을 선택해주세요");
     } else {
       const time1 = performance.now();
+
       setRealGraphBtn(false);
       setIsLoading(true);
-
       axios
         .post("http://3.36.125.122:8082/data/parameter", {
           componentName: selectedcompoData.name,
@@ -365,24 +327,19 @@ const Graph = ({
                 if (name == componentName) {
                   parent = moduleName;
                 }
-                const res2 = await axios.post(
-                  "http://3.36.125.122:8082/data/pgraph",
-                  {
-                    endDate: endTime,
-                    startDate: startTime,
-                    machineName: machineName,
-                    componentName: parent,
-                    parameterName: name,
-                  }
-                );
-
+                console.log(startTime);
+                console.log(endTime);
+                const res2 = await axios.post("http://3.36.125.122:8082/data/pgraph", {
+                  endDate: endTime,
+                  startDate: startTime,
+                  machineName: machineName,
+                  componentName: parent,
+                  parameterName: name,
+                });
                 let dataArr = [];
                 const perfor1 = performance.now();
                 for (let j = 0; j < res2.data.length; j++) {
-                  dataArr.push([
-                    new Date(res2.data[j].date).toISOString(),
-                    res2.data[j].value,
-                  ]);
+                  dataArr.push([new Date(res2.data[j].date).toISOString(), res2.data[j].value]);
                 }
                 const perfor2 = performance.now();
                 console.log("for문 시간 : ", perfor2 - perfor1);
@@ -400,10 +357,11 @@ const Graph = ({
               .then((result) => {
                 console.log(result);
                 resultArr.push(result);
+                console.log(resultArr);
                 resultArrData = resultArr;
+                console.log(resultArrData);
                 const prev1 = performance.now();
                 const realTimeFlag = false;
-
                 prevdata(realTimeFlag, resultArr[0], nameArr);
                 const prev2 = performance.now();
                 console.log("그래프시간 시간 : ", prev2 - prev1);
@@ -411,33 +369,25 @@ const Graph = ({
               .finally(() => {
                 setIsLoading(false);
               });
-
-            // if (chartRef.current) {
-            //   const chartInstance = chartRef.current.getEchartsInstance();
-            //   if (chartInstance) {
-            //     chartInstance.clear();
-            //   }
-            // }
-
-            // setOptions(getInitialOptions());
             const t2 = performance.now();
-            console.log("ProFmise 문 ", t2 - t1);
+            console.log("Promise 문 ", t2 - t1);
           }
         });
     }
   };
-  const onRealtimeGraphHandler = () => { 
-    if(!realGraphBtn){
-      console.log(!realGraphBtn)
-      console.log("실행됨!")
+
+  const onRealtimeGraphHandler = () => {
+    if (!realGraphBtn) {
+      console.log(!realGraphBtn);
+      console.log("실행됨!");
       if (!selectedcompoData || !selectedcompoData.name) {
         alert("값을 선택해주세요");
       } else {
         const time1 = performance.now();
 
-          //------------실시간 그래프 api 보내기 위해 startdate 설정.(현재시간 - 1)-------
-        let  realStart= new Date();
-        realStart = new Date(realStart.getTime() - (realStart.getTimezoneOffset() * 60000));
+        //------------실시간 그래프 api 보내기 위해 startdate 설정.(현재시간 - 1)-------
+        let realStart = new Date();
+        realStart = new Date(realStart.getTime() - realStart.getTimezoneOffset() * 60000);
         realStart.setHours(realStart.getHours() - 10);
         // 날짜를 ISO 8601 형식의 문자열로 변환합니다.
         let realtimeAnHourAgo = realStart.toISOString();
@@ -447,19 +397,18 @@ const Graph = ({
         //----------------------------------------------------------------------------
         //-------------실시간 그래프 api 보내기 위해 endDate 설정-----------------------
         let realEnd = new Date();
-        realEnd = new Date(realEnd.getTime() - (realEnd.getTimezoneOffset() * 60000));
+        realEnd = new Date(realEnd.getTime() - realEnd.getTimezoneOffset() * 60000);
         let realtime = realEnd.toISOString();
         realtime = realtime.slice(0, 19);
         console.log(realtime);
         //-----------------------------------------------------------------------------
 
-  
         setIsLoading(true);
-        console.log(" 셀렉티드 머신 네임: ", selectedcompoData.name)
-        console.log(" 셀렉티드 머신 네임: ", realtime)
-        console.log(" 셀렉티드 머신 네임: ", selectedMachineName)
-        console.log(" 셀렉티드 머신 네임: ", selectedModuleName)
-        console.log(" 셀렉티드 머신 네임: ", realtimeAnHourAgo)
+        console.log(" 셀렉티드 머신 네임: ", selectedcompoData.name);
+        console.log(" 셀렉티드 머신 네임: ", realtime);
+        console.log(" 셀렉티드 머신 네임: ", selectedMachineName);
+        console.log(" 셀렉티드 머신 네임: ", selectedModuleName);
+        console.log(" 셀렉티드 머신 네임: ", realtimeAnHourAgo);
         axios
           .post("http://3.36.125.122:8082/data/parameter", {
             componentName: selectedcompoData.name,
@@ -481,39 +430,33 @@ const Graph = ({
               for (let i = 0; i < res1.data.length; i++) {
                 nameArr.push(res1.data[i].name);
               }
-  
+
               let machineName = selectedMachineName;
               let moduleName = selectedModuleName;
               let componentName = selectedcompoData.name;
               nameArr.push(componentName);
-  
+
               let resultArr = [];
-  
+
               const t1 = performance.now();
-  
+
               Promise.all(
                 nameArr.map(async (name) => {
                   let parent = componentName;
                   if (name == componentName) {
                     parent = moduleName;
                   }
-                  const res2 = await axios.post(
-                    "http://3.36.125.122:8082/data/pgraph",
-                    {
-                      endDate: realtime,
-                      startDate: realtimeAnHourAgo,
-                      machineName: machineName,
-                      componentName: parent,
-                      parameterName: name,
-                    }
-                  );
+                  const res2 = await axios.post("http://3.36.125.122:8082/data/pgraph", {
+                    endDate: realtime,
+                    startDate: realtimeAnHourAgo,
+                    machineName: machineName,
+                    componentName: parent,
+                    parameterName: name,
+                  });
                   let dataArr = [];
                   const perfor1 = performance.now();
                   for (let j = 0; j < res2.data.length; j++) {
-                    dataArr.push([
-                      new Date(res2.data[j].date).toISOString(),
-                      res2.data[j].value,
-                    ]);
+                    dataArr.push([new Date(res2.data[j].date).toISOString(), res2.data[j].value]);
                   }
                   const perfor2 = performance.now();
                   console.log("for문 시간 : ", perfor2 - perfor1);
@@ -547,52 +490,50 @@ const Graph = ({
           });
       }
     }
-    console.log("얘밖에 없는데")
+    console.log("얘밖에 없는데");
     setRealGraphBtn(true);
-    
-  }
+  };
+
   useEffect(() => {
-    console.log("realGraphBtn 바뀜!", realGraphBtn)
-      const eventSource = new EventSource(
-        'http://3.36.125.122:8082/sse/connect',
-        { headers: { accept: 'text/event-stream' } },
-        { withCredentials: true },
-        );
-      eventSource.addEventListener('connect', (event) => {
-        const { data: received } = event;
-        console.log('Graph connect', received);
-        console.log(event.data);
+    console.log("realGraphBtn 바뀜!", realGraphBtn);
+    const eventSource = new EventSource(
+      "http://3.36.125.122:8082/sse/connect",
+      { headers: { accept: "text/event-stream" } },
+      { withCredentials: true }
+    );
+    eventSource.addEventListener("connect", (event) => {
+      const { data: received } = event;
+      console.log("Graph connect", received);
+      console.log(event.data);
+    });
+
+    eventSource.addEventListener("machine", (event) => {
+      const newMachineData = event.data;
+      console.log(newMachineData);
+      console.log("이벤트 머신이름: ", newMachineData);
+      console.log("선택 머신이름: ", selectedMachineName);
+      console.log("버튼 머신이름: ", realGraphBtn);
+
+      if (newMachineData == selectedMachineName && realGraphBtn === true) {
+        console.log(" 실시간 실행 된다잉 ");
+        realGraphMove();
+      }
+    });
+  }, [realGraphBtn]);
+
+  const realGraphMove = () => {
+    console.log("realgraphmove 실행");
+    axios
+      .post("http://3.36.125.122:8082/data/graph/now", {
+        componentName: selectedcompoData?.name,
+        machineName: selectedMachineName,
+        moduleName: selectedModuleName,
+      })
+      .then((res) => {
+        console.log(res);
+        newRealGraph(res.data);
       });
-
-      eventSource.addEventListener('machine', (event) => {
-        const newMachineData = event.data;
-        console.log(newMachineData);
-        console.log("이벤트 머신이름: ", newMachineData)
-        console.log("선택 머신이름: ", selectedMachineName)
-        console.log("버튼 머신이름: ", realGraphBtn)
-
-        if ((newMachineData == selectedMachineName) && (realGraphBtn === true)) {
-          console.log(" 실시간 실행 된다잉 ")
-          realGraphMove();
-        }
-      });
-    }, [realGraphBtn]);
-
-    const realGraphMove = () => {
-      console.log("realgraphmove 실행")
-      axios
-            .post('http://3.36.125.122:8082/data/graph/now', {
-              componentName: selectedcompoData?.name,
-              machineName: selectedMachineName,
-              moduleName: selectedModuleName,
-            })
-            .then((res) => {
-              console.log(res)
-              newRealGraph(res.data)
-            });
-    }
-
-
+  };
 
   return (
     <div>
@@ -601,7 +542,7 @@ const Graph = ({
           <Font>{selectedcompoData?.name}</Font>
           <Line></Line>
           <AlignPeriod>
-            <PFont>PERIOD</PFont>
+            <PFont>PERIOD</PFont>{" "}
             <DatePicker
               defaultValue={dayjs(startTime)}
               locale={locale}
@@ -613,7 +554,9 @@ const Graph = ({
               onChange={onStartTimeChange}
               format="HH:mm:ss"
             />
-            ~
+
+
+            {"   "}~{"  "}
             <DatePicker
               defaultValue={dayjs(endTime)}
               locale={locale}
@@ -625,10 +568,12 @@ const Graph = ({
               onChange={onEndTimeChange}
               format="HH:mm:ss"
             />
+
             <Button onClick={onGraphHandler}>set</Button>
             <Button onClick={onRealtimeGraphHandler}>realtime</Button>
           </AlignPeriod>
         </PeriodBox>
+
         <div>
           {isLoading ? (
             <LoadingIndicator>
@@ -643,6 +588,7 @@ const Graph = ({
             />
           )}
         </div>
+
       </Box>
     </div>
   );
@@ -656,6 +602,8 @@ const LoadingIndicator = styled.div`
   justify-content: center;
   height: 200px; /* Adjust the height as needed */
 `;
+
+
 const Box = styled.div`
   position: absolute;
   top: 260px;
@@ -669,11 +617,11 @@ const Box = styled.div`
   overflow: hidden;
 `;
 const Font = styled.div`
-  margin: 10px 0px 10px 20px;
+  margin: 5px 0px 0px 20px;
   font-family: "Inter";
   font-style: normal;
-  font-weight: 400;
-  font-size: 15px;
+  font-weight: bold;
+  font-size: 17px;
   color: #707070;
 `;
 const Line = styled.div`
@@ -681,7 +629,7 @@ const Line = styled.div`
   width: 810px;
   height: 0px;
   left: 25px;
-  top: 45px;
+  top: 30px;
   border: 1px solid #eff1f5;
 `;
 
@@ -701,17 +649,26 @@ const PeriodBox = styled.div`
   font-size: 12px;
 `;
 const AlignPeriod = styled.div`
-  margin-top: 30px;
+  margin-top: 15px;
   display: flex;
-  align-items: center;
+  width: 100%;
+`;
+const SDatePicker = styled(DatePicker)`
+  border: none;
+
+  .react-datepicker__day--selected,
+  .react-datepicker__day--in-selecting-range,
+  .react-datepicker__day--in-range {
+    background-color: #a8dadc;
+  }
 `;
 const Button = styled.button`
   background-color: blue;
   color: white;
   padding: 3px 10px;
+  margin : 0px 5px 0px 5px;
   border: none;
   border-radius: 5px;
   width : 30px
   cursor: pointer;
-  margin-left : 5px;
 `;
