@@ -4,7 +4,7 @@ import { DatePicker, TimePicker } from "antd";
 import "react-datepicker/dist/react-datepicker.css";
 import { Oval } from "react-loader-spinner";
 import locale from "antd/es/date-picker/locale/ko_KR";
-import dayjs from "dayjs";
+// import dayjs from "dayjs";
 import ECharts, { EchartsReactprops } from "echarts-for-react";
 import axios from "axios";
 import * as echarts from "echarts";
@@ -544,12 +544,12 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
           <AlignPeriod>
             <PFont>PERIOD</PFont>{" "}
             <DatePicker
-              defaultValue={dayjs(startTime)}
+              // defaultValue={dayjs(startTime)}
               locale={locale}
               onChange={onStartDateChange}
             />
             <TimePicker
-              defaultValue={dayjs(startTime)}
+              // defaultValue={dayjs(startTime)}
               locale={locale}
               onChange={onStartTimeChange}
               format="HH:mm:ss"
@@ -558,12 +558,12 @@ const Graph = ({ selectedcompoData, selectedMachineName, selectedModuleName }) =
 
             {"   "}~{"  "}
             <DatePicker
-              defaultValue={dayjs(endTime)}
+              // defaultValue={dayjs(endTime)}
               locale={locale}
               onChange={onEndDateChange}
             />
             <TimePicker
-              defaultValue={dayjs(endTime)}
+              // defaultValue={dayjs(endTime)}
               locale={locale}
               onChange={onEndTimeChange}
               format="HH:mm:ss"
@@ -652,15 +652,6 @@ const AlignPeriod = styled.div`
   margin-top: 15px;
   display: flex;
   width: 100%;
-`;
-const SDatePicker = styled(DatePicker)`
-  border: none;
-
-  .react-datepicker__day--selected,
-  .react-datepicker__day--in-selecting-range,
-  .react-datepicker__day--in-range {
-    background-color: #a8dadc;
-  }
 `;
 const Button = styled.button`
   background-color: blue;
