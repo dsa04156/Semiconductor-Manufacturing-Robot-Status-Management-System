@@ -430,7 +430,7 @@ const Graph = ({
           realStart.getTime() - realStart.getTimezoneOffset() * 60000
         );
         realStart.setHours(realStart.getHours() - 10);
-        // 날짜를 ISO 8601 형식의 문자열로 변환합니다.
+        // 날짜를 ISO 8601 형식의 문자열로 변환합니다
         let realtimeAnHourAgo = realStart.toISOString();
         // 초 이하의 정보를 제거합니다.
         realtimeAnHourAgo = realtimeAnHourAgo.slice(0, 19);
