@@ -90,19 +90,49 @@ const Admin = () => {
                 .filter((item) => item.type !== "Master")
                 .map((item, index) => (
                   <tr key={item.email}>
-                    <td style={{ color: "blue", fontSize: "21px" }}>
+                    <td
+                      style={{
+                        color: "blue",
+                        fontSize: "21px",
+                        textAlign: "center",
+                      }}
+                    >
                       {item.email}
                     </td>
-                    <td style={{ color: "#7f7f7f", fontSize: "18px" }}>
+                    <td
+                      style={{
+                        color: "#7f7f7f",
+                        fontSize: "18px",
+                        textAlign: "center",
+                      }}
+                    >
                       {item.phone}
                     </td>
-                    <td style={{ color: "#7f7f7f", fontSize: "18px" }}>
+                    <td
+                      style={{
+                        color: "#7f7f7f",
+                        fontSize: "18px",
+                        textAlign: "center",
+                      }}
+                    >
                       {item.name}
                     </td>
-                    <td style={{ color: "#7f7f7f", fontSize: "18px" }}>
+                    <td
+                      style={{
+                        color: "#7f7f7f",
+                        fontSize: "18px",
+                        textAlign: "center",
+                      }}
+                    >
                       {item.type}
                     </td>
-                    <td style={{ color: "#7f7f7f", fontSize: "18px" }}>
+                    <td
+                      style={{
+                        color: "#7f7f7f",
+                        fontSize: "18px",
+                        textAlign: "center",
+                      }}
+                    >
                       <StyledFormSelect
                         as="select"
                         size="sm"
@@ -168,8 +198,8 @@ const Admin = () => {
 export default Admin;
 const StyledTh = styled.th`
   font-family: "Roboto", sans-serif;
-  font-size: 28px;
-  color: black;
+  font-size: 25px;
+  text-align: center;
 `;
 const StyledFormSelect = styled(Form.Control)`
   font-size: 16px;
