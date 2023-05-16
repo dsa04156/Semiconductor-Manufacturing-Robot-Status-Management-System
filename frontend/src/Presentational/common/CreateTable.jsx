@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import EvalStatus from "./EvalStatus";
 
 function CreateTable({ setTest, data, test, child }) {
   const [selected, setSelected] = useState(test);
   const [selectedComponentData, setSelectedComponentData] = useState();
+
+  const tableBodyRef = useRef(null);    // 스크롤부분
 
   const idxHandler = (idx) => {
     setSelected(idx);
@@ -49,6 +51,13 @@ function CreateTable({ setTest, data, test, child }) {
     );
   });
 
+  // 스크롤 부분
+  // useEffect(() => {
+  //   if (tableBodyRef.current){
+  //     tableBodyRef.current.scrollTop = 0;
+  //   }
+  // }, [changeModule])
+
   return (
     <Styles>
       <table className="table">
@@ -60,13 +69,16 @@ function CreateTable({ setTest, data, test, child }) {
             <td>AssetScore</td>
           </tr>
         </thead>
-        <tbody style={{verticalAlign: 'middle'}}>{dataTable}</tbody>
+          <tbody style={{verticalAlign: 'middle', maxHeight:"384px"}} >{dataTable}</tbody>
+
       </table>
     </Styles>
   );
 }
 
 export default CreateTable;
+
+
 const StyledTd = styled.td`
   font-family: "Noto Sans KR", sans-serif;
   font-style: normal;
@@ -77,6 +89,7 @@ const Styles = styled.div`
   table {
     border-spacing: 0;
     width: 100%;
+    height: 100%
     border: none;
 
     td {
@@ -84,7 +97,6 @@ const Styles = styled.div`
       font-size: 10px;
       font-family: "Inter";
       font-style: normal;
-      /* width: 100px; */
       color: #707070;
       border: none;
     }

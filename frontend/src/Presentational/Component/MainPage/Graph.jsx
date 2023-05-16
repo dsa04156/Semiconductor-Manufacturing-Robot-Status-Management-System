@@ -246,6 +246,7 @@ const Graph = ({
   const prevdata = (realTimeFlag, resultArr, nameArr) => {
     console.log("prevdata함수 실행");
     let realStart = new Date();
+    let newEnd = new Date();
     realStart = new Date(
       realStart.getTime() - realStart.getTimezoneOffset() * 60000
     );
@@ -258,7 +259,7 @@ const Graph = ({
       newOption2.xAxis = {
         type: "time",
         min: realStart.getTime(),
-        max: endDate.getTime(),
+        max: newEnd.getTime(),
       };
       newOption2.legend = {
         data: nameArr,
@@ -278,7 +279,6 @@ const Graph = ({
         },
         series: resultArr,
       }));
-
       if (chartRef.current) {
         const myChart = chartRef.current.getEchartsInstance();
         myChart.setOption(newOption2);
@@ -390,9 +390,9 @@ const Graph = ({
             )
               .then((result) => {
                 let resultFlag = true
-                console.log(result)
-                for (let i = 0; i<result[0].length; i++){
-                  if(result[0][i].length > 0){
+                console.log("결과들",result)
+                for (let i = 0; i<result.length; i++){
+                  if(result[i].data.length > 0){
                     resultFlag = false
                   }
                 }
@@ -422,7 +422,7 @@ const Graph = ({
 
   const onRealtimeGraphHandler = () => {
     console.log("onRealtimeGraphHandler함수 실행");
-    if (!realGraphBtn) {
+    console.log(realGraphBtn)
       console.log(!realGraphBtn);
       console.log("onRealtimeGraphHandler if문 실행됨!");
       if (!selectedcompoData || !selectedcompoData.name) {
@@ -440,7 +440,7 @@ const Graph = ({
         let realtimeAnHourAgo = realStart.toISOString();
         // 초 이하의 정보를 제거합니다.
         realtimeAnHourAgo = realtimeAnHourAgo.slice(0, 19);
-        console.log(realtimeAnHourAgo);
+        console.log("시작시간",realtimeAnHourAgo);
         //----------------------------------------------------------------------------
         //-------------실시간 그래프 api 보내기 위해 endDate 설정-----------------------
         let realEnd = new Date();
@@ -449,7 +449,7 @@ const Graph = ({
         );
         let realtime = realEnd.toISOString();
         realtime = realtime.slice(0, 19);
-        console.log(realtime);
+        console.log("끝시간",realtime);
         //-----------------------------------------------------------------------------
 
         setIsLoading(true);
@@ -486,6 +486,11 @@ const Graph = ({
                   if (name == componentName) {
                     parent = moduleName;
                   }
+                  console.log(                      "endDate: ",realtime,
+                    "startDate: ",realtimeAnHourAgo,
+                    "machineName: ",machineName,
+                    "componentName: ",parent,
+                    "parameterName: ",name,)
                   const res2 = await axios.post(
                     "http://3.36.125.122:8082/data/pgraph",
                     {
@@ -496,6 +501,7 @@ const Graph = ({
                       parameterName: name,
                     }
                   );
+                  console.log("res2",res2)
                   let dataArr = [];
                   const perfor1 = performance.now();
                   for (let j = 0; j < res2.data.length; j++) {
@@ -517,14 +523,15 @@ const Graph = ({
               )
                 .then((result) => {
                   let resultFlag = true
-
-                  for (let i = 0; i<result[0].length; i++){
-                    if(result[0][i].length > 0){
+                  console.log("결과들",result)
+                  for (let i = 0; i<result.length; i++){
+                    if(result[i].data.length > 0){
                       resultFlag = false
                     }
                   }
                   if (resultFlag){
-                    alert("해당 기간에는 데이터가 없습니다.")
+                    alert("해당 기간에는 데이터가 없습니다.");
+                    setRealGraphBtn(false);
                     return;
                   }
                   console.log(result);
@@ -545,7 +552,6 @@ const Graph = ({
               console.log("Promise 문 ", t2 - t1);
             }
           );
-      }
     }
     setRealGraphBtn(true);
   };

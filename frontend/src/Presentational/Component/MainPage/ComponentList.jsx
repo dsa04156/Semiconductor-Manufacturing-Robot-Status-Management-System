@@ -12,7 +12,7 @@ const ComponentList = ({ child, setSelectComponentData }) => {
       <Small>
         <Font>COMPONENT LIST</Font>
         <Line/>
-        <CreateTable setTest={setTest} data={child} test={test} child={child} />
+          <CreateTable setTest={setTest} data={child} test={test} child={child} />
       </Small>
       <HealthStatus componentData={child} />
     </div>
@@ -31,11 +31,11 @@ const Small = styled.div`
   height: 470px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
-  overflow-y: auto;
+  overflow-y: hidden;
 `;
 
 const Font = styled.div`
-  margin: 15px 0px 15px 25px;
+  margin: 12px 0px 12px 25px;
   font-family: "Inter";
   font-style: normal;
   font-size: 16px;
@@ -44,9 +44,9 @@ const Font = styled.div`
 
 const Line = styled.div`
   position: absolute;
-  width: 400px;
+  width: 430px;
   height: 0px;
-  left: 25px;
-  top: 50px;
+  left: 15px;
+  top: 45px;
   border: 1px solid #eff1f5;
 `;

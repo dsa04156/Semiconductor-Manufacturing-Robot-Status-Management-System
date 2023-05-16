@@ -46,20 +46,25 @@ const Admin = () => {
     });
 
   //권한 변경 부분
-  const handleApply = async (event, email, type) => {
+
+  const handleApplyAll = async (event) => {
     event.preventDefault();
     try {
-      const res = await api.put("account/typeUpdate", {
-        email: email,
-        type: type,
-      });
-      // console.log(res.data);
-      alert(res.data);
-      const res2 = await api.get("account/list");
-      setData(res2.data);
+      for (let index = 0; index < filteredData.length; index++) {
+        const item = filteredData[index];
+        if (permissionData[index] && permissionData[index] !== "-------") {
+          await api.put("account/typeUpdate", {
+            email: item.email,
+            type: permissionData[index],
+          });
+          permissionData[index] = "-------";
+        }
+      }
+      alert("권한 변경 완료");
+      const res = await api.get("account/list");
+      setData(res.data);
     } catch (error) {
       console.error(error);
-      alert(error.message);
     }
   };
 
@@ -72,7 +77,7 @@ const Admin = () => {
               style={{
                 fontSize: "20px",
                 position: "sticky",
-                fontFamily: "Roboto",
+                fontFamily: "Inter",
                 top: "0",
                 zIndex: 1,
               }}
@@ -85,24 +90,70 @@ const Admin = () => {
                 <StyledTh>Edit Permission</StyledTh>
               </tr>
             </thead>
-            <tbody style={{ position: "sticky" }}>
+            <tbody
+              style={{
+                position: "sticky",
+                display: "block",
+                overflowY: "scroll",
+                scrollbarWidth: "thin",
+                scrollbarColor: "rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1)",
+                maxHeight: "380px",
+              }}
+            >
               {filteredData
                 .filter((item) => item.type !== "Master")
                 .map((item, index) => (
                   <tr key={item.email}>
-                    <td style={{ color: "blue", fontSize: "21px" }}>
+                    <td
+                      style={{
+                        color: "blue",
+                        fontSize: "21px",
+                        textAlign: "center",
+                        fontFamily: "Inter",
+                      }}
+                    >
                       {item.email}
                     </td>
-                    <td style={{ color: "#7f7f7f", fontSize: "18px" }}>
+                    <td
+                      style={{
+                        color: "#7f7f7f",
+                        fontSize: "18px",
+                        textAlign: "center",
+                        fontFamily: "Inter",
+                      }}
+                    >
                       {item.phone}
                     </td>
-                    <td style={{ color: "#7f7f7f", fontSize: "18px" }}>
+                    <td
+                      style={{
+                        color: "#7f7f7f",
+                        fontSize: "18px",
+                        textAlign: "center",
+                        fontFamily: "Inter",
+                        paddingLeft: "25px",
+                      }}
+                    >
                       {item.name}
                     </td>
-                    <td style={{ color: "#7f7f7f", fontSize: "18px" }}>
+                    <td
+                      style={{
+                        color: "#7f7f7f",
+                        fontSize: "18px",
+                        textAlign: "center",
+                        fontFamily: "Inter",
+                        paddingLeft: "33px",
+                      }}
+                    >
                       {item.type}
                     </td>
-                    <td style={{ color: "#7f7f7f", fontSize: "18px" }}>
+                    <td
+                      style={{
+                        color: "#7f7f7f",
+                        fontSize: "18px",
+                        textAlign: "center",
+                        fontFamily: "Inter",
+                      }}
+                    >
                       <StyledFormSelect
                         as="select"
                         size="sm"
@@ -126,19 +177,6 @@ const Admin = () => {
                           <option key={index}>{data}</option>
                         ))}
                       </StyledFormSelect>
-                      <br></br>
-                      <button
-                        className="btn btn-primary"
-                        type="submit"
-                        onClick={(e) => {
-                          if (permissionData[index]) {
-                            handleApply(e, item.email, permissionData[index]);
-                          }
-                        }}
-                      >
-                        <FaCheck style={{ marginRight: "5px" }} />
-                        Apply
-                      </button>
                     </td>
                   </tr>
                 ))}
@@ -160,16 +198,38 @@ const Admin = () => {
             style={{ width: "300px" }}
           />
         </Form.Group>
+        <Applybtn
+          className="btn btn-primary"
+          type="submit"
+          onClick={handleApplyAll}
+        >
+          <FaCheck style={{ marginRight: "5px" }} />
+          Apply
+        </Applybtn>
       </Box2>
     </div>
   );
 };
 
 export default Admin;
+
+const Applybtn = styled.th`
+  position: fixed;
+  top: 150px;
+  right: 85px;
+`;
+
+const ScrollableTable = styled.div`
+  max-height: 480px;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1);
+`;
+
 const StyledTh = styled.th`
-  font-family: "Roboto", sans-serif;
-  font-size: 28px;
-  color: black;
+  font-family: "Inter", sans-serif;
+  font-size: 25px;
+  text-align: center;
 `;
 const StyledFormSelect = styled(Form.Control)`
   font-size: 16px;
@@ -178,7 +238,9 @@ const StyledFormSelect = styled(Form.Control)`
   color: #f9f9f9;
   border-radius: 4px;
   cursor: pointer;
-  width: 100%;
+  width: 70%;
+  margin-left: 40px;
+  font-family: "Inter";
 `;
 
 const Box = styled.div`
@@ -194,6 +256,7 @@ const Box = styled.div`
   display: flex;
   align-items: center;
   overflow: hidden;
+  font-family: "Inter";
 
   .table-container {
     width: 100%;
@@ -254,8 +317,7 @@ const Box2 = styled.div`
   width: 40%;
   display: flex;
   align-items: center;
-
-  .admin {
+  font-family: "Inter" .admin {
     margin-right: 10px;
   }
 
