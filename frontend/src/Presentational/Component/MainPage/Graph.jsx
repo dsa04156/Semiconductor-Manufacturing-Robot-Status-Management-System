@@ -331,10 +331,6 @@ const Graph = ({
           startDate: startDate,
         })
         .then((res1) => {
-          if (res1.data.length === 0) {
-            alert("해당 기간에는 데이터가 없습니다");
-            setIsLoading(false);
-          } else {
             const t0 = performance.now();
             const minus = time1 - t0;
             console.log("name api문", minus);
@@ -348,7 +344,7 @@ const Graph = ({
             let moduleName = selectedModuleName;
             let componentName = selectedcompoData.name;
             nameArr.push(componentName);
-
+            console.log(nameArr)
             let resultArr = [];
 
             const t1 = performance.now();
@@ -393,6 +389,17 @@ const Graph = ({
               })
             )
               .then((result) => {
+                let resultFlag = true
+                console.log(result)
+                for (let i = 0; i<result[0].length; i++){
+                  if(result[0][i].length > 0){
+                    resultFlag = false
+                  }
+                }
+                if (resultFlag){
+                  alert("해당 기간에는 데이터가 없습니다.")
+                  return;
+                }
                 console.log(result);
                 resultArr.push(result);
                 console.log(resultArr);
@@ -409,8 +416,7 @@ const Graph = ({
               });
             const t2 = performance.now();
             console.log("Promise 문 ", t2 - t1);
-          }
-        });
+          });
     }
   };
 
@@ -456,10 +462,6 @@ const Graph = ({
             startDate: realtimeAnHourAgo,
           })
           .then((res1) => {
-            if (res1.data.length === 0) {
-              alert("해당 기간에는 데이터가 없습니다");
-              setIsLoading(false);
-            } else {
               const t0 = performance.now();
               const minus = time1 - t0;
               console.log("name api문", minus);
@@ -514,6 +516,17 @@ const Graph = ({
                 })
               )
                 .then((result) => {
+                  let resultFlag = true
+
+                  for (let i = 0; i<result[0].length; i++){
+                    if(result[0][i].length > 0){
+                      resultFlag = false
+                    }
+                  }
+                  if (resultFlag){
+                    alert("해당 기간에는 데이터가 없습니다.")
+                    return;
+                  }
                   console.log(result);
                   resultArr.push(result);
                   console.log(resultArr);
@@ -531,7 +544,7 @@ const Graph = ({
               const t2 = performance.now();
               console.log("Promise 문 ", t2 - t1);
             }
-          });
+          );
       }
     }
     setRealGraphBtn(true);
@@ -769,10 +782,10 @@ const SIconContainer = styled.div`
 const Box = styled.div`
   position: absolute;
   top: 260px;
-  left: 630px;
+  left: 600px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  width: 870px;
+  width: 900px;
   height: 470px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;

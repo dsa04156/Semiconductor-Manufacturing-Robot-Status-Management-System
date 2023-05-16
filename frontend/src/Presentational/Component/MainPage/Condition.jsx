@@ -253,7 +253,7 @@
 //   border-bottom-color: #ffffff;
 
 //   & option {
-//     color: black;
+//     color: #ffffff;
 //   }
 
 //   &::after {
@@ -333,6 +333,7 @@
 //   }
 // `;
 
+
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Form from "react-bootstrap/Form";
@@ -371,16 +372,16 @@ const Condition = ({
 }) => {
   const [machineData, setMachineData] = useState({});
   const [moduleData, setModuleData] = useState([]);
-  const [componentData, setComponentData] = useState([]);
   const [status, setStatus] = useState('');
   const [currentMachineName, setCurrentMachineName] = useState('');
   const [currentModuleName, setCurrentModuleName] = useState('');
-  const [selectValue, setSelectValue] = useState('')
+  const [selectMachineValue, setSelectMachineValue] = useState({value: "", label: "--------"});
+  const [selectValue, setSelectValue] = useState({value: "", label: "--------"})
 
   const collectionJSON = localStorage.getItem('collectionNames');
   const collectionNames = JSON.parse(collectionJSON);
 
-  const secondSelect = useRef(null);
+  // const secondSelect = useRef(null);
 
   //------------실시간 그래프 api 보내기 위해 startdate 설정.(현재시간 - 1)-------
   let startDate = new Date();
@@ -478,10 +479,15 @@ const Condition = ({
   const handleChangeMachine = (selectedOption) => {
     const selectMachineName = selectedOption.value;
     // console.log(secondSelect.current.value)
+    setSelectMachineValue(selectedOption);
     setCurrentMachineName(selectMachineName);
     setModuleChild([]); // 장비 드롭다운에서 다른 장비 선택 시 컴포넌트 리스트 출력 되는 것 초기화.
     // secondSelect.current.value = ""; // 장비 드롭다운에서 다른 장비 선택 시 모듈 드롭다운 초기화
     setSelectedMachineName(selectMachineName);
+
+    setCurrentModuleName("");
+
+    setSelectValue({value: "", label: "--------"})
 
     api
       .post(`/data/${selectMachineName}`, JSON.stringify({})) // 추후 root 자리에 변수 넣어서 변경. 현재는 root로 그냥 테스트.
@@ -517,6 +523,10 @@ const Condition = ({
     setCurrentModuleName(selectModuleName);
     setSelectedModuleName(selectModuleName);
 
+    console.log(selectedOption)
+
+    setSelectValue(selectedOption)
+
     api
       .post(
         `data/machine/module?machineName=${currentMachineName}&moduleName=${selectModuleName}`,
@@ -543,17 +553,19 @@ const Condition = ({
             <StyledMachineSelect 
               styles = {customStyles}
               size = "sm"
-              defaultValue = ""
+              value = {selectMachineValue}
               onChange = {handleChangeMachine}
               options = {[{value: "", label: "--------"}, ...machineOptions]}
+              isOptionDisabled={option => option.value === ""}
             />
             <StyledModuleSelect
               styles = {customStyles}
               size = "sm"
               defaultValue = ""
+              value={selectValue}
               onChange = {handleChangeModule}
               options = {[{value: "", label: "--------"}, ...moduleOptions]}
-              ref={secondSelect}
+              isOptionDisabled={option => option.value === ""}
             />
           </div>
         <div className="mt-4 d-flex justify-content-center align-items-center">
@@ -569,7 +581,7 @@ export default Condition;
 const Big = styled.div`
   position: absolute;
   top: 10px;
-  left: 1041px;
+  left: 1040px;
   background: linear-gradient(90deg, #0051c4 0%, #002962 100%);
   border: 1px solid rgba(0, 0, 0, 0.2);
   width: 460px;
@@ -605,12 +617,6 @@ const StyledModuleSelect = styled(Select)`
   margin-top: -10px;
   position: relative; /* 필요에 따라 변경 */
   z-index: 9999; /* 원하는 값으로 변경 */
-`;
-
-const SelectContainer = styled.div`
-  flex: 1; /* 추가 */
-  display: flex; /* 추가 */
-  justify-content: space-between; /* 추가 */
 `;
 const CustomSelect = styled.select`
   background-color: transparent;

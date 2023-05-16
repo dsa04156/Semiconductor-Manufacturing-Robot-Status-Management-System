@@ -41,7 +41,7 @@ function CreateTable({ setTest, data, test, child }) {
           />
         </td>
         <StyledTd>{elem.name}</StyledTd>
-        <StyledTd>
+        <StyledTd style={{ position: "relative", left: "20px" }}>
           <EvalStatus evalValue={elem.eval} />
         </StyledTd>
         <StyledTd>{parseFloat(elem.value).toFixed(2)}</StyledTd>
@@ -56,7 +56,7 @@ function CreateTable({ setTest, data, test, child }) {
           <tr className="tableHeader">
             <td style={{ width: "30px" }}></td>
             <td>Component</td>
-            <td style={{ paddingLeft: "30px" }}>Status</td>
+            <td style={{ paddingLeft: "50px" }}>Status</td>
             <td>AssetScore</td>
           </tr>
         </thead>

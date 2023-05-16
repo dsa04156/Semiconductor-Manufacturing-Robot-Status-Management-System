@@ -43,17 +43,18 @@ const EvalStatus = ({ evalValue }) => {
     background: ${background};
     text-align: center;
     display: inline-block;
-    width: ${width};
+    width: calc(${width} + 20px);
     border-radius: 20px;
     font-weight: bold;
-    margin-left: 20px;
   `;
 
   return (
-    <StyledStatus>
-      <Icon icon={icon} color="white" style={{ margin: 2 }} />
-      {evalValue}
-    </StyledStatus>
+    <div style={{display: 'flex', justifyContent: 'center'}}>
+      <StyledStatus>
+        <Icon icon={icon} color="white" style={{ margin: 2 }} />
+        {evalValue}
+      </StyledStatus>
+    </div>
   );
 };
 

@@ -31,8 +31,11 @@ const SideBar = () => {
           <div>
             <Icon icon="ion:extension-puzzle" width="35" />
           </div>
-          <Font> Machine</Font>
-          <Font> Health</Font>
+          <Font style={{textAlign:"center"}}>
+            Machine
+            <br />
+            Health
+          </Font>
         </Menu>
       </NavLink>
 
@@ -96,7 +99,6 @@ const Menu = styled.div`
 const Font = styled.div`
   margin-top: 5px;
   font-size: small;
-
 `;
 
 const Font2 = styled.div`
