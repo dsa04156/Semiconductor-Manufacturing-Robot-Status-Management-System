@@ -64,51 +64,73 @@ const HealthStatus = ({ componentData }) => {
   const sat_data = [datas[2], totalcount - datas[2]];
   const good_data = [datas[3], totalcount - datas[3]];
 
-  let goodPercent = parseFloat(((unsat_compodata * 100) / totalcount).toFixed(2));
-  let good= "";
-  
-  if ( goodPercent % 1 === 0) {
-   good =  goodPercent.toFixed(0);
-  } else if ( goodPercent.toFixed(1).endsWith("0")) {
-    good =  goodPercent.toFixed(1);
-  } else {
-    good=  goodPercent.toFixed(2);
-  }
+  let goodPercent =((good_compodata * 100)/totalcount).toFixed(2);
 
-  let satPercent = parseFloat(((unsat_compodata * 100) / totalcount).toFixed(2));
-  let sat= "";
+  let good = 0;
   
-  if ( satPercent % 1 === 0) {
-   sat =  satPercent.toFixed(0);
-  } else if ( satPercent.toFixed(1).endsWith("0")) {
-    sat =  satPercent.toFixed(1);
-  } else {
-    sat=  satPercent.toFixed(2);
-  }
-
-  let unaccepPercent = parseFloat(((unsat_compodata * 100) / totalcount).toFixed(2));
-  let unaccep = "";
+  if (!isNaN(parseFloat(goodPercent)) && isFinite(goodPercent)) {
+    goodPercent = parseFloat(goodPercent);
   
-  if (unaccepPercent % 1 === 0) {
-    unaccep = unaccepPercent.toFixed(0);
-  } else if (unaccepPercent.toFixed(1).endsWith("0")) {
-    unaccep = unaccepPercent.toFixed(1);
-  } else {
-    unaccep= unaccepPercent.toFixed(2);
+    if (goodPercent % 1 === 0) {
+      good = goodPercent.toFixed(0);
+    } else if (goodPercent.toFixed(2).endsWith(0)) {
+      good = goodPercent.toFixed(1);
+    } else {
+      good = goodPercent.toFixed(2);
+    }
   }
 
 
-  let unsatPercent = parseFloat(((unsat_compodata * 100) / totalcount).toFixed(2));
-  let unsat = "";
+
+
+  let satPercent =((sat_compodata * 100)/totalcount).toFixed(2);
+
+  let sat = 0;
   
-  if (unsatPercent % 1 === 0) {
-    unsat = unsatPercent.toFixed(0);
-  } else if (unsatPercent.toFixed(1).endsWith("0")) {
-    unsat = unsatPercent.toFixed(1);
-  } else {
-    unsat= unsatPercent.toFixed(2);
+  if (!isNaN(parseFloat( satPercent)) && isFinite( satPercent)) {
+    satPercent = parseFloat( satPercent);
+  
+    if ( satPercent % 1 === 0) {
+      sat =  satPercent.toFixed(0);
+    } else if ( satPercent.toFixed(2).endsWith(0)) {
+      sat =  satPercent.toFixed(1);
+    } else {
+      sat =  satPercent.toFixed(2);
+    }
   }
 
+
+  let unaccepPercent =((unaccep_compodata * 100)/totalcount).toFixed(2);
+
+  let unaccep = 0;
+  
+  if (!isNaN(parseFloat( unaccepPercent)) && isFinite( unaccepPercent)) {
+    unaccepPercent = parseFloat( unaccepPercent);
+  
+    if ( unaccepPercent % 1 === 0) {
+      unaccep =  unaccepPercent.toFixed(0);
+    } else if ( unaccepPercent.toFixed(2).endsWith(0)) {
+      unaccep =  unaccepPercent.toFixed(1);
+    } else {
+      unaccep =  unaccepPercent.toFixed(2);
+    }
+  }
+
+  let unsatPercent =((unsat_compodata * 100)/totalcount).toFixed(2);
+
+  let unsat = 0;
+  
+  if (!isNaN(parseFloat( unsatPercent)) && isFinite( unsatPercent)) {
+    unsatPercent = parseFloat( unsatPercent);
+  
+    if ( unsatPercent % 1 === 0) {
+      unsat =  unsatPercent.toFixed(0);
+    } else if ( unsatPercent.toFixed(2).endsWith(0)) {
+      unsat =  unsatPercent.toFixed(1);
+    } else {
+      unsat =  unsatPercent.toFixed(2);
+    }
+  }
 
   const TotdonutData = {
     series: datas,
