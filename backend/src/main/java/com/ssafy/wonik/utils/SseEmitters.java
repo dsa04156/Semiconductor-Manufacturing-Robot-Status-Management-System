@@ -52,7 +52,15 @@ public class SseEmitters {
         });
     }
 
-
-
-
+    public void sendError(String machine) throws Exception{
+        emitters.forEach(sseEmitter -> {
+            try {
+                sseEmitter.send(SseEmitter.event()
+                        .name("errorMachine")
+                        .data(machine));
+            }catch (IOException e){
+                throw new RuntimeException(e);
+            }
+        });
+    }
 }

@@ -44,4 +44,12 @@ public class SseController {
         sseEmitters.send(machine);
         return HttpStatus.OK;
     }
+
+    @PostMapping("/newerror/{machine}")
+    public HttpStatus NewError(@PathVariable String machine) throws Exception {
+        System.out.println(machine);
+        sseEmitters.sendError(machine);
+        return HttpStatus.OK;
+    }
+
 }
