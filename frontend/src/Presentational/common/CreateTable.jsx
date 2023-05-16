@@ -81,10 +81,10 @@ const Styles = styled.div`
 
     td {
       text-align: center;
-      font-size: 12px;
+      font-size: 10px;
       font-family: "Inter";
       font-style: normal;
-      width: 100px;
+      /* width: 100px; */
       color: #707070;
       border: none;
     }

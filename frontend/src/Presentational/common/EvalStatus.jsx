@@ -20,7 +20,7 @@ const EvalStatus = ({ evalValue }) => {
       background = "#D9B310";
       icon =
         "streamline:mail-smiley-sad-face-chat-message-smiley-emoji-sad-face-unsatisfied";
-      width = "125px";
+      width = "150px";
       break;
     case "SATISFACTORY":
       color = "white";
@@ -43,9 +43,10 @@ const EvalStatus = ({ evalValue }) => {
     background: ${background};
     text-align: center;
     display: inline-block;
-    width: calc(${width} + 20px);
+    width: calc(${width} + 7px);
     border-radius: 20px;
     font-weight: bold;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   `;
 
   return (
