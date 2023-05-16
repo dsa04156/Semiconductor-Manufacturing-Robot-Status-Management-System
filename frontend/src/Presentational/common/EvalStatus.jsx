@@ -13,26 +13,26 @@ const EvalStatus = ({ evalValue }) => {
       color = "white";
       background = "red";
       icon = "icon-park-solid:bad-two";
-      width = "115px";
+      width = "125px";
       break;
     case "UNSATISFACTORY":
       color = "white";
       background = "#D9B310";
       icon =
         "streamline:mail-smiley-sad-face-chat-message-smiley-emoji-sad-face-unsatisfied";
-      width = "125px";
+      width = "133px";
       break;
     case "SATISFACTORY":
       color = "white";
       background = "blue";
       icon = "teenyicons:mood-smile-solid";
-      width = "110px";
+      width = "116px";
       break;
     case "GOOD":
       color = "white";
       background = "green";
       icon = "icon-park-solid:good-two";
-      width = "60px";
+      width = "70px";
       break;
     default:
       break;
@@ -50,8 +50,12 @@ const EvalStatus = ({ evalValue }) => {
 
   return (
     <StyledStatus>
-      <Icon icon={icon} color="white" style={{ margin: 2 }} />
-      {evalValue}
+      <Icon
+        icon={icon}
+        color="white"
+        style={{ marginLeft: 5, marginRight: 5 }}
+      />
+      <span style={{ marginRight: "5px" }}>{evalValue}</span>
     </StyledStatus>
   );
 };
