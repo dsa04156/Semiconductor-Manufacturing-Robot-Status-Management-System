@@ -46,6 +46,7 @@ const EvalStatus = ({ evalValue }) => {
     width: ${width};
     border-radius: 20px;
     font-weight: bold;
+    margin-left: 20px;
   `;
 
   return (

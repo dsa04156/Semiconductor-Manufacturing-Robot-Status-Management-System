@@ -7,17 +7,16 @@ import { Icon } from "@iconify/react";
 import { Oval } from "react-loader-spinner";
 import ECharts, { EchartsReactprops } from "echarts-for-react";
 import axios from "axios";
-import * as echarts from 'echarts';
+import * as echarts from "echarts";
 
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from "lodash";
 
 const Graph = ({
   selectedcompoData,
   selectedMachineName,
   selectedModuleName,
-
 }) => {
-  const [startDate, setStartDate] = useState(
+  const [startDate, setstartDate] = useState(
     new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   );
   const [endDate, setendDate] = useState(new Date());
@@ -27,6 +26,45 @@ const Graph = ({
   const [saveResultArr, setSaveResultArr] = useState();
   const chartRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  //ㅡㅡㅡ마우스 외부클릭
+  const outsideClickRefstart = useRef();
+  const outsideClickRefend = useRef();
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        outsideClickRefstart.current &&
+        !outsideClickRefstart.current.contains(event.target)
+      ) {
+        setStartDateOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleOutsideClick2 = (event) => {
+      if (
+        outsideClickRefend.current &&
+        !outsideClickRefend.current.contains(event.target)
+      ) {
+        setEndDateOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick2);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick2);
+    };
+  }, []);
+  //ㅡㅡㅡㅡ마우스 외부클릭 끝
 
   useEffect(() => {
     if (!selectedMachineName || !selectedModuleName) {
@@ -38,92 +76,79 @@ const Graph = ({
       setOption(getInitialOptions());
     }
   }, [selectedcompoData?.name, selectedMachineName, selectedModuleName]);
-
   const [option, setOption] = useState({
-      tooltip: {
-        trigger: "axis",
-      },
-      legend:{
-        data: []
-      },
-      toolbox: {
-        feature: {
-          dataZoom: {
-            yAxisIndex: "none",
-            bottom: 0,
-          },
-          restore: {},
+    tooltip: {
+      trigger: "axis",
+    },
+    legend: {
+      data: [],
+    },
+    toolbox: {
+      feature: {
+        dataZoom: {
+          yAxisIndex: "none",
+          bottom: 0,
         },
-        right: 0,
-        top: 30,
+        restore: {},
       },
-      xAxis: {
-        type: "time",
-        min: new Date("2021-12-31T23:59:59.999Z").getTime(),
-        max: new Date("2022-12-31T23:59:59.999Z").getTime(),
+      right: 0,
+      top: 30,
+    },
+    xAxis: {
+      type: "time",
+      min: new Date("2021-12-31T23:59:59.999Z").getTime(),
+      max: new Date("2022-12-31T23:59:59.999Z").getTime(),
+      show: true,
+    },
+    yAxis: {
+      type: "value",
+      boundaryGap: [0, "1%"],
+      show: true,
+    },
+    dataZoom: [
+      {
+        type: "slider",
         show: true,
+        start: 0,
+        end: 100,
+        handleSize: 8,
       },
-      yAxis: {
-        type: "value",
-        boundaryGap: [0, "1%"],
-        show: true,
+      {
+        type: "inside",
+        start: 0,
+        end: 100,
       },
-      dataZoom: [
-        {
-          type: "slider",
-          show: true,
-          start: 0,
-          end: 100,
-          handleSize: 8,
-        },
-        {
-          type: "inside",
-          start: 0,
-          end: 100,
-        },
-      ],
-      series: [],
-    }
-  )
+    ],
+    series: [],
+  });
 
   const [option2, setOption2] = useState({
-    title: {
-      text: "Realtime Graph",
-      textStyle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginLeft: 30,
-        marginBottom: 30,
-      },
-      left: 25,
-      // top: 30,
+    tooltip: {
+      trigger: "axis",
     },
-  tooltip: {
-      trigger: 'axis',
-  },
-  legend: {
-      data:[]
-  },
-  dataZoom: {
+    legend: {
+      data: [],
+    },
+    dataZoom: {
       show: false,
       start: 0,
       end: 100,
       disabled: true, // 줌 비활성화
-  },
-  xAxis: [
+    },
+    xAxis: [
       {
-          type: 'time',
-          min: new Date("2021-12-31T23:59:59.999Z").getTime(),
-          max: new Date("2022-12-31T23:59:59.999Z").getTime(),
+        type: "time",
+        min: new Date("2021-12-31T23:59:59.999Z").getTime(),
+        max: new Date("2022-12-31T23:59:59.999Z").getTime(),
       },
-  ],
-  yAxis: {
-    type: "value",
-    boundaryGap: [0, "1%"],
-    show: true,
-  },
-  series: []
-})
+    ],
+    yAxis: {
+      type: "value",
+      boundaryGap: [0, "1%"],
+      show: true,
+    },
+    series: [],
+  });
 
   let resultArrData = [];
 
@@ -134,159 +159,132 @@ const Graph = ({
 
   // 이 옵션으로 chart를 만듦
   const getInitialOptions = () => ({
-    title: {
-      text: "Period Graph",
-      left: 25,
-
-      textStyle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginLeft: 30,
-        marginBottom: 30,
-      },
+    tooltip: {
+      trigger: "axis",
     },
-      tooltip: {
-        trigger: "axis",
-      },
-      toolbox: {
-        feature: {
-          dataZoom: {
-            yAxisIndex: "none",
-            bottom: 0,
-          },
-          restore: {},
+    toolbox: {
+      feature: {
+        dataZoom: {
+          yAxisIndex: "none",
+          bottom: 0,
         },
-        right: 0,
-        top: 30,
+        restore: {},
       },
-      xAxis: {
-        type: "time",
-        min: new Date("2021-12-31T23:59:59.999Z").getTime(),
-        max: new Date("2022-12-31T23:59:59.999Z").getTime(),
+      right: 0,
+      top: 30,
+    },
+    xAxis: {
+      type: "time",
+      min: new Date("2021-12-31T23:59:59.999Z").getTime(),
+      max: new Date("2022-12-31T23:59:59.999Z").getTime(),
+      show: true,
+    },
+    yAxis: {
+      type: "value",
+      boundaryGap: ["1%", "1%"],
+      show: true,
+    },
+    dataZoom: [
+      {
+        type: "slider",
         show: true,
+        start: 0,
+        end: 100,
+        handleSize: 8,
       },
-      yAxis: {
-        type: "value",
-        boundaryGap: ["1%", "1%"],
-        show: true,
+      {
+        type: "inside",
+        start: 0,
+        end: 100,
       },
-      dataZoom: [
-        {
-          type: "slider",
-          show: true,
-          start: 0,
-          end: 100,
-          handleSize: 8,
-        },
-        {
-          type: "inside",
-          start: 0,
-          end: 100,
-        },
-      ],
-      series: [],
-    });
+    ],
+    series: [],
+  });
 
-    const newRealGraph = (newData) => {
-      // console.log("newRealGraph함수 실행")
-      setOption2((prev) => {
-        const newOption = {...prev}; // 깊은 복사
-        let minTime = new Date(newOption.series[0].data[0][0])
-        let minTimeIndex = 0
-        for (let i = 0; i < newOption.series.length; i++){
-          if (minTime > new Date(newOption.series[i].data[0][0]))
-            minTime = new Date(newOption.series[i].data[0][0])
-            minTimeIndex = i
-        }
-
-        for (let j = 0; j < newData.length; j++) {
-          let flag = true
-          for (let i = 0; i < newOption.series.length; i++) {
-            if (newOption.series[i].name === newData[j].name) {
-              newOption.series[i].data.shift()
-              newOption.series[i].data.push([newData[j].date, newData[j].value])
-              flag = false
-              break;
-            }
-          }
-          if(flag){
-            newOption.legend.data.push(newData[j].name)
-            newOption.series.push({
-                  name: newData[j].name,
-                  type: "line",
-                  symbol: "none",
-                  colorBy: "series",
-                  large: true,
-                  data: [[newData[j].date, newData[j].value]],
-            })
-          }
-        }
-    
-        newOption.xAxis.max = new Date(newData[0].date).getTime();
-        newOption.xAxis.min = newOption.series[minTimeIndex].data[0][0]
-    
-        if (chartRef.current) {
-          const myChart = chartRef.current.getEchartsInstance();
-          var zoomStart = myChart.getOption().dataZoom[0].start;
-          var zoomEnd = myChart.getOption().dataZoom[0].end;
-          myChart.setOption(newOption, false);
-          myChart.setOption({
-            dataZoom: [{
-              start: zoomStart,
-              end: zoomEnd
-            }]
-          });
-        }
-        return newOption;
-      });
-  
-    };
-  const prevdata = (realTimeFlag, resultArr, nameArr) => {
-    // console.log("prevdata함수 실행")
-    let  realStart= new Date();
-    realStart = new Date(realStart.getTime() - (realStart.getTimezoneOffset() * 60000));
-    realStart.setHours(realStart.getHours() - 10);
-    let  reEnd= new Date();
-    reEnd = new Date(reEnd.getTime() - (reEnd.getTimezoneOffset() * 60000));
-    reEnd.setHours(reEnd.getHours() - 9);
-    
-    console.log(realStart)
-    console.log(endDate)
-    if(realTimeFlag){
-      // console.log("prevdata 안 if문 실행")
-      console.log("실시간 결과 값들",resultArr)
-      const newOption2 = option2
-      newOption2.xAxis = {
-        type: 'time',
-        min: realStart.getTime(),
-        max: reEnd.getTime(),
+  const newRealGraph = (newData) => {
+    console.log("newRealGraph함수 실행");
+    setOption2((prev) => {
+      const newOption = { ...prev }; // 깊은 복사
+      let minTime = new Date(newOption.series[0].data[0][0]);
+      let minTimeIndex = 0;
+      for (let i = 0; i < newOption.series.length; i++) {
+        if (minTime > new Date(newOption.series[i].data[0][0]))
+          minTime = new Date(newOption.series[i].data[0][0]);
+        minTimeIndex = i;
       }
+
+      for (let j = 0; j < newData.length; j++) {
+        for (let i = 0; i < newOption.series.length; i++) {
+          if (newOption.series[i].name === newData[j].name) {
+            newOption.series[i].data.shift();
+            newOption.series[i].data.push([newData[j].date, newData[j].value]);
+            break;
+          }
+        }
+      }
+
+      newOption.xAxis.max = new Date(newData[0].date).getTime();
+      newOption.xAxis.min = newOption.series[minTimeIndex].data[0][0];
+
+      if (chartRef.current) {
+        const myChart = chartRef.current.getEchartsInstance();
+        var zoomStart = myChart.getOption().dataZoom[0].start;
+        var zoomEnd = myChart.getOption().dataZoom[0].end;
+        myChart.setOption(newOption, false);
+        myChart.setOption({
+          dataZoom: [
+            {
+              start: zoomStart,
+              end: zoomEnd,
+            },
+          ],
+        });
+      }
+      return newOption;
+    });
+  };
+  const prevdata = (realTimeFlag, resultArr, nameArr) => {
+    console.log("prevdata함수 실행");
+    let realStart = new Date();
+    realStart = new Date(
+      realStart.getTime() - realStart.getTimezoneOffset() * 60000
+    );
+    realStart.setHours(realStart.getHours() - 10);
+    console.log(realStart);
+    if (realTimeFlag) {
+      console.log("prevdata 안 if문 실행");
+      console.log("실시간 결과 값들", resultArr);
+      const newOption2 = option2;
+      newOption2.xAxis = {
+        type: "time",
+        min: realStart.getTime(),
+        max: endDate.getTime(),
+      };
       newOption2.legend = {
         data: nameArr,
         selectedMode: true,
-      }
-      newOption2.series = resultArr
+      };
+      newOption2.series = resultArr;
       setOption2((prev) => ({
         ...prev,
         xAxis: {
-          type: 'time',
+          type: "time",
           min: realStart.getTime(),
-          max: reEnd.getTime(),
+          max: endDate.getTime(),
         },
-        legend:{
+        legend: {
           data: nameArr,
           selectedMode: true,
         },
-        series: resultArr
-      }))
-      if (chartRef.current){
-        const myChart = chartRef.current.getEchartsInstance();
-        myChart.setOption(newOption2)
-      }
+        series: resultArr,
+      }));
 
-    }
-    else{
-      // console.log("이게 왜 됨ㄴ어ㅣㄹ미;ㄴ얼;",realGraphBtn)
+      if (chartRef.current) {
+        const myChart = chartRef.current.getEchartsInstance();
+        myChart.setOption(newOption2);
+      }
+    } else {
+      console.log("이게 왜 됨ㄴ어ㅣㄹ미;ㄴ얼;", realGraphBtn);
       const t0 = performance.now();
       setOption((prev) => ({
         ...prev,
@@ -306,16 +304,16 @@ const Graph = ({
       const elapsed = t1 - t0;
       console.log(elapsed);
 
-      if (chartRef.current){
-        // console.log("prevdata else 문 안에 if(cahrtRef.current문) 실행")
+      if (chartRef.current) {
+        console.log("prevdata else 문 안에 if(cahrtRef.current문) 실행");
         const myChart = chartRef.current.getEchartsInstance();
-        myChart.setOption(option)
+        myChart.setOption(option);
       }
     }
   };
 
   const onGraphHandler = () => {
-    // console.log("onGraphHandler함수 실행")
+    console.log("onGraphHandler함수 실행");
     if (!selectedcompoData || !selectedcompoData.name) {
       alert("값을 선택해주세요");
     } else {
@@ -361,8 +359,8 @@ const Graph = ({
                 if (name == componentName) {
                   parent = moduleName;
                 }
-                // console.log(startDate)
-                // console.log(endDate)
+                console.log(startDate);
+                console.log(endDate);
                 const res2 = await axios.post(
                   "http://3.36.125.122:8082/data/pgraph",
                   {
@@ -401,7 +399,7 @@ const Graph = ({
                 resultArrData = resultArr;
                 console.log(resultArrData);
                 const prev1 = performance.now();
-                const realTimeFlag = false
+                const realTimeFlag = false;
                 prevdata(realTimeFlag, resultArr[0], nameArr);
                 const prev2 = performance.now();
                 console.log("그래프시간 시간 : ", prev2 - prev1);
@@ -417,25 +415,22 @@ const Graph = ({
   };
 
   const onRealtimeGraphHandler = () => {
-    // if(chartRef.current)문 : 실시간 그래프에서 컴포넌트 변경 시 클릭된 컴포넌트 아래 파라미터들만 차트에 띄워주게 함.
-    if(chartRef.current){
-      const myChart = chartRef.current.getEchartsInstance();
-      myChart.clear();
-    }
-    // console.log("onRealtimeGraphHandler함수 실행")
-    // if(!realGraphBtn){
-      console.log(!realGraphBtn)
-      // console.log("onRealtimeGraphHandler if문 실행됨!")
+    console.log("onRealtimeGraphHandler함수 실행");
+    if (!realGraphBtn) {
+      console.log(!realGraphBtn);
+      console.log("onRealtimeGraphHandler if문 실행됨!");
       if (!selectedcompoData || !selectedcompoData.name) {
         alert("값을 선택해주세요");
       } else {
         const time1 = performance.now();
 
-          //------------실시간 그래프 api 보내기 위해 startdate 설정.(현재시간 - 1)-------
-        let  realStart= new Date();
-        realStart = new Date(realStart.getTime() - (realStart.getTimezoneOffset() * 60000));
+        //------------실시간 그래프 api 보내기 위해 startdate 설정.(현재시간 - 1)-------
+        let realStart = new Date();
+        realStart = new Date(
+          realStart.getTime() - realStart.getTimezoneOffset() * 60000
+        );
         realStart.setHours(realStart.getHours() - 10);
-        // 날짜를 ISO 8601 형식의 문자열로 변환합니다.
+        // 날짜를 ISO 8601 형식의 문자열로 변환합니다
         let realtimeAnHourAgo = realStart.toISOString();
         // 초 이하의 정보를 제거합니다.
         realtimeAnHourAgo = realtimeAnHourAgo.slice(0, 19);
@@ -443,19 +438,15 @@ const Graph = ({
         //----------------------------------------------------------------------------
         //-------------실시간 그래프 api 보내기 위해 endDate 설정-----------------------
         let realEnd = new Date();
-        realEnd = new Date(realEnd.getTime() - (realEnd.getTimezoneOffset() * 60000));
+        realEnd = new Date(
+          realEnd.getTime() - realEnd.getTimezoneOffset() * 60000
+        );
         let realtime = realEnd.toISOString();
         realtime = realtime.slice(0, 19);
         console.log(realtime);
         //-----------------------------------------------------------------------------
 
-  
         setIsLoading(true);
-        // console.log(" 셀렉티드 머신 네임: ", selectedcompoData.name)
-        // console.log(" 셀렉티드 머신 네임: ", realtime)
-        // console.log(" 셀렉티드 머신 네임: ", selectedMachineName)
-        // console.log(" 셀렉티드 머신 네임: ", selectedModuleName)
-        // console.log(" 셀렉티드 머신 네임: ", realtimeAnHourAgo)
         axios
           .post("http://3.36.125.122:8082/data/parameter", {
             componentName: selectedcompoData.name,
@@ -477,16 +468,16 @@ const Graph = ({
               for (let i = 0; i < res1.data.length; i++) {
                 nameArr.push(res1.data[i].name);
               }
-  
+
               let machineName = selectedMachineName;
               let moduleName = selectedModuleName;
               let componentName = selectedcompoData.name;
               nameArr.push(componentName);
-  
+
               let resultArr = [];
-  
+
               const t1 = performance.now();
-  
+
               Promise.all(
                 nameArr.map(async (name) => {
                   let parent = componentName;
@@ -542,144 +533,187 @@ const Graph = ({
             }
           });
       }
-    // }
-    // console.log("얘밖에 없는데")
-    setRealGraphBtn(true); 
-    
-  }
+    }
+    setRealGraphBtn(true);
+  };
 
   useEffect(() => {
-    // console.log("realGraphBtn 바뀜!", realGraphBtn)
-      const eventSource = new EventSource(
-        'http://3.36.125.122:8082/sse/connect',
-        { headers: { accept: 'text/event-stream' } },
-        { withCredentials: true },
+    console.log("realGraphBtn 바뀜!", realGraphBtn);
+    const eventSource = new EventSource(
+      "http://3.36.125.122:8082/sse/connect",
+      { headers: { accept: "text/event-stream" } },
+      { withCredentials: true }
+    );
+    eventSource.addEventListener("connect", (event) => {
+      const { data: received } = event;
+      console.log("Graph connect", received);
+      console.log(event.data);
+    });
+
+    eventSource.addEventListener("machine", (event) => {
+      const newMachineData = event.data;
+
+      if (newMachineData === selectedMachineName && realGraphBtn === true) {
+        console.log(
+          "실시간 useEffect문 안 if문((newMachineData == selectedMachineName) && (realGraphBtn === true)) 실행 "
         );
-      eventSource.addEventListener('connect', (event) => {
-        const { data: received } = event;
-        console.log('Graph connect', received);
-        console.log(event.data);
+        realGraphMove();
+      }
+    });
+    return () => {
+      eventSource.close();
+    };
+  }, [realGraphBtn]);
+
+  const realGraphMove = () => {
+    console.log("realgraphmove 실행");
+    axios
+      .post("http://3.36.125.122:8082/data/graph/now", {
+        componentName: selectedcompoData?.name,
+        machineName: selectedMachineName,
+        moduleName: selectedModuleName,
+      })
+      .then((res) => {
+        console.log(res);
+        newRealGraph(res.data);
       });
-
-      eventSource.addEventListener('machine', (event) => {
-        const newMachineData = event.data;
-        // console.log(event.data);
-        // console.log(newMachineData);
-        // console.log("이벤트 머신이름: ", newMachineData)
-        // console.log("선택 머신이름: ", selectedMachineName)
-        // console.log("버튼 머신이름: ", realGraphBtn)
-
-        if ((newMachineData == selectedMachineName) && (realGraphBtn === true)) {
-          // console.log("실시간 useEffect문 안 if문((newMachineData == selectedMachineName) && (realGraphBtn === true)) 실행 ")
-          realGraphMove();
-        }
-      });
-      return () => {
-        eventSource.close();
-      };
-    }, [realGraphBtn, option, option2]);
-
-    const realGraphMove = () => {
-      // console.log("realgraphmove 실행")
-      axios
-            .post('http://3.36.125.122:8082/data/graph/now', {
-              componentName: selectedcompoData?.name,
-              machineName: selectedMachineName,
-              moduleName: selectedModuleName,
-            })
-            .then((res) => {
-              console.log(res)
-              newRealGraph(res.data)
-            });
-    }
+  };
 
   return (
     <div>
       <Box>
         <PeriodBox>
-          <Font>{selectedcompoData?.name}</Font>
+          <Font>
+            {realGraphBtn
+              ? `RealTime Grpah(${selectedcompoData?.name || "None"})`
+              : `Period Graph(${selectedcompoData?.name || "None"})`}
+          </Font>
           <Line></Line>
-          <AlignPeriod>
-            <PFont>PERIOD</PFont>{" "}
-            <SIconContainer>
-              <Icon
-                icon="material-symbols:calendar-today-outline-rounded"
-                width="20"
-                color="blue"
-                onClick={() => setStartDateOpen(!startDateOpen)}
-              />
-            </SIconContainer>
-            <SDatePicker
-              preventOpenFocus={true}
-              showPopperArrow={false}
-              selected={startDate}
-              open={startDateOpen}
-              onChange={(date) => {setStartDate(date); setStartDateOpen(false);}}
-              onSelect={() => setStartDateOpen(false)}
-              locale={ko}
-              selectsStart
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={1}
-              dateFormat="yyyy-MM-dd HH:mm"
-              popperProps={{
-                modifiers: [
-                  {
-                    name: "flip",
-                    enabled: false,
-                  },
-                  {
-                    name: "preventOverflow",
-                    options: {
-                      enabled: true,
-                      escapeWithReference: false,
-                      boundary: "viewport",
-                    },
-                  },
-                ],
+
+          <AlignPeriod style={{ display: "flex", alignItems: "center" }}>
+            <PFont>PERIOD</PFont>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <SIconContainer>
+                <Icon
+                  icon="material-symbols:calendar-today-outline-rounded"
+                  width="27"
+                  color="steelblue"
+                  onClick={() => setStartDateOpen(!startDateOpen)}
+                />
+              </SIconContainer>
+              <SDatePickerWrapper ref={outsideClickRefstart}>
+                <SDatePicker
+                  preventOpenFocus={true}
+                  showPopperArrow={false}
+                  selected={startDate}
+                  open={startDateOpen}
+                  onChange={(date) => {
+                    setstartDate(date);
+                    setStartDateOpen(false);
+                  }}
+                  onSelect={() => {
+                    setStartDateOpen(false);
+                  }}
+                  locale={ko}
+                  selectsStart
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={1}
+                  dateFormat="yyyy-MM-dd HH:mm"
+                  popperProps={{
+                    modifiers: [
+                      {
+                        name: "flip",
+                        enabled: false,
+                      },
+                      {
+                        name: "preventOverflow",
+                        options: {
+                          enabled: true,
+                          escapeWithReference: false,
+                          boundary: "viewport",
+                        },
+                      },
+                    ],
+                  }}
+                />
+              </SDatePickerWrapper>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                margin: "0 20px 0 15px",
               }}
             />
-            {"   "}~{"  "}
-            <SIconContainer>
-              <Icon
-                icon="material-symbols:calendar-today-outline-rounded"
-                width="20"
-                color="blue"
-                onClick={() => setEndDateOpen(!endDateOpen)}
-              />
-            </SIconContainer>
-            <SDatePicker
-              showPopperArrow={false}
-              selected={endDate}
-              open={endDateOpen}
-              onChange={(date) => {setendDate(date); setEndDateOpen(false);}}
-              onSelect={() => setEndDateOpen(false)}
-              locale={ko}
-              minDate={startDate}
-              selectsEnd
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={1}
-              dateFormat="yyyy-MM-dd HH:mm"
-              popperProps={{
-                modifiers: [
-                  {
-                    name: "flip",
-                    enabled: false,
-                  },
-                  {
-                    name: "preventOverflow",
-                    options: {
-                      enabled: true,
-                      escapeWithReference: false,
-                      boundary: "viewport",
-                    },
-                  },
-                ],
+            ~
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                margin: "0 60px 0 30px",
               }}
-            />
-            <Button onClick={onGraphHandler}>set</Button>
-            <Button onClick={onRealtimeGraphHandler}>realtime</Button>
+            >
+              <SIconContainer>
+                <Icon
+                  icon="material-symbols:calendar-today-outline-rounded"
+                  width="27"
+                  color="steelblue"
+                  onClick={() => setEndDateOpen(!endDateOpen)}
+                />
+              </SIconContainer>
+              <SDatePickerWrapper ref={outsideClickRefend}>
+                <SDatePicker
+                  showPopperArrow={false}
+                  selected={endDate}
+                  open={endDateOpen}
+                  onChange={(date) => {
+                    setendDate(date);
+                    setEndDateOpen(false);
+                  }}
+                  onSelect={() => {
+                    setEndDateOpen(false);
+                  }}
+                  locale={ko}
+                  minDate={startDate}
+                  selectsEnd
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={1}
+                  dateFormat="yyyy-MM-dd HH:mm"
+                  popperProps={{
+                    modifiers: [
+                      {
+                        name: "flip",
+                        enabled: false,
+                      },
+                      {
+                        name: "preventOverflow",
+                        options: {
+                          enabled: true,
+                          escapeWithReference: false,
+                          boundary: "viewport",
+                        },
+                      },
+                    ],
+                  }}
+                />
+              </SDatePickerWrapper>
+            </div>
+            <Button1 onClick={onGraphHandler}>
+              <Icon
+                icon="mdi:calendar-clock"
+                style={{ marginRight: "3px", fontSize: "18px" }}
+              />{" "}
+              Period Set
+            </Button1>
+            <Button2 onClick={onRealtimeGraphHandler}>
+              <Icon
+                icon="mdi:flash"
+                style={{ marginRight: "3px", fontSize: "18px" }}
+              />
+              RealTime
+            </Button2>
           </AlignPeriod>
         </PeriodBox>
 
@@ -689,7 +723,7 @@ const Graph = ({
           }}
         >
           <EChartsWrapper
-            id = 'main'
+            id="main"
             ref={chartRef}
             option={option}
             opts={{ width: "auto", height: "auto" }}
@@ -726,7 +760,9 @@ const EChartsWrapper = styled(ECharts)`
 
 const SIconContainer = styled.div`
   width: 20px;
-  color: blue;
+  margin-right: 15px;
+  margin-left: 10px;
+  color: steelblue;
   cursor: pointer;
 `;
 
@@ -742,20 +778,20 @@ const Box = styled.div`
   border-radius: 20px;
   overflow: hidden;
 `;
+
 const Font = styled.div`
-  margin: 15px 0px 0px 30px;
+  margin: 10px 0px 0px 20px;
   font-family: "Inter";
   font-style: normal;
-  font-weight: bold;
   font-size: 17px;
   color: #707070;
 `;
 const Line = styled.div`
   position: absolute;
-  width: 810px;
+  width: 100%;
   height: 0px;
-  left: 25px;
-  top: 30px;
+  left: 10px;
+  top: 35px;
   border: 1px solid #eff1f5;
 `;
 
@@ -775,21 +811,37 @@ const PeriodBox = styled.div`
   font-size: 12px;
 `;
 const AlignPeriod = styled.div`
-  margin-top: 15px;
+  margin-top: 20px;
   display: flex;
-  width: 450px;
 `;
 const SDatePicker = styled(DatePicker)`
   border: none;
-
   .react-datepicker__day--selected,
   .react-datepicker__day--in-selecting-range,
   .react-datepicker__day--in-range {
     background-color: #a8dadc;
   }
+  width: 110px;
 `;
-const Button = styled.button`
-  background-color: blue;
+const SDatePickerWrapper = styled.div`
+  .react-datepicker__input-container input {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+  }
+`;
+const Button1 = styled.button`
+  background-color: hsl(10, 50%, 50%);
+  color: white;
+  padding: 3px 10px;
+  margin : 0px 5px 0px 5px;
+  border: none;
+  border-radius: 5px;
+  width : 30px
+  cursor: pointer;
+`;
+
+const Button2 = styled.button`
+  background-color: hsl(210, 100%, 30%);
   color: white;
   padding: 3px 10px;
   margin : 0px 5px 0px 5px;

@@ -11,6 +11,7 @@ const ComponentList = ({ child, setSelectComponentData }) => {
     <div>
       <Small>
         <Font>COMPONENT LIST</Font>
+        <Line/>
         <CreateTable setTest={setTest} data={child} test={test} child={child} />
       </Small>
       <HealthStatus componentData={child} />
@@ -34,9 +35,18 @@ const Small = styled.div`
 `;
 
 const Font = styled.div`
-  margin: 10px 0px 10px 20px;
+  margin: 15px 0px 15px 25px;
   font-family: "Inter";
   font-style: normal;
   font-size: 16px;
   color: #707070;
+`;
+
+const Line = styled.div`
+  position: absolute;
+  width: 400px;
+  height: 0px;
+  left: 25px;
+  top: 50px;
+  border: 1px solid #eff1f5;
 `;

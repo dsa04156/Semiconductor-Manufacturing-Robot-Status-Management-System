@@ -31,7 +31,8 @@ const SideBar = () => {
           <div>
             <Icon icon="ion:extension-puzzle" width="35" />
           </div>
-          <Font> Machine Health</Font>
+          <Font> Machine</Font>
+          <Font> Health</Font>
         </Menu>
       </NavLink>
 
@@ -65,8 +66,8 @@ const SideBar = () => {
 
       <NavLink to="/">
         <Logout onClick={() => dispatch(authActions.logOut())}>
-          <Font2> Logout </Font2>
           <Icon icon="ic:sharp-logout" />
+          <Font2> Logout </Font2>
         </Logout>
       </NavLink>
     </Side>
@@ -85,7 +86,7 @@ const Side = styled.div`
   position: relative;
 `;
 const Menu = styled.div`
-  margin-top: 30px;
+  padding: 15px;
   width: 100px;
   display: flex;
   flex-direction: column;
@@ -95,7 +96,7 @@ const Menu = styled.div`
 const Font = styled.div`
   margin-top: 5px;
   font-size: small;
-  margin-left: 22px;
+
 `;
 
 const Font2 = styled.div`
