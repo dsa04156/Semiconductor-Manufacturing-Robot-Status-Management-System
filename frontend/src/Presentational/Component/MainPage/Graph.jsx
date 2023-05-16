@@ -284,7 +284,6 @@ const Graph = ({
         myChart.setOption(newOption2);
       }
     } else {
-      console.log("이게 왜 됨ㄴ어ㅣㄹ미;ㄴ얼;", realGraphBtn);
       const t0 = performance.now();
       setOption((prev) => ({
         ...prev,
@@ -371,6 +370,7 @@ const Graph = ({
                     parameterName: name,
                   }
                 );
+
                 let dataArr = [];
                 const perfor1 = performance.now();
                 for (let j = 0; j < res2.data.length; j++) {

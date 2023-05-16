@@ -41,7 +41,7 @@ function CreateTable({ setTest, data, test, child }) {
           />
         </td>
         <StyledTd>{elem.name}</StyledTd>
-        <StyledTd>
+        <StyledTd style={{ position: "relative", left: "20px" }}>
           <EvalStatus evalValue={elem.eval} />
         </StyledTd>
         <StyledTd>{parseFloat(elem.value).toFixed(2)}</StyledTd>
@@ -56,11 +56,11 @@ function CreateTable({ setTest, data, test, child }) {
           <tr className="tableHeader">
             <td style={{ width: "30px" }}></td>
             <td>Component</td>
-            <td>Status</td>
+            <td style={{ paddingLeft: "30px" }}>Status</td>
             <td>AssetScore</td>
           </tr>
         </thead>
-        <tbody>{dataTable}</tbody>
+        <tbody style={{ verticalAlign: "middle" }}>{dataTable}</tbody>
       </table>
     </Styles>
   );
@@ -70,7 +70,6 @@ export default CreateTable;
 const StyledTd = styled.td`
   font-family: "Noto Sans KR", sans-serif;
   font-style: normal;
-
   font-size: 12px;
   color: #707070;
 `;
@@ -78,14 +77,16 @@ const Styles = styled.div`
   table {
     border-spacing: 0;
     width: 100%;
-    border: 1px solid #ddd;
+    border: none;
 
     td {
       text-align: center;
       font-size: 12px;
       font-family: "Inter";
       font-style: normal;
+      width: 100px;
       color: #707070;
+      border: none;
     }
 
     .tableHeader {
