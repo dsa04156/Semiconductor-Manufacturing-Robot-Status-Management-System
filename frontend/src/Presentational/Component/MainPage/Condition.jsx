@@ -352,6 +352,7 @@ const customStyles = {
     borderBottomColor: '#ffffff',
     marginleft: '20px',
   }),
+
   singleValue: (provided, state) => ({
     ...provided,
     color: 'white',
@@ -367,7 +368,8 @@ const Condition = ({
   setModuleChild,
   setSelectedMachineName,
   setSelectedModuleName,
-  selectedcompoDate,
+  // selectedcompoDate,
+  // setSelected,
 
 }) => {
   const [machineData, setMachineData] = useState({});
@@ -375,31 +377,13 @@ const Condition = ({
   const [status, setStatus] = useState('');
   const [currentMachineName, setCurrentMachineName] = useState('');
   const [currentModuleName, setCurrentModuleName] = useState('');
+  const [selected ,setSelected] = useState('');                      // 스크롤 부분
   const [selectMachineValue, setSelectMachineValue] = useState({value: "", label: "--------"});
   const [selectValue, setSelectValue] = useState({value: "", label: "--------"})
 
   const collectionJSON = localStorage.getItem('collectionNames');
   const collectionNames = JSON.parse(collectionJSON);
 
-  // const secondSelect = useRef(null);
-
-  //------------실시간 그래프 api 보내기 위해 startdate 설정.(현재시간 - 1)-------
-  let startDate = new Date();
-  startDate = new Date(startDate.getTime() - (startDate.getTimezoneOffset() * 60000));
-  startDate.setHours(startDate.getHours() - 1);
-  // 날짜를 ISO 8601 형식의 문자열로 변환합니다.
-  let realtimeAnHourAgo = startDate.toISOString();
-  // 초 이하의 정보를 제거합니다.
-  realtimeAnHourAgo = realtimeAnHourAgo.slice(0, 19);
-  console.log(realtimeAnHourAgo);
-  //----------------------------------------------------------------------------
-  //-------------실시간 그래프 api 보내기 위해 endDate 설정-----------------------
-  let endDate = new Date();
-  endDate = new Date(endDate.getTime() - (endDate.getTimezoneOffset() * 60000));
-  let realtime = endDate.toISOString();
-  realtime = realtime.slice(0, 19);
-  console.log(realtime);
-  //-----------------------------------------------------------------------------
 
   useEffect(() => {
     const eventSource = new EventSource(
@@ -518,10 +502,11 @@ const Condition = ({
 
   const handleChangeModule = (selectedOption) => {
     const selectModuleName = selectedOption.value;
-    
+
     // console.log("클릭", selectModuleName);
     setCurrentModuleName(selectModuleName);
     setSelectedModuleName(selectModuleName);
+    setSelected(selectModuleName);            // 스크롤 부분
 
     console.log(selectedOption)
 

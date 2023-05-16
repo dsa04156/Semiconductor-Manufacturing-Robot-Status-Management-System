@@ -162,7 +162,7 @@ table {
 
 tbody {
   display: block;
-  max-height: 600px; /* 적절한 높이 값을 지정하세요. */
+  max-height: 600px; 
   overflow-y: auto;
   position: relative;
 }

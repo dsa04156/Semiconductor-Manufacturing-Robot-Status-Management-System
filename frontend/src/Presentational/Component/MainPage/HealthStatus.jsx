@@ -4,8 +4,6 @@ import styled from "styled-components";
 import { Icon } from "@iconify/react";
 
 const HealthStatus = ({ componentData }) => {
-
-  
   const compodata = componentData.map((data) => {
     return {
       name: data.name,
@@ -22,7 +20,7 @@ const HealthStatus = ({ componentData }) => {
   }, 0);
 
   const unaccep_lables = ["unacceptable", "others"];
-  const unaccep_colors = ["#FF5172", "#F2D8DF"];
+  const unaccep_colors = ["#FF3E53", "#F2D8DF"];
 
   const unsat_compodata = compodata.reduce((unsat_count, data) => {
     if (data.eval === "UNSATISFACTORY") {
@@ -31,7 +29,7 @@ const HealthStatus = ({ componentData }) => {
     return unsat_count;
   }, 0);
   const unsat_lables = ["unsatisfactory", "others"];
-  const unsat_colors = ["#FFEE32", "#F4E4C4"];
+  const unsat_colors = ["#ffb733", "#F4E4C4"];
 
   const sat_compodata = compodata.reduce((sat_count, data) => {
     if (data.eval === "SATISFACTORY") {
@@ -40,7 +38,7 @@ const HealthStatus = ({ componentData }) => {
     return sat_count;
   }, 0);
   const sat_lables = ["satisfactory", "others"];
-  const sat_colors = ["#30ADF3", "#C4E2F4"];
+  const sat_colors = ["#2bbfba", "#C4E2F4"];
 
   const good_compodata = compodata.reduce((good_count, data) => {
     if (data.eval === "GOOD") {
@@ -49,31 +47,35 @@ const HealthStatus = ({ componentData }) => {
     return good_count;
   }, 0);
   const good_lables = ["Good", "others"];
-  const good_colors = ["#A5FF32", "#D9ECC8"];
+  const good_colors = ["#14B856", "#D9ECC8"];
 
-  const datas = [unaccep_compodata, unsat_compodata, sat_compodata, good_compodata];
+  const datas = [
+    unaccep_compodata,
+    unsat_compodata,
+    sat_compodata,
+    good_compodata,
+  ];
 
   const labels = ["unacceptable", "unsatisfactory", "satisfactory", "Good"];
-  const colors = ["#ff3e53", "#ffb733", "#2bbfba", "#14b856"];
+  const colors = ["#FF3E53", "#ffb733", "#2bbfba", "#14B856"];
 
   let totalcount = componentData.reduce((acc, cur) => {
     return acc + 1;
   }, 0);
 
-  console.log(unaccep_compodata)
 
   const unaccep_data = [unaccep_compodata, totalcount - unaccep_compodata];
   const unsat_data = [datas[1], totalcount - datas[1]];
   const sat_data = [datas[2], totalcount - datas[2]];
   const good_data = [datas[3], totalcount - datas[3]];
 
-  let goodPercent =((good_compodata * 100)/totalcount).toFixed(2);
+  let goodPercent = ((good_compodata * 100) / totalcount).toFixed(2);
 
   let good = 0;
-  
+
   if (!isNaN(parseFloat(goodPercent)) && isFinite(goodPercent)) {
     goodPercent = parseFloat(goodPercent);
-  
+
     if (goodPercent % 1 === 0) {
       good = goodPercent.toFixed(0);
     } else if (goodPercent.toFixed(2).endsWith(0)) {
@@ -83,55 +85,51 @@ const HealthStatus = ({ componentData }) => {
     }
   }
 
-
-
-
-  let satPercent =((sat_compodata * 100)/totalcount).toFixed(2);
+  let satPercent = ((sat_compodata * 100) / totalcount).toFixed(2);
 
   let sat = 0;
-  
-  if (!isNaN(parseFloat( satPercent)) && isFinite( satPercent)) {
-    satPercent = parseFloat( satPercent);
-  
-    if ( satPercent % 1 === 0) {
-      sat =  satPercent.toFixed(0);
-    } else if ( satPercent.toFixed(2).endsWith(0)) {
-      sat =  satPercent.toFixed(1);
+
+  if (!isNaN(parseFloat(satPercent)) && isFinite(satPercent)) {
+    satPercent = parseFloat(satPercent);
+
+    if (satPercent % 1 === 0) {
+      sat = satPercent.toFixed(0);
+    } else if (satPercent.toFixed(2).endsWith(0)) {
+      sat = satPercent.toFixed(1);
     } else {
-      sat =  satPercent.toFixed(2);
+      sat = satPercent.toFixed(2);
     }
   }
 
-
-  let unaccepPercent =((unaccep_compodata * 100)/totalcount).toFixed(2);
+  let unaccepPercent = ((unaccep_compodata * 100) / totalcount).toFixed(2);
 
   let unaccep = 0;
-  
-  if (!isNaN(parseFloat( unaccepPercent)) && isFinite( unaccepPercent)) {
-    unaccepPercent = parseFloat( unaccepPercent);
-  
-    if ( unaccepPercent % 1 === 0) {
-      unaccep =  unaccepPercent.toFixed(0);
-    } else if ( unaccepPercent.toFixed(2).endsWith(0)) {
-      unaccep =  unaccepPercent.toFixed(1);
+
+  if (!isNaN(parseFloat(unaccepPercent)) && isFinite(unaccepPercent)) {
+    unaccepPercent = parseFloat(unaccepPercent);
+
+    if (unaccepPercent % 1 === 0) {
+      unaccep = unaccepPercent.toFixed(0);
+    } else if (unaccepPercent.toFixed(2).endsWith(0)) {
+      unaccep = unaccepPercent.toFixed(1);
     } else {
-      unaccep =  unaccepPercent.toFixed(2);
+      unaccep = unaccepPercent.toFixed(2);
     }
   }
 
-  let unsatPercent =((unsat_compodata * 100)/totalcount).toFixed(2);
+  let unsatPercent = ((unsat_compodata * 100) / totalcount).toFixed(2);
 
   let unsat = 0;
-  
-  if (!isNaN(parseFloat( unsatPercent)) && isFinite( unsatPercent)) {
-    unsatPercent = parseFloat( unsatPercent);
-  
-    if ( unsatPercent % 1 === 0) {
-      unsat =  unsatPercent.toFixed(0);
-    } else if ( unsatPercent.toFixed(2).endsWith(0)) {
-      unsat =  unsatPercent.toFixed(1);
+
+  if (!isNaN(parseFloat(unsatPercent)) && isFinite(unsatPercent)) {
+    unsatPercent = parseFloat(unsatPercent);
+
+    if (unsatPercent % 1 === 0) {
+      unsat = unsatPercent.toFixed(0);
+    } else if (unsatPercent.toFixed(2).endsWith(0)) {
+      unsat = unsatPercent.toFixed(1);
     } else {
-      unsat =  unsatPercent.toFixed(2);
+      unsat = unsatPercent.toFixed(2);
     }
   }
 
@@ -163,7 +161,7 @@ const HealthStatus = ({ componentData }) => {
         type: "donut",
       },
       dataLabels: {
-        enabled:false
+        enabled: false,
       },
       fill: {
         colors: unaccep_colors,
@@ -182,7 +180,6 @@ const HealthStatus = ({ componentData }) => {
     },
   };
 
-
   const unsatdonutData = {
     series: unsat_data,
     options: {
@@ -190,7 +187,7 @@ const HealthStatus = ({ componentData }) => {
         type: "donut",
       },
       dataLabels: {
-        enabled:false
+        enabled: false,
       },
       fill: {
         colors: unsat_colors,
@@ -215,7 +212,7 @@ const HealthStatus = ({ componentData }) => {
         type: "donut",
       },
       dataLabels: {
-        enabled:false
+        enabled: false,
       },
       fill: {
         colors: sat_colors,
@@ -240,7 +237,7 @@ const HealthStatus = ({ componentData }) => {
         type: "donut",
       },
       dataLabels: {
-        enabled:false
+        enabled: false,
       },
       fill: {
         colors: good_colors,
@@ -265,22 +262,33 @@ const HealthStatus = ({ componentData }) => {
         <Head>Health Status</Head>
         <HealthStatusTitle>
           <TLabel>Total</TLabel>
-          {totalcount <10 ? <TValue size={98}>{totalcount}</TValue>: <TValue size={85}>{totalcount}</TValue>}
+          {totalcount < 10 ? (
+            <TValue size={110}>{totalcount}</TValue>
+          ) : (
+            <TValue size={96}>{totalcount}</TValue>
+          )}
           <ReactApexChart
             options={TotdonutData.options}
             series={TotdonutData.series}
             type="donut"
-            width={220}
+            width={240}
           />
 
-          <Label size={275}>unacceptable</Label>
+          <Label size={289}>unacceptable</Label>
 
           <Box size={260}>
             <InBox color={"#ffcece"}>
-              <Icon icon="icon-park-solid:bad-two" color="#ff3e53" hFlip={true} />
+              <Icon
+                icon="icon-park-solid:bad-two"
+                color="#ff3e53"
+                hFlip={true}
+              />
             </InBox>
-            {unaccep_compodata < 10 ? <Value size={61}>{unaccep_compodata }</Value> : <Value size={55}>{unaccep_compodata }</Value>}
-
+            {unaccep_compodata < 10 ? (
+              <Value size={61}>{unaccep_compodata}</Value>
+            ) : (
+              <Value size={55}>{unaccep_compodata}</Value>
+            )}
 
             <ReactApexChart
               options={unacceptdonutData.options}
@@ -291,7 +299,7 @@ const HealthStatus = ({ componentData }) => {
             <Percent>{unaccep}%</Percent>
           </Box>
 
-          <Label size={435}>unsatisfactory</Label>
+          <Label size={447}>unsatisfactory</Label>
 
           <Box size={420}>
             <InBox color={"#FFE7BC"}>
@@ -300,8 +308,11 @@ const HealthStatus = ({ componentData }) => {
                 color="#ffb733"
               />
             </InBox>
-            {unsat_compodata < 10 ? <Value size={61}>{unsat_compodata}</Value> : <Value size={55}>{unsat_compodata}</Value>}
-
+            {unsat_compodata < 10 ? (
+              <Value size={61}>{unsat_compodata}</Value>
+            ) : (
+              <Value size={55}>{unsat_compodata}</Value>
+            )}
 
             <ReactApexChart
               options={unsatdonutData.options}
@@ -312,13 +323,17 @@ const HealthStatus = ({ componentData }) => {
             <Percent>{unsat}%</Percent>
           </Box>
 
-          <Label size={610}>satisfactory</Label>
+          <Label size={615}>satisfactory</Label>
 
           <Box size={580}>
             <InBox color={"#CBFFFD"}>
               <Icon icon="teenyicons:mood-smile-solid" color="#2bbfba" />
             </InBox>
-            {sat_compodata < 10 ? <Value size={61}>{sat_compodata}</Value> : <Value size={55}>{sat_compodata}</Value>}
+            {sat_compodata < 10 ? (
+              <Value size={61}>{sat_compodata}</Value>
+            ) : (
+              <Value size={55}>{sat_compodata}</Value>
+            )}
             <ReactApexChart
               options={satdonutData.options}
               series={satdonutData.series}
@@ -328,13 +343,17 @@ const HealthStatus = ({ componentData }) => {
             <Percent>{sat}%</Percent>
           </Box>
 
-          <Label size={790}>Good</Label>
+          <Label size={792}>Good</Label>
 
           <Box size={740}>
             <InBox color={"#C6FFDD"}>
               <Icon icon="icon-park-solid:good-two" color="#14b856" />
             </InBox>
-            {good_compodata < 10 ? <Value size={61}>{good_compodata}</Value> : <Value size={55}>{good_compodata}</Value>}
+            {good_compodata < 10 ? (
+              <Value size={61}>{good_compodata}</Value>
+            ) : (
+              <Value size={55}>{good_compodata}</Value>
+            )}
             <ReactApexChart
               options={gooddonutData.options}
               series={gooddonutData.series}
@@ -367,11 +386,10 @@ const Big = styled.div`
   top: 10px;
   left: 120px;
   background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid #d8d8d8;
   width: 900px;
   height: 230px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 20px;
+  border-radius: 16px;
   align-items: center;
 `;
 const HealthStatusTitle = styled.div`
@@ -410,45 +428,62 @@ const Line = styled.div`
   height: 0px;
   left: 25px;
   top: 45px;
-  border: 1px solid #eff1f5;;
+  border: 1px solid #707070;
 `;
 
 const TLabel = styled.div`
   position: absolute;
-  top: 90px;
-  left: 95px;
+  top: 95px;
+  left: 99px;
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
   font-size: 16px;
-  color: #adb1b8;
-  z-index:3;
+  line-height: 24px;
+  text-transform: uppercase;
+  color: #707070;
+  z-index: 3;
 `;
 const Label = styled.div`
   position: absolute;
-  top: 200px;
+  top: 208px;
   left: ${(props) => props.size}px;
-  font-size: 16px;
-  color: #adb1b8;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  color: #707070;
 `;
 
 const TValue = styled.div`
   position: absolute;
-  top: 100px;
+  top: 110px;
   left: ${(props) => props.size}px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
   font-size: 45px;
-  color: black;
+  text-transform: uppercase;
+  color: #000000;
 `;
 const Value = styled.div`
   position: absolute;
   top: 66px;
   left: ${(props) => props.size}px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
   font-size: 20px;
+  text-transform: uppercase;
+  color: #000000;
   color: black;
-  z-index:2;
+  z-index: 2;
 `;
 const Percent = styled.div`
-  position : relative;
-  display : flex;
-  justify-content : center;
-  align-items : center;
-  height : 0px;
-  margin-left : 12px;
-`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 0px;
+  margin-left: 12px;
+`;
