@@ -29,7 +29,7 @@ const HealthStatus = ({ componentData }) => {
     return unsat_count;
   }, 0);
   const unsat_lables = ["unsatisfactory", "others"];
-  const unsat_colors = ["#ffb733", "#F4E4C4"];
+  const unsat_colors = ["#f0d05b", "#F4E4C4"];
 
   const sat_compodata = compodata.reduce((sat_count, data) => {
     if (data.eval === "SATISFACTORY") {
@@ -57,7 +57,7 @@ const HealthStatus = ({ componentData }) => {
   ];
 
   const labels = ["unacceptable", "unsatisfactory", "satisfactory", "Good"];
-  const colors = ["#FF3E53", "#ffb733", "#2bbfba", "#14B856"];
+  const colors = ["#FF3E53", "#f0d05b", "#2bbfba", "#14B856"];
 
   let totalcount = componentData.reduce((acc, cur) => {
     return acc + 1;
@@ -374,11 +374,11 @@ const Head = styled.div`
   margin-left: 30px;
   margin-top: 15px;
   margin-bottom: 10px;
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 400;
   font-size: 18px;
+  text-transform: uppercase;
   color: #707070;
+  font-weight: 600;
+  font-family: "Segoe UI";
   line-height: 22px;
 `;
 const Big = styled.div`
@@ -423,34 +423,33 @@ const InBox = styled.div`
 `;
 
 const Line = styled.div`
+
   position: absolute;
   width: 850px;
   height: 0px;
   left: 25px;
   top: 45px;
-  border: 1px solid #707070;
+  border: 1px solid #B7B7B7;
 `;
 
 const TLabel = styled.div`
   position: absolute;
   top: 95px;
-  left: 99px;
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
+  left: 95px;
+  font-size: 20px;
   text-transform: uppercase;
   color: #707070;
+  font-weight: 400;
+  font-family: "Segoe UI";
   z-index: 3;
 `;
 const Label = styled.div`
   position: absolute;
   top: 208px;
   left: ${(props) => props.size}px;
-  font-family: 'Inter';
+  font-family: "Segoe UI";
   font-style: normal;
-  font-weight: 400;
+  font-weight: 600;
   font-size: 12px;
   color: #707070;
 `;
@@ -459,24 +458,21 @@ const TValue = styled.div`
   position: absolute;
   top: 110px;
   left: ${(props) => props.size}px;
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
+  font-family: "Segoe UI";
+  font-weight: 600;
   font-size: 45px;
   text-transform: uppercase;
   color: #000000;
 `;
 const Value = styled.div`
   position: absolute;
-  top: 66px;
+  top: 69px;
   left: ${(props) => props.size}px;
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 20px;
+  font-weight: 600;
+  font-family: "Segoe UI";
   text-transform: uppercase;
+  font-size: 20px;
   color: #000000;
-  color: black;
   z-index: 2;
 `;
 const Percent = styled.div`
@@ -486,4 +482,6 @@ const Percent = styled.div`
   align-items: center;
   height: 0px;
   margin-left: 12px;
+  font-weight: 400;
+  font-family: "Segoe UI";
 `;

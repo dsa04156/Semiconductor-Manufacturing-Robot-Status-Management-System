@@ -812,10 +812,11 @@ const Box = styled.div`
 
 const Font = styled.div`
   margin: 10px 0px 0px 20px;
-  font-family: "Inter";
-  font-style: normal;
-  font-size: 17px;
+  font-size: 18px;
+  text-transform: uppercase;
   color: #707070;
+  font-weight: 600;
+  font-family: "Segoe UI";
 `;
 const Line = styled.div`
   position: absolute;
@@ -823,15 +824,15 @@ const Line = styled.div`
   height: 0px;
   left: 15px;
   top: 35px;
-  border: 1px solid #707070;
+  border: 1px solid #B7B7B7;
 `;
 
 const PFont = styled.div`
   margin-left: 30px;
   margin-right: 5px;
+  font-weight: 400;
+  font-family: "Segoe UI";
 
-  font-family: "Inter";
-  font-style: normal;
   font-size: 13px;
   color: #707070;
 `;
