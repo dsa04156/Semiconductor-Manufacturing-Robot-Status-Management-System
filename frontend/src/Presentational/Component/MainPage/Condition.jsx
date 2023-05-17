@@ -25,6 +25,14 @@ const customStyles = {
     ...provided,
     color: state.isSelected ? "white" : provided.color,
   }),
+  menuPortal: (provided) => ({
+    ...provided,
+    zIndex: 9999, // Set a higher z-index value to make sure it appears above other components
+  }),
+  menu: (provided) => ({
+    ...provided,
+    overflowY: "auto", // Enable scrolling when the content exceeds the specified height
+  }),
 
 };
 
@@ -207,7 +215,7 @@ const Condition = ({
           onChange={handleChangeMachine}
           options={[{ value: "", label: "--------" }, ...machineOptions]}
           isOptionDisabled={(option) => option.value === ""}
-
+          menuPortalTarget={document.body}
         />
         <StyledModuleSelect
           styles={customStyles}
@@ -217,7 +225,7 @@ const Condition = ({
           onChange={handleChangeModule}
           options={[{ value: "", label: "--------" }, ...moduleOptions]}
           isOptionDisabled={(option) => option.value === ""}
-
+          menuPortalTarget={document.body}
         />
 
         <div className="mt-5 d-flex justify-content-center align-items-center">
