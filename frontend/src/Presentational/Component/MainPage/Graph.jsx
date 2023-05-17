@@ -329,7 +329,7 @@ const Graph = ({
       console.log(realGraphBtn);
       setIsLoading(true);
       axios
-        .post("http://3.36.125.122:8082/data/parameter", {
+        .post("https://k8s101.p.ssafy.io/be/data/parameter", {
           componentName: selectedcompoData.name,
           endDate: endDate,
           machineName: selectedMachineName,
@@ -364,7 +364,7 @@ const Graph = ({
                 console.log(startDate);
                 console.log(endDate);
                 const res2 = await axios.post(
-                  "http://3.36.125.122:8082/data/pgraph",
+                  "https://k8s101.p.ssafy.io/be/data/pgraph",
                   {
                     endDate: endDate,
                     startDate: startDate,
@@ -460,7 +460,7 @@ const Graph = ({
 
         setIsLoading(true);
         axios
-          .post("http://3.36.125.122:8082/data/parameter", {
+          .post("https://k8s101.p.ssafy.io/be/data/parameter", {
             componentName: selectedcompoData.name,
             endDate: realtime,
             machineName: selectedMachineName,
@@ -498,7 +498,7 @@ const Graph = ({
                     "componentName: ",parent,
                     "parameterName: ",name,)
                   const res2 = await axios.post(
-                    "http://3.36.125.122:8082/data/pgraph",
+                    "https://k8s101.p.ssafy.io/be/data/pgraph",
                     {
                       endDate: realtime,
                       startDate: realtimeAnHourAgo,
@@ -565,7 +565,7 @@ const Graph = ({
   useEffect(() => {
     console.log("realGraphBtn 바뀜!", realGraphBtn);
     const eventSource = new EventSource(
-      "http://3.36.125.122:8082/sse/connect",
+      "https://k8s101.p.ssafy.io/be/sse/connect",
       { headers: { accept: "text/event-stream" } },
       { withCredentials: true }
     );
@@ -600,7 +600,7 @@ const Graph = ({
   const realGraphMove = () => {
     console.log("realgraphmove 실행");
     axios
-      .post("http://3.36.125.122:8082/data/graph/now", {
+      .post("https://k8s101.p.ssafy.io/be/data/graph/now", {
         componentName: selectedcompoData?.name,
         machineName: selectedMachineName,
         moduleName: selectedModuleName,

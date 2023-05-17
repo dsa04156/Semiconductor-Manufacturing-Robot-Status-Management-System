@@ -59,7 +59,7 @@ const Condition = ({
 
   useEffect(() => {
     const eventSource = new EventSource(
-      "http://3.36.125.122:8082/sse/connect",
+      "https://k8s101.p.ssafy.io/be/sse/connect",
       { headers: { accept: "text/event-stream" } },
       { withCredentials: true }
     );
