@@ -184,8 +184,7 @@ tr {
 .IMG{
   width:100%;
   height:100%;
-  background:#FFFFFF;
-  opacity:0.1;
+  filter: opacity(0.102) drop-shadow(0 0 0 #ffffff);
   position: relative;
   z-index: 0;
 }

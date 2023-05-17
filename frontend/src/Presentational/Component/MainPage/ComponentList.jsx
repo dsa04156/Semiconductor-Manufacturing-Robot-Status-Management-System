@@ -35,9 +35,8 @@ const Small = styled.div`
 
 const Font = styled.div`
   margin : 10px 0px 10px 20px;
-  font-family: "Inter";
-  font-style: normal;
-  font-size: 16px;
+  font-family: "Segoe UI";
+  font-size: 18px;
   color: #707070;
   font-size: 18px;
   text-transform: uppercase;
