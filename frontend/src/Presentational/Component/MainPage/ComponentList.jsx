@@ -29,7 +29,6 @@ const Small = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.2);
   width: 460px;
   height: 470px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   overflow-y: hidden;
 `;

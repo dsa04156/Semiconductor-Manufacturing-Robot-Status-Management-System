@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react";
 
 const EvalStatus = ({ evalValue }) => {
   let color;
+  let scolor;
   let background;
   let icon;
   let width;
@@ -11,26 +12,30 @@ const EvalStatus = ({ evalValue }) => {
   switch (evalValue) {
     case "UNACCEPTABLE":
       color = "white";
-      background = "red";
+      scolor = "#f0051e";
+      background = "#FF3E53";
       icon = "icon-park-solid:bad-two";
       width = "115px";
       break;
     case "UNSATISFACTORY":
       color = "white";
-      background = "#D9B310";
+      scolor ="#fac769"
+      background = "#ffb733";
       icon =
         "streamline:mail-smiley-sad-face-chat-message-smiley-emoji-sad-face-unsatisfied";
       width = "150px";
       break;
     case "SATISFACTORY":
       color = "white";
-      background = "blue";
+      scolor="#09e8e1"
+      background = "#2bbfba";
       icon = "teenyicons:mood-smile-solid";
       width = "110px";
       break;
     case "GOOD":
       color = "white";
-      background = "green";
+      scolor="#1FDD6C"
+      background = "#1DA754";
       icon = "icon-park-solid:good-two";
       width = "60px";
       break;
@@ -40,7 +45,7 @@ const EvalStatus = ({ evalValue }) => {
 
   const StyledStatus = styled.span`
     color: ${color};
-    background: ${background};
+    background: linear-gradient(90deg,${scolor} 0%,${background} 100% );
     text-align: center;
     display: inline-block;
     width: calc(${width} + 7px);
