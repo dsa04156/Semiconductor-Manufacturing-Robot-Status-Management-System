@@ -35,10 +35,14 @@ const Small = styled.div`
 
 const Font = styled.div`
   margin: 12px 0px 12px 25px;
-  font-family: "Inter";
+  font-family: "Segoe UI";
   font-style: normal;
   font-size: 16px;
   color: #707070;
+  font-size: 18px;
+  text-transform: uppercase;
+  font-weight: 600;
+
 `;
 
 const Line = styled.div`
@@ -47,5 +51,5 @@ const Line = styled.div`
   height: 0px;
   left: 15px;
   top: 45px;
-  border: 1px solid #707070;
+  border: 1px solid #B7B7B7;
 `;

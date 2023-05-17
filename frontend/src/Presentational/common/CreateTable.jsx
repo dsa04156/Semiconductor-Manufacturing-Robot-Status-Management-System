@@ -94,16 +94,18 @@ const Styles = styled.div`
 
     td {
       text-align: center;
-      font-size: 10px;
-      font-family: "Inter";
-      font-style: normal;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: "Segoe UI";
       color: #707070;
       border: none;
     }
 
     .tableHeader {
-      font-weight: bold;
-      background-color: #ffffff;
+      font-weight: 700;
+      font-family: "Segoe UI";
+      color: #707070;
+      font-size: 14px;
     }
 
     .tableBody {

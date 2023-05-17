@@ -19,8 +19,8 @@ const EvalStatus = ({ evalValue }) => {
       break;
     case "UNSATISFACTORY":
       color = "white";
-      scolor ="#fac769"
-      background = "#ffb733";
+      scolor ="#f0de9c"
+      background = "#f0d05b";
       icon =
         "streamline:mail-smiley-sad-face-chat-message-smiley-emoji-sad-face-unsatisfied";
       width = "150px";

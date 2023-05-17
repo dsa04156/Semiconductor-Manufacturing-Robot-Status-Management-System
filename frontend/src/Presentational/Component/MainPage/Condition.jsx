@@ -18,6 +18,8 @@ const customStyles = {
 
   singleValue: (provided, state) => ({
     ...provided,
+    fontWeight: 400,
+    fontFamily: "Segoe UI",
     color: "white",
     fontSize: "20px",
   }),
@@ -255,8 +257,8 @@ const Fontst = styled.div`
   position: absolute;
   top: 20px;
   left: 10px;
-  font-family: "Inter";
-  font-style: normal;
+  font-weight: 400;
+  font-family: "Segoe UI";
   font-size: ${(props) => props.size}px;
   color: #ffffff;
   margin-left: 10px;
@@ -265,9 +267,8 @@ const Fontrmargin = styled.div`
   position: absolute;
   top: 20px;
   left: 250px;
-  font-family: "Inter";
-  font-style: normal;
   font-weight: 400;
+  font-family: "Segoe UI";
   font-size: ${(props) => props.size}px;
   color: #ffffff;
   margin-right: 40px;
