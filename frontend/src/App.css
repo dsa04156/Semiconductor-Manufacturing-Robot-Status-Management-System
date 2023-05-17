@@ -181,3 +181,11 @@ tr {
 .react-datepicker-wrapper{
   width: 100%;
 }
+.IMG{
+  width:100%;
+  height:100%;
+  background:#FFFFFF;
+  opacity:0.1;
+  position: relative;
+  z-index: 0;
+}
