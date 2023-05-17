@@ -7,16 +7,16 @@ function CreateTable({ setTest, data, test, child }) {
   const [selectedComponentData, setSelectedComponentData] = useState();
 
   const tableBodyRef = useRef(null);    // 스크롤부분
-
+  
   const idxHandler = (idx) => {
     setSelected(idx);
     setTest(idx);
   };
-
+  
   const idxClickHandler = () => {
     setSelectedComponentData(child[selected]);
   };
-
+  
   const dataTable = data?.map((elem, idx) => {
     if (elem.value < 0.1) {
       elem.eval = "UNACCEPTABLE";
@@ -27,12 +27,12 @@ function CreateTable({ setTest, data, test, child }) {
     } else {
       elem.eval = "GOOD";
     }
-
+    
     return (
       <tr
-        className={`tableBody ${idx === selected ? "selected" : ""}`}
-        key={idx}
-        onClick={() => idxHandler(idx)}
+      className={`tableBody ${idx === selected ? "selected" : ""}`}
+      key={idx}
+      onClick={() => idxHandler(idx)}
       >
         <td style={{ width: "30px" }}>
           <input
@@ -40,7 +40,7 @@ function CreateTable({ setTest, data, test, child }) {
             checked={idx === selected}
             onChange={() => {}}
             onClick={idxClickHandler}
-          />
+            />
         </td>
         <StyledTd>{elem.name}</StyledTd>
         <StyledTd style={{ position: "relative", left: "20px" }}>
@@ -50,13 +50,15 @@ function CreateTable({ setTest, data, test, child }) {
       </tr>
     );
   });
+  
 
   // 스크롤 부분
-  // useEffect(() => {
-  //   if (tableBodyRef.current){
-  //     tableBodyRef.current.scrollTop = 0;
-  //   }
-  // }, [changeModule])
+  useEffect(() => {
+    console.log("실행")
+      if (tableBodyRef.current){
+          tableBodyRef.current.scrollTop = 0;
+        }
+  }, [])
 
   return (
     <Styles>
@@ -69,7 +71,7 @@ function CreateTable({ setTest, data, test, child }) {
             <td>AssetScore</td>
           </tr>
         </thead>
-          <tbody style={{verticalAlign: 'middle', maxHeight:"384px"}} >{dataTable}</tbody>
+          <tbody style={{verticalAlign: 'middle', maxHeight:"384px"}} ref={tableBodyRef}>{dataTable}</tbody>
 
       </table>
     </Styles>

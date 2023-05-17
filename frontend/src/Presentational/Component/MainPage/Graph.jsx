@@ -588,8 +588,7 @@ const Graph = ({
     });
     eventSource.addEventListener("errorMachine", (event) => {
       console.log("이거 실행", event.data)
-      //event.data != selectedMachineName && 
-      if(collectionNames.includes(event.data)){
+      if(collectionNames.includes(event.data)){ //event.data != selectedMachineName && 
         notificationHandler(event.data)
       }
   });
