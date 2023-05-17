@@ -4,23 +4,28 @@ import { Icon } from "@iconify/react";
 
 const Conbox = ({ mstate, width, fontsize }) => {
   // console.log(mstate)
+  let [scolor, setscolor] = useState("");
   let [color, setcolor] = useState("");
   let [icon, seticon] = useState("");
 
   useEffect(() => {
     if (mstate === "unacceptable") {
-      setcolor("#FF5172");
+      setscolor("#f0051e");
+      setcolor("#FF3E53");
       seticon("icon-park-solid:bad-two");
     } else if (mstate === "unsatisfactory") {
-      setcolor("#FFEE32");
+      setscolor("#fac769");
+      setcolor("#ffb733");
       seticon(
         "streamline:mail-smiley-sad-face-chat-message-smiley-emoji-sad-face-unsatisfied"
       );
     } else if (mstate === "satisfactory") {
-      setcolor("#30ADF3");
+      setscolor("#09e8e1");
+      setcolor("#2bbfba");
       seticon("teenyicons:mood-smile-solid");
     } else {
-      setcolor("#A5FF32");
+      setscolor("#1FDD6C");
+      setcolor("#1DA754");
       seticon("icon-park-solid:good-two");
     }
     // else {
@@ -29,7 +34,7 @@ const Conbox = ({ mstate, width, fontsize }) => {
   }, [mstate]);
 
   return (
-    <Con color={color} width={width}>
+    <Con scolor={scolor}  color={color} width={width}>
       <Icon icon={icon} color="white" width={fontsize} style={{ margin: 4 }} />
       <Font fontsize={fontsize}>{mstate}</Font>
     </Con>
@@ -39,7 +44,7 @@ const Conbox = ({ mstate, width, fontsize }) => {
 export default Conbox;
 
 const Con = styled.div`
-  background: ${(props) => props.color};
+  background: linear-gradient(90deg,${(props) => props.scolor} 0%,${(props) => props.color} 100% );
   width: ${(props) => props.width}px;
   margin: 20px 0px 0px 0px;
   height: 50px;
