@@ -35,4 +35,4 @@ server:
     context-path: /be
   ssl:
     enabled: false
-  port: 8082
+  port: 8080
