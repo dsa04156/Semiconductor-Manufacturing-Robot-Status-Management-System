@@ -15,6 +15,7 @@ const Graph = ({
   selectedcompoData,
   selectedMachineName,
   selectedModuleName,
+  notificationHandler
 }) => {
   const [startDate, setstartDate] = useState(
     new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
@@ -30,6 +31,11 @@ const Graph = ({
   //ㅡㅡㅡ마우스 외부클릭
   const outsideClickRefstart = useRef();
   const outsideClickRefend = useRef();
+
+  //---- 내가 가진 장비 목록
+  const collectionJSON = localStorage.getItem('collectionNames');
+  const collectionNames = JSON.parse(collectionJSON);
+
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -578,7 +584,15 @@ const Graph = ({
         );
         realGraphMove();
       }
+
     });
+    eventSource.addEventListener("errorMachine", (event) => {
+      console.log("이거 실행", event.data)
+      //event.data != selectedMachineName && 
+      if(collectionNames.includes(event.data)){
+        notificationHandler(event.data)
+      }
+  });
     return () => {
       eventSource.close();
     };
