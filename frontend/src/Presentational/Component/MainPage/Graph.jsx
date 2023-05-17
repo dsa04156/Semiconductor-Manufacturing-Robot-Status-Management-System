@@ -617,8 +617,8 @@ const Graph = ({
         <PeriodBox>
           <Font>
             {realGraphBtn
-              ? `RealTime Grpah(${selectedcompoData?.name || "None"})`
-              : `Period Graph(${selectedcompoData?.name || "None"})`}
+              ? `RealTime Graph (${selectedcompoData?.name || "None"})`
+              : `Period Graph (${selectedcompoData?.name || "None"})`}
           </Font>
           <Line></Line>
 
