@@ -162,7 +162,7 @@ table {
 
 tbody {
   display: block;
-  max-height: 600px; /* 적절한 높이 값을 지정하세요. */
+  max-height: 600px; 
   overflow-y: auto;
   position: relative;
 }
@@ -177,4 +177,15 @@ tr {
   margin-top: 136px;
 
   color: gray;
+}
+.react-datepicker-wrapper{
+  width: 100%;
+}
+.IMG{
+  width:100%;
+  height:100%;
+  background:#FFFFFF;
+  opacity:0.1;
+  position: relative;
+  z-index: 0;
 }

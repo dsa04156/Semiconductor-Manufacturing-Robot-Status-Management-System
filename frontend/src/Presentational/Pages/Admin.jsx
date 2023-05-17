@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import Form from "react-bootstrap/Form";
 import { useState, useEffect } from "react";
-
-import { FaSearch } from "react-icons/fa";
+import { DropdownButton, Dropdown } from "react-bootstrap";
+import { FaCheck, FaSearch } from "react-icons/fa";
 import api from "../../redux/api";
 
 const Admin = () => {
@@ -12,8 +12,8 @@ const Admin = () => {
   const [permissionData, setPermissionData] = useState([]);
   const [defaultPermission, setDefaultPermission] = useState("Unknown");
 
-  const collectionJSON = localStorage.getItem('collectionNames')
-  const collectionNames = JSON.parse(collectionJSON)
+  const collectionJSON = localStorage.getItem("collectionNames");
+  const collectionNames = JSON.parse(collectionJSON);
 
   // console.log(collectionNames);
   useEffect(() => {
@@ -30,35 +30,42 @@ const Admin = () => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredData = data.filter((item) => {
-    if (item && item.name && item.type) {
-      return item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    }
-    return false;
-  }).sort((a, b) => {
-    if (a.type === "UnKnown") return -1;
-    if (b.type === "UnKnown") return 1;
-    if (a.type > b.type) return 1;
-    if (a.type < b.type) return -1;
-    return 0;
-  });
+  const filteredData = data
+    .filter((item) => {
+      if (item && item.name && item.type) {
+        return item.name.toLowerCase().includes(searchTerm.toLowerCase());
+      }
+      return false;
+    })
+    .sort((a, b) => {
+      if (a.type === "UnKnown") return -1;
+      if (b.type === "UnKnown") return 1;
+      if (a.type > b.type) return 1;
+      if (a.type < b.type) return -1;
+      return 0;
+    });
 
   //권한 변경 부분
-  const handleApply = async (event, email, type) => {
+
+  const handleApplyAll = async (event) => {
     event.preventDefault();
-      try {
-        const res = await api.put("account/typeUpdate", {
-          email: email,
-          type: type,
-        });
-        // console.log(res.data);
-        alert(res.data);
-        const res2 = await api.get("account/list");
-        setData(res2.data);
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
+    try {
+      for (let index = 0; index < filteredData.length; index++) {
+        const item = filteredData[index];
+        if (permissionData[index] && permissionData[index] !== "-------") {
+          await api.put("account/typeUpdate", {
+            email: item.email,
+            type: permissionData[index],
+          });
+          permissionData[index] = "-------";
+        }
       }
+      alert("권한 변경 완료");
+      const res = await api.get("account/list");
+      setData(res.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -70,37 +77,91 @@ const Admin = () => {
               style={{
                 fontSize: "20px",
                 position: "sticky",
+                fontFamily: "Inter",
                 top: "0",
                 zIndex: 1,
               }}
             >
               <tr>
-                <th>ID</th>
-                <th>H.P</th>
-                <th>Name</th>
-                <th>Permission</th>
-                <th>Edit Permission</th>
+                <StyledTh>ID</StyledTh>
+                <StyledTh>H.P</StyledTh>
+                <StyledTh>Name</StyledTh>
+                <StyledTh>Permission</StyledTh>
+                <StyledTh>Edit Permission</StyledTh>
               </tr>
             </thead>
-            <tbody style={{ position: "sticky" }}>
+            <tbody
+              style={{
+                position: "sticky",
+                display: "block",
+                overflowY: "scroll",
+                scrollbarWidth: "thin",
+                scrollbarColor: "rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1)",
+                maxHeight: "380px",
+              }}
+            >
               {filteredData
                 .filter((item) => item.type !== "Master")
                 .map((item, index) => (
                   <tr key={item.email}>
-                    <td style={{ color: "blue", fontSize: "23px" }}>
+                    <td
+                      style={{
+                        color: "blue",
+                        fontSize: "21px",
+                        textAlign: "center",
+                        fontFamily: "Inter",
+                      }}
+                    >
                       {item.email}
                     </td>
-                    <td style={{ fontSize: "20px" }}>{item.phone}</td>
-                    <td style={{ fontSize: "20px" }}>{item.name}</td>
-                    <td style={{ fontSize: "20px" }}>{item.type}</td>
-                    <td style={{ fontSize: "20px" }}>
-                      <Form.Select
+                    <td
+                      style={{
+                        color: "#7f7f7f",
+                        fontSize: "18px",
+                        textAlign: "center",
+                        fontFamily: "Inter",
+                      }}
+                    >
+                      {item.phone}
+                    </td>
+                    <td
+                      style={{
+                        color: "#7f7f7f",
+                        fontSize: "18px",
+                        textAlign: "center",
+                        fontFamily: "Inter",
+                        paddingLeft: "25px",
+                      }}
+                    >
+                      {item.name}
+                    </td>
+                    <td
+                      style={{
+                        color: "#7f7f7f",
+                        fontSize: "18px",
+                        textAlign: "center",
+                        fontFamily: "Inter",
+                        paddingLeft: "33px",
+                      }}
+                    >
+                      {item.type}
+                    </td>
+                    <td
+                      style={{
+                        color: "#7f7f7f",
+                        fontSize: "18px",
+                        textAlign: "center",
+                        fontFamily: "Inter",
+                      }}
+                    >
+                      <StyledFormSelect
+                        as="select"
                         size="sm"
                         value={permissionData[index] || "-------"}
                         onChange={(e) => {
                           const selectedValue = e.target.value;
                           if (selectedValue === "-------") {
-                            return; // 선택 안할 시 함수 실행하지 않음
+                            return; // 선택되지 않은 경우 함수 실행하지 않음
                           }
                           setPermissionData((prevPermissionData) => {
                             const newPermissionData = [...prevPermissionData];
@@ -112,21 +173,10 @@ const Admin = () => {
                         {/*로그인 시 장비 타입목록 받아와서 map으로 드롭다운 구현*/}
                         <option value="-------">-------</option>
                         <option value="Unknown">Unknown</option>
-                        {collectionNames.map((data, index)=> (
-                        <option key={index}>{data}</option>
+                        {collectionNames.map((data, index) => (
+                          <option key={index}>{data}</option>
                         ))}
-                      </Form.Select>
-                      <button
-                        className="btn btn-primary"
-                        type="submit"
-                        onClick={(e) => {
-                          if (permissionData[index]) {
-                            handleApply(e, item.email, permissionData[index]);
-                          }
-                        }}
-                      >
-                        Apply
-                      </button>
+                      </StyledFormSelect>
                     </td>
                   </tr>
                 ))}
@@ -148,6 +198,14 @@ const Admin = () => {
             style={{ width: "300px" }}
           />
         </Form.Group>
+        <Applybtn
+          className="btn btn-primary"
+          type="submit"
+          onClick={handleApplyAll}
+        >
+          <FaCheck style={{ marginRight: "5px" }} />
+          Apply
+        </Applybtn>
       </Box2>
     </div>
   );
@@ -155,23 +213,54 @@ const Admin = () => {
 
 export default Admin;
 
+const Applybtn = styled.th`
+  position: fixed;
+  top: 150px;
+  right: 85px;
+`;
+
+const ScrollableTable = styled.div`
+  max-height: 480px;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1);
+`;
+
+const StyledTh = styled.th`
+  font-family: "Inter", sans-serif;
+  font-size: 25px;
+  text-align: center;
+`;
+const StyledFormSelect = styled(Form.Control)`
+  font-size: 16px;
+  padding: 6px 12px;
+  background-color: #7f7f7f;
+  color: #f9f9f9;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 70%;
+  margin-left: 40px;
+  font-family: "Inter";
+`;
+
 const Box = styled.div`
   position: absolute;
   top: 200px;
   left: 150px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  width: 80%;
-  height: 70%;
+  width: 85%;
+  height: 480px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   display: flex;
   align-items: center;
   overflow: hidden;
+  font-family: "Inter";
 
   .table-container {
     width: 100%;
-    overflow-x: auto;
+
     padding: 10px;
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1);
@@ -192,19 +281,19 @@ const Box = styled.div`
 
   th:first-child,
   td:first-child {
-    width: 20%;
+    width: 30%;
     max-width: 200px;
   }
 
   th:nth-child(2),
   td:nth-child(2) {
-    width: 15%;
+    width: 20%;
     max-width: 150px;
   }
 
   th:nth-child(3),
   td:nth-child(3) {
-    width: 25%;
+    width: 15%;
     max-width: 250px;
   }
 
@@ -228,8 +317,7 @@ const Box2 = styled.div`
   width: 40%;
   display: flex;
   align-items: center;
-
-  .admin {
+  font-family: "Inter" .admin {
     margin-right: 10px;
   }
 

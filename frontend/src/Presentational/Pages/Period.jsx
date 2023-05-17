@@ -38,7 +38,7 @@ const Period = ({
   };
   return (
     <PeriodBox>
-      <p style={{margin: '10px 0px -5px 0px', fontWeight: 'bold'}}>pump</p>
+      <p style={{margin: '10px 0px -5px 0px', fontWeight: 'bold'}}>{selectComponentName}</p>
       <hr/>
       <AlignPeriod>
       {" PERIOD "}
@@ -129,6 +129,7 @@ const PeriodBox = styled.div`
   align-items: center;
   z-index: 4;
   font-size: 12px;
+  margin: auto;
 `;
 
 const CalendarIcon = styled.img`

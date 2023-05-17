@@ -1,4 +1,4 @@
-import React,{memo} from "react";
+import React, { memo } from "react";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import styled from "styled-components";
@@ -31,7 +31,11 @@ const SideBar = () => {
           <div>
             <Icon icon="ion:extension-puzzle" width="35" />
           </div>
-          <Font> Machine Health</Font>
+          <Font style={{textAlign:"center"}}>
+            Machine
+            <br />
+            Health
+          </Font>
         </Menu>
       </NavLink>
 
@@ -63,23 +67,10 @@ const SideBar = () => {
         </NavLink>
       )}
 
-      <NavLink
-        to="/Graphtest"
-        onClick={() => handleNavClick(3)}
-        className={num === 3 ? "back_type" : "nav_item"}
-      >
-        <Menu>
-          <div>
-            <Icon icon="mdi:human-female" width="35" />
-          </div>
-          <Font2> Graphtest</Font2>
-        </Menu>
-      </NavLink>
-
       <NavLink to="/">
         <Logout onClick={() => dispatch(authActions.logOut())}>
-          <Font2> Logout </Font2>
           <Icon icon="ic:sharp-logout" />
+          <Font2> Logout </Font2>
         </Logout>
       </NavLink>
     </Side>
@@ -98,7 +89,7 @@ const Side = styled.div`
   position: relative;
 `;
 const Menu = styled.div`
-  margin-top: 30px;
+  padding: 15px;
   width: 100px;
   display: flex;
   flex-direction: column;
@@ -108,7 +99,6 @@ const Menu = styled.div`
 const Font = styled.div`
   margin-top: 5px;
   font-size: small;
-  margin-left: 22px;
 `;
 
 const Font2 = styled.div`

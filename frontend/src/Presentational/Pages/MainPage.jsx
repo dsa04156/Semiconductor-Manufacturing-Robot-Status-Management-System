@@ -1,18 +1,26 @@
 import Condition from "../Component/MainPage/Condition";
+import CreateTable from "../common/CreateTable";       // 스크롤 부분
 import ComponentList from "../Component/MainPage/ComponentList";
-import Graphtest from "../Pages/Graphtest";
+import Graph from "../Component/MainPage/Graph";
 import react, { useState } from "react";
+import usePushNotification from '../common/usePushNotification ';
 
 const Mainpage = () => {
   const [moduleChild, setModuleChild] = useState([]);
   const [selectComponentData, setSelectComponentData] = useState([]); // ComponentList에서 선택한 컴포넌트(name, value) 들고옴
   const [selectedMachineName, setSelectedMachineName] = useState();
   const [selectedModuleName, setSelectedModuleName] = useState();
+  const [selected, setSelected] = useState(null);            // 스크롤 부분
 
-  //  console.log(moduleChild)
-  // console.log(selectComponentData);
-  // console.log(selectedMachineName);
-  // console.log(selectedModuleName);
+
+  const { fireNotificationWithTimeout } = usePushNotification();
+    const notificationHandler = (e) => {
+      console.log("실행은 됨 안뜨는 것 뿐")
+      fireNotificationWithTimeout('Machine Error', {
+        body: e+" 의 상태가 좋지않습니다.",
+      });
+  
+    }  
 
   return (
     <div>
@@ -20,15 +28,19 @@ const Mainpage = () => {
         setModuleChild={setModuleChild}
         setSelectedMachineName={setSelectedMachineName}
         setSelectedModuleName={setSelectedModuleName}
+        selectedcompoDate={selectComponentData}
+        setSelected={setSelected}
+
       />
       <ComponentList
         child={moduleChild}
         setSelectComponentData={setSelectComponentData}
       />
-      <Graphtest
+      <Graph
         selectedcompoData={selectComponentData}
         selectedMachineName={selectedMachineName}
         selectedModuleName={selectedModuleName}
+        notificationHandler = {notificationHandler}
       />
     </div>
   );

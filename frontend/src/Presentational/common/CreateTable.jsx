@@ -1,65 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import EvalStatus from './EvalStatus';
+import React, { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import EvalStatus from "./EvalStatus";
 
 function CreateTable({ setTest, data, test, child }) {
   const [selected, setSelected] = useState(test);
   const [selectedComponentData, setSelectedComponentData] = useState();
 
-  useEffect(() => {
-    console.log(selected);
-  }, [selected]);
-
+  const tableBodyRef = useRef(null);    // 스크롤부분
+  
   const idxHandler = (idx) => {
     setSelected(idx);
     setTest(idx);
-  }
-
+  };
+  
   const idxClickHandler = () => {
     setSelectedComponentData(child[selected]);
-  }
-
+  };
+  
   const dataTable = data?.map((elem, idx) => {
-    if (elem.value < 0){
-      elem.eval = "unacceptable";
-    }
-    else if (elem.value < 0.03){
-      elem.eval = "unsatisfactory";
-    }
-    else if (elem.value < 0.3){
-      elem.eval = "satisfactory";
-    }
-    else {
-      elem.eval = "Good";
+    if (elem.value < 0.1) {
+      elem.eval = "UNACCEPTABLE";
+    } else if (elem.value < 0.2) {
+      elem.eval = "UNSATISFACTORY";
+    } else if (elem.value < 0.3) {
+      elem.eval = "SATISFACTORY";
+    } else {
+      elem.eval = "GOOD";
     }
     
     return (
-      <tr className='tableBody' key={idx}>
-        <td style={{ width: '30px' }}><input type="radio" checked={idx === selected} onChange={() => idxHandler(idx)} onClick={idxClickHandler}/></td>
-        <td>{elem.name}</td>
-        <td>
-          <EvalStatus evalValue={elem.eval}/>
+      <tr
+      className={`tableBody ${idx === selected ? "selected" : ""}`}
+      key={idx}
+      onClick={() => idxHandler(idx)}
+      >
+        <td style={{ width: "30px" }}>
+          <input
+            type="radio"
+            checked={idx === selected}
+            onChange={() => {}}
+            onClick={idxClickHandler}
+            />
         </td>
-        <td>{elem.value}</td>
+        <StyledTd>{elem.name}</StyledTd>
+        <StyledTd style={{ position: "relative", left: "20px" }}>
+          <EvalStatus evalValue={elem.eval} />
+        </StyledTd>
+        <StyledTd>{parseFloat(elem.value).toFixed(2)}</StyledTd>
       </tr>
     );
   });
   
-  // Render the UI for your table
+
+  // 스크롤 부분
+  useEffect(() => {
+    console.log("실행")
+      if (tableBodyRef.current){
+          tableBodyRef.current.scrollTop = 0;
+        }
+  }, [])
+
   return (
     <Styles>
       <table className="table">
         <thead>
-          <tr className='tableHeader'>
-            <td style={{ width: '30px' }}></td>
+          <tr className="tableHeader">
+            <td style={{ width: "30px" }}></td>
             <td>Component</td>
-            <td>Status</td>
+            <td style={{ paddingLeft: "50px" }}>Status</td>
             <td>AssetScore</td>
           </tr>
         </thead>
-        <tbody>
-          {dataTable}
-        </tbody>
+          <tbody style={{verticalAlign: 'middle', maxHeight:"384px"}} ref={tableBodyRef}>{dataTable}</tbody>
+
       </table>
     </Styles>
   );
@@ -67,18 +80,27 @@ function CreateTable({ setTest, data, test, child }) {
 
 export default CreateTable;
 
+
+const StyledTd = styled.td`
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-size: 12px;
+  color: #707070;
+`;
 const Styles = styled.div`
   table {
     border-spacing: 0;
     width: 100%;
-    border: 1px solid #ddd;
+    height: 100%
+    border: none;
 
     td {
       text-align: center;
-      font-size: 12px;
-      font-family: 'Inter';
+      font-size: 10px;
+      font-family: "Inter";
       font-style: normal;
       color: #707070;
+      border: none;
     }
 
     .tableHeader {
@@ -93,7 +115,7 @@ const Styles = styled.div`
         background-color: #ddd;
       }
 
-      input[type='radio']:checked {
+      input[type="radio"]:checked {
         background-color: #2196f3;
         color: white;
       }

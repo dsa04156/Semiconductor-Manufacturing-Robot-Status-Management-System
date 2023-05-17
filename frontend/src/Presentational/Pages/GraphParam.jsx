@@ -125,15 +125,10 @@ export default GraphParam;
 
 const ParamBox = styled.div`
   position: absolute;
-  top: 90px;
-  left:700px;
+  top: 100px;
+  left: 700px;
   background: #ffffff;
-  /* border: 1px solid rgba(0, 0, 0, 0.2); */
   width: 180px;
-  height: 360px;
-  /* box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); */
-  /* border-radius: 20px; */
-  /* display: flex; */
-  /* align-items: center; */
+  height: 100px;
   overflow-y: auto;
 `;
