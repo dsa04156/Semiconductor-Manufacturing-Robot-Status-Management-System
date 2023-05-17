@@ -811,7 +811,7 @@ const Line = styled.div`
   height: 0px;
   left: 10px;
   top: 35px;
-  border: 1px solid #eff1f5;
+  border: 1px solid #707070;
 `;
 
 const PFont = styled.div`

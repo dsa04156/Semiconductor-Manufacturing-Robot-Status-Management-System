@@ -48,5 +48,5 @@ const Line = styled.div`
   height: 0px;
   left: 15px;
   top: 45px;
-  border: 1px solid #eff1f5;
+  border: 1px solid #707070;
 `;
