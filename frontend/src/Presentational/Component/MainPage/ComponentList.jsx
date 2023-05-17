@@ -34,8 +34,8 @@ const Small = styled.div`
 `;
 
 const Font = styled.div`
-  margin: 12px 0px 12px 25px;
-  font-family: "Segoe UI";
+  margin : 10px 0px 10px 20px;
+  font-family: "Inter";
   font-style: normal;
   font-size: 16px;
   color: #707070;
@@ -44,7 +44,6 @@ const Font = styled.div`
   font-weight: 600;
 
 `;
-
 const Line = styled.div`
   position: absolute;
   width: 430px;
