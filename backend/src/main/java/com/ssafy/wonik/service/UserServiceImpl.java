@@ -79,6 +79,7 @@ public class UserServiceImpl implements UserService {
                 collectionNames.remove("tempusers");
                 collectionNames.remove("system.version");
                 collectionNames.remove("system.users");
+                collectionNames.remove("system.profile");
                 userResponseDto.setCollectionNames(collectionNames);
             } catch (Exception e) {
                 System.out.println(e);
