@@ -3,6 +3,7 @@ import CreateTable from "../common/CreateTable";       // 스크롤 부분
 import ComponentList from "../Component/MainPage/ComponentList";
 import Graph from "../Component/MainPage/Graph";
 import react, { useState } from "react";
+import usePushNotification from '../common/usePushNotification ';
 
 const Mainpage = () => {
   const [moduleChild, setModuleChild] = useState([]);
@@ -10,6 +11,16 @@ const Mainpage = () => {
   const [selectedMachineName, setSelectedMachineName] = useState();
   const [selectedModuleName, setSelectedModuleName] = useState();
   const [selected, setSelected] = useState(null);            // 스크롤 부분
+
+
+  const { fireNotificationWithTimeout } = usePushNotification();
+    const notificationHandler = (e) => {
+      console.log("실행은 됨 안뜨는 것 뿐")
+      fireNotificationWithTimeout('Machine Error', {
+        body: e+" 의 상태가 좋지않습니다.",
+      });
+  
+    }  
 
   return (
     <div>
@@ -29,7 +40,7 @@ const Mainpage = () => {
         selectedcompoData={selectComponentData}
         selectedMachineName={selectedMachineName}
         selectedModuleName={selectedModuleName}
-
+        notificationHandler = {notificationHandler}
       />
     </div>
   );
