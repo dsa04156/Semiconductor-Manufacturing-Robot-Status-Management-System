@@ -47,7 +47,7 @@ public class SseController {
 
     @PostMapping("/newerror/{machine}")
     public HttpStatus NewError(@PathVariable String machine) throws Exception {
-        System.out.println(machine);
+        System.out.println("에러다"+machine);
         sseEmitters.sendError(machine);
         System.out.println(machine);
         return HttpStatus.OK;
