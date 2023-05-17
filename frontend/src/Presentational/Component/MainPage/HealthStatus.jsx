@@ -20,7 +20,7 @@ const HealthStatus = ({ componentData }) => {
   }, 0);
 
   const unaccep_lables = ["unacceptable", "others"];
-  const unaccep_colors = ["#FF3E53", "#F2D8DF"];
+  const unaccep_colors = ["#FF3E53", "#CFCFCF"];
 
   const unsat_compodata = compodata.reduce((unsat_count, data) => {
     if (data.eval === "UNSATISFACTORY") {
@@ -29,7 +29,7 @@ const HealthStatus = ({ componentData }) => {
     return unsat_count;
   }, 0);
   const unsat_lables = ["unsatisfactory", "others"];
-  const unsat_colors = ["#f0d05b", "#F4E4C4"];
+  const unsat_colors = ["#f0d05b", "#CFCFCF"];
 
   const sat_compodata = compodata.reduce((sat_count, data) => {
     if (data.eval === "SATISFACTORY") {
@@ -38,7 +38,7 @@ const HealthStatus = ({ componentData }) => {
     return sat_count;
   }, 0);
   const sat_lables = ["satisfactory", "others"];
-  const sat_colors = ["#2bbfba", "#C4E2F4"];
+  const sat_colors = ["#2bbfba", "#CFCFCF"];
 
   const good_compodata = compodata.reduce((good_count, data) => {
     if (data.eval === "GOOD") {
@@ -47,7 +47,7 @@ const HealthStatus = ({ componentData }) => {
     return good_count;
   }, 0);
   const good_lables = ["Good", "others"];
-  const good_colors = ["#14B856", "#D9ECC8"];
+  const good_colors = ["#14B856", "#CFCFCF"];
 
   const datas = [
     unaccep_compodata,
@@ -139,9 +139,20 @@ const HealthStatus = ({ componentData }) => {
       chart: {
         type: "donut",
       },
+      dataLabels: {
+        enabled: false,
+      },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '80%', 
+          },
+        },
+      },
       fill: {
         colors: colors,
       },
+      
       legend: {
         show: false,
       },
@@ -162,6 +173,13 @@ const HealthStatus = ({ componentData }) => {
       },
       dataLabels: {
         enabled: false,
+      },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '80%', 
+          },
+        },
       },
       fill: {
         colors: unaccep_colors,
@@ -189,6 +207,13 @@ const HealthStatus = ({ componentData }) => {
       dataLabels: {
         enabled: false,
       },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '80%', 
+          },
+        },
+      },
       fill: {
         colors: unsat_colors,
         type: "gradient",
@@ -214,6 +239,13 @@ const HealthStatus = ({ componentData }) => {
       dataLabels: {
         enabled: false,
       },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '80%', 
+          },
+        },
+      },
       fill: {
         colors: sat_colors,
         type: "gradient",
@@ -238,6 +270,13 @@ const HealthStatus = ({ componentData }) => {
       },
       dataLabels: {
         enabled: false,
+      },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '80%', 
+          },
+        },
       },
       fill: {
         colors: good_colors,
@@ -265,7 +304,7 @@ const HealthStatus = ({ componentData }) => {
           {totalcount < 10 ? (
             <TValue size={110}>{totalcount}</TValue>
           ) : (
-            <TValue size={96}>{totalcount}</TValue>
+            <TValue size={100}>{totalcount}</TValue>
           )}
           <ReactApexChart
             options={TotdonutData.options}
