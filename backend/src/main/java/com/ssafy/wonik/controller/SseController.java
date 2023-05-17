@@ -49,6 +49,7 @@ public class SseController {
     public HttpStatus NewError(@PathVariable String machine) throws Exception {
         System.out.println(machine);
         sseEmitters.sendError(machine);
+        System.out.println(machine);
         return HttpStatus.OK;
     }
 
