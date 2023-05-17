@@ -12,7 +12,7 @@ import java.io.IOException;
 
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000","http://3.36.125.122:3000"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000","http://3.36.125.122:3000","https://k8s101.p.ssafy.io"}, allowCredentials = "true")
 @RequestMapping("/sse")
 public class SseController {
 
