@@ -29,14 +29,11 @@ const Login = () => {
     api
       .post("/account/login", JSON.stringify({ email, password }))
       .then((response) => {
-        // console.log(response.data);
         const collotionJSON = JSON.stringify(response.data.collectionNames)
         localStorage.setItem("accessToken", response.data.token);
         localStorage.setItem("collectionNames", collotionJSON);
         const data_ = jwtDecode(response.data.token);
         dispatch(authActions.settype( response.data.type ));
-        // console.log(collotionJSON)
-
         dispatch(authActions.logIn({ data: data_ }));
         dispatch(newactions.setNum(0));
 

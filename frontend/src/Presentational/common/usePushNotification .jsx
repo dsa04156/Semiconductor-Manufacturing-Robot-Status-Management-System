@@ -39,10 +39,6 @@ const usePushNotification = () => {
         };
 
         if(!notificationRef.current){
-            console.log("firenotification")
-            console.log(title)
-            console.log(option)
-
             notificationRef.current = new Notification(title, newOption);
             setNotificationClickEvent();
             notificationRef.current = null;

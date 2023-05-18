@@ -5,8 +5,6 @@ import EvalStatus from "./EvalStatus";
 function CreateTable({ setTest, data, test, child }) {
   const [selected, setSelected] = useState(test);
   const [selectedComponentData, setSelectedComponentData] = useState();
-
-  const tableBodyRef = useRef(null);    // 스크롤부분
   
   const idxHandler = (idx) => {
     setSelected(idx);
@@ -18,11 +16,11 @@ function CreateTable({ setTest, data, test, child }) {
   };
   
   const dataTable = data?.map((elem, idx) => {
-    if (elem.value < 0.1) {
+    if (elem.value < 0.3) {
       elem.eval = "UNACCEPTABLE";
-    } else if (elem.value < 0.2) {
+    } else if (elem.value < 0.5) {
       elem.eval = "UNSATISFACTORY";
-    } else if (elem.value < 0.3) {
+    } else if (elem.value < 0.8) {
       elem.eval = "SATISFACTORY";
     } else {
       elem.eval = "GOOD";
@@ -50,15 +48,6 @@ function CreateTable({ setTest, data, test, child }) {
       </tr>
     );
   });
-  
-
-  // 스크롤 부분
-  useEffect(() => {
-    console.log("실행")
-      if (tableBodyRef.current){
-          tableBodyRef.current.scrollTop = 0;
-        }
-  }, [])
 
   return (
     <Styles>
@@ -71,7 +60,7 @@ function CreateTable({ setTest, data, test, child }) {
             <td>AssetScore</td>
           </tr>
         </thead>
-          <tbody style={{verticalAlign: 'middle', maxHeight:"384px"}} ref={tableBodyRef}>{dataTable}</tbody>
+          <tbody style={{verticalAlign: 'middle', maxHeight:"384px"}}>{dataTable}</tbody>
 
       </table>
     </Styles>

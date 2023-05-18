@@ -187,7 +187,7 @@ const Graph = ({
     },
     yAxis: {
       type: "value",
-      boundaryGap: ["1%", "1%"],
+      boundaryGap: [0 , "1%"],
       show: true,
     },
     dataZoom: [
@@ -208,21 +208,27 @@ const Graph = ({
   });
 
   const newRealGraph = (newData) => {
-    console.log("newRealGraph함수 실행");
     setOption2((prev) => {
       const newOption = { ...prev }; // 깊은 복사
-      let minTime = new Date(newOption.series[0].data[0][0]);
-      let minTimeIndex = 0;
-      for (let i = 0; i < newOption.series.length; i++) {
-        if (minTime > new Date(newOption.series[i].data[0][0]))
-          minTime = new Date(newOption.series[i].data[0][0]);
-        minTimeIndex = i;
-      }
-
+      let minTime = new Date(newData[0].date);
+      minTime.setHours(minTime.getHours()-1);
+      console.log(minTime)
       for (let j = 0; j < newData.length; j++) {
         for (let i = 0; i < newOption.series.length; i++) {
+          console.log(newOption.series[i].name, newData[j].name)
           if (newOption.series[i].name === newData[j].name) {
-            newOption.series[i].data.shift();
+            console.log(new Date(newOption.series[i].data[0][0]).getTime(), ",",minTime.getTime())
+            let cnt = 0
+            for (let k = 0; k < newOption.series[i].data.length; k++){
+              if(new Date(newOption.series[i].data[k][0]).getTime() < minTime.getTime()){
+                cnt += 1;
+              }
+            }
+            console.log("for문 갯수", cnt)
+            for (let k = 0; k < cnt; k++){
+              console.log("밀어내")
+              newOption.series[i].data.shift();
+            }
             newOption.series[i].data.push([newData[j].date, newData[j].value]);
             break;
           }
@@ -230,7 +236,7 @@ const Graph = ({
       }
 
       newOption.xAxis.max = new Date(newData[0].date).getTime();
-      newOption.xAxis.min = newOption.series[minTimeIndex].data[0][0];
+      newOption.xAxis.min = minTime.getTime();
 
       if (chartRef.current) {
         const myChart = chartRef.current.getEchartsInstance();
@@ -250,16 +256,13 @@ const Graph = ({
     });
   };
   const prevdata = (realTimeFlag, resultArr, nameArr) => {
-    console.log("prevdata함수 실행");
     let realStart = new Date();
     let newEnd = new Date();
     realStart = new Date(
       realStart.getTime() - realStart.getTimezoneOffset() * 60000
     );
     realStart.setHours(realStart.getHours() - 10);
-    console.log(realStart);
     if (realTimeFlag) {
-      console.log("prevdata 안 if문 실행");
       console.log("실시간 결과 값들", resultArr);
       const newOption2 = option2;
       newOption2.xAxis = {
@@ -290,7 +293,6 @@ const Graph = ({
         myChart.setOption(newOption2);
       }
     } else {
-      console.log("이게 왜 됨ㄴ어ㅣㄹ미;ㄴ얼;", realGraphBtn);
       const t0 = performance.now();
       setOption((prev) => ({
         ...prev,
@@ -309,9 +311,7 @@ const Graph = ({
       const t1 = performance.now();
       const elapsed = t1 - t0;
       console.log(elapsed);
-
       if (chartRef.current) {
-        console.log("prevdata else 문 안에 if(cahrtRef.current문) 실행");
         const myChart = chartRef.current.getEchartsInstance();
         myChart.setOption(option);
       }
@@ -319,14 +319,11 @@ const Graph = ({
   };
 
   const onGraphHandler = () => {
-    console.log("onGraphHandler함수 실행");
     if (!selectedcompoData || !selectedcompoData.name) {
       alert("값을 선택해주세요");
     } else {
       const time1 = performance.now();
-
       setRealGraphBtn(false);
-      console.log(realGraphBtn);
       setIsLoading(true);
       axios
         .post("https://k8s101.p.ssafy.io/be/data/parameter", {
@@ -427,10 +424,6 @@ const Graph = ({
   };
 
   const onRealtimeGraphHandler = () => {
-    console.log("onRealtimeGraphHandler함수 실행");
-    console.log(realGraphBtn)
-      console.log(!realGraphBtn);
-      console.log("onRealtimeGraphHandler if문 실행됨!");
       if (!selectedcompoData || !selectedcompoData.name) {
         alert("값을 선택해주세요");
       } else {
@@ -492,11 +485,6 @@ const Graph = ({
                   if (name == componentName) {
                     parent = moduleName;
                   }
-                  console.log(                      "endDate: ",realtime,
-                    "startDate: ",realtimeAnHourAgo,
-                    "machineName: ",machineName,
-                    "componentName: ",parent,
-                    "parameterName: ",name,)
                   const res2 = await axios.post(
                     "https://k8s101.p.ssafy.io/be/data/pgraph",
                     {
@@ -563,7 +551,6 @@ const Graph = ({
   };
 
   useEffect(() => {
-    console.log("realGraphBtn 바뀜!", realGraphBtn);
     const eventSource = new EventSource(
       "https://k8s101.p.ssafy.io/be/sse/connect",
       { headers: { accept: "text/event-stream" } },
@@ -577,11 +564,9 @@ const Graph = ({
 
     eventSource.addEventListener("machine", (event) => {
       const newMachineData = event.data;
+      console.log("스웨거 실행")
 
       if (newMachineData === selectedMachineName && realGraphBtn === true) {
-        console.log(
-          "실시간 useEffect문 안 if문((newMachineData == selectedMachineName) && (realGraphBtn === true)) 실행 "
-        );
         realGraphMove();
       }
 
@@ -598,7 +583,6 @@ const Graph = ({
   }, [realGraphBtn]);
 
   const realGraphMove = () => {
-    console.log("realgraphmove 실행");
     axios
       .post("https://k8s101.p.ssafy.io/be/data/graph/now", {
         componentName: selectedcompoData?.name,

@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Icon } from "@iconify/react";
 
 const Conbox = ({ mstate, width, fontsize }) => {
-  // console.log(mstate)
   let [scolor, setscolor] = useState("");
   let [color, setcolor] = useState("");
   let [icon, seticon] = useState("");

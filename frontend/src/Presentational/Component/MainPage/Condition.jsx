@@ -43,15 +43,12 @@ const Condition = ({
   setModuleChild,
   setSelectedMachineName,
   setSelectedModuleName,
-  // selectedcompoDate,
-  // setSelected,
 }) => {
   const [machineData, setMachineData] = useState({});
   const [moduleData, setModuleData] = useState([]);
   const [status, setStatus] = useState("");
   const [currentMachineName, setCurrentMachineName] = useState("");
   const [currentModuleName, setCurrentModuleName] = useState("");
-  const [selected, setSelected] = useState(""); // 스크롤 부분
   const [selectMachineValue, setSelectMachineValue] = useState({ value: "", label: "--------" });
   const [selectValue, setSelectValue] = useState({ value: "", label: "--------" });
 
@@ -80,23 +77,19 @@ const Condition = ({
       const newMachineData = event.data;
 
       if (newMachineData == currentMachineName) {
-        //  console.log('장비 갱신 콘솔은 됨');
-
         api
           .post(`/data/${currentMachineName}`, JSON.stringify({})) // 추후 root 자리에 변수 넣어서 변경. 현재는 root로 그냥 테스트.
           .then((response) => {
-            // console.log(response.data);
             const modulelist = []; // 모듈인 애들 담아 놓는 리스트.
             for (const a of response.data) {
-              //    console.log(a);
               if (a.name === currentMachineName) {
                 setMachineData(a);
                 const value = a.value;
-                if (value < 0) {
+                if (value < 0.3) {
                   setStatus((a) => "unacceptable");
-                } else if (value < 0.03) {
+                } else if (value < 0.5) {
                   setStatus((a) => "unsatisfactory");
-                } else if (value < 0.48) {
+                } else if (value < 0.8) {
                   setStatus((a) => "satisfactory");
                 } else {
                   setStatus((a) => "Good");
@@ -116,7 +109,6 @@ const Condition = ({
             JSON.stringify({})
           )
           .then((response) => {
-            //     console.log(response.data);
             setModuleChild(response.data);
           })
           .catch((err) => {
@@ -136,32 +128,26 @@ const Condition = ({
 
   const handleChangeMachine = (selectedOption) => {
     const selectMachineName = selectedOption.value;
-    // console.log(secondSelect.current.value)
     setSelectMachineValue(selectedOption);
     setCurrentMachineName(selectMachineName);
     setModuleChild([]); // 장비 드롭다운에서 다른 장비 선택 시 컴포넌트 리스트 출력 되는 것 초기화.
-    // secondSelect.current.value = ""; // 장비 드롭다운에서 다른 장비 선택 시 모듈 드롭다운 초기화
     setSelectedMachineName(selectMachineName);
-
     setCurrentModuleName("");
-
     setSelectValue({ value: "", label: "--------" });
 
     api
       .post(`/data/${selectMachineName}`, JSON.stringify({})) // 추후 root 자리에 변수 넣어서 변경. 현재는 root로 그냥 테스트.
       .then((response) => {
-        //    console.log(response.data);
         const modulelist = []; // 모듈인 애들 담아 놓는 리스트.
         for (const a of response.data) {
-          //    console.log(a);
           if (a.name === selectMachineName) {
             setMachineData(a);
             const value = a.value;
-            if (value < 0) {
+            if (value < 0.3) {
               setStatus((a) => "unacceptable");
-            } else if (value < 0.03) {
+            } else if (value < 0.5) {
               setStatus((a) => "unsatisfactory");
-            } else if (value < 0.48) {
+            } else if (value < 0.8) {
               setStatus((a) => "satisfactory");
             } else {
               setStatus((a) => "Good");
@@ -177,13 +163,8 @@ const Condition = ({
   const handleChangeModule = (selectedOption) => {
     const selectModuleName = selectedOption.value;
 
-    // console.log("클릭", selectModuleName);
     setCurrentModuleName(selectModuleName);
     setSelectedModuleName(selectModuleName);
-    setSelected(selectModuleName); // 스크롤 부분
-
-    console.log(selectedOption);
-
     setSelectValue(selectedOption);
 
     api
@@ -193,7 +174,6 @@ const Condition = ({
       )
       .then((response) => {
         setModuleChild(response.data);
-        // console.log(response.data);
       });
   };
 

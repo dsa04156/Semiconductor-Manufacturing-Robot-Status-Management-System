@@ -1,15 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import jwtDecode from 'jwt-decode'
 
-
-
 let initialState = {
   isLogined: false,
   email: "",
   type: localStorage.getItem("type") || "",
 
 }
-
 
 const authReducer = createSlice({
   name: "authReducer",
