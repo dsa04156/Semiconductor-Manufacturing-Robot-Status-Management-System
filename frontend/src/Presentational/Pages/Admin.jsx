@@ -9,7 +9,7 @@ import api from "../../redux/api";
 const Admin = () => {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [permissionData, setPermissionData] = useState([]);
+  const [permissionData, setPermissionData] = useState({});
   const [defaultPermission, setDefaultPermission] = useState("Unknown");
 
   const collectionJSON = localStorage.getItem("collectionNames");
@@ -52,12 +52,20 @@ const Admin = () => {
     try {
       for (let index = 0; index < filteredData.length; index++) {
         const item = filteredData[index];
-        if (permissionData[index] && permissionData[index] !== "-------") {
+
+        if (
+          permissionData[item.email] &&
+          permissionData[item.email] !== "-------"
+        ) {
           await api.put("account/typeUpdate", {
             email: item.email,
-            type: permissionData[index],
+            type: permissionData[item.email],
           });
-          permissionData[index] = "-------";
+
+          setPermissionData((prevPermissionData) => ({
+            ...prevPermissionData,
+            [item.email]: "-------",
+          }));
         }
       }
       alert("권한 변경 완료");
@@ -157,17 +165,18 @@ const Admin = () => {
                       <StyledFormSelect
                         as="select"
                         size="sm"
-                        value={permissionData[index] || "-------"}
+                        // 이메일로 permissionData를 조회합니다.
+                        value={permissionData[item.email] || "-------"}
                         onChange={(e) => {
                           const selectedValue = e.target.value;
                           if (selectedValue === "-------") {
                             return; // 선택되지 않은 경우 함수 실행하지 않음
                           }
-                          setPermissionData((prevPermissionData) => {
-                            const newPermissionData = [...prevPermissionData];
-                            newPermissionData[index] = selectedValue;
-                            return newPermissionData;
-                          });
+                          // 이메일에 해당하는 permissionData를 업데이트합니다.
+                          setPermissionData((prevPermissionData) => ({
+                            ...prevPermissionData,
+                            [item.email]: selectedValue,
+                          }));
                         }}
                       >
                         {/*로그인 시 장비 타입목록 받아와서 map으로 드롭다운 구현*/}
