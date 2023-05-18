@@ -53,14 +53,21 @@ public class SseEmitters {
     }
 
     public void sendError(String machine) throws Exception{
+        StopWatch sw = new StopWatch()
+        sw.start
+        int n = 0;
         emitters.forEach(sseEmitter -> {
             try {
+                System.out.println(n)
                 sseEmitter.send(SseEmitter.event()
                         .name("errorMachine")
                         .data(machine));
+                n ++
             }catch (IOException e){
                 throw new RuntimeException(e);
             }
         });
+        sw.stop
+        System.out.println(sw.getTotalTimeSeconds())
     }
 }
