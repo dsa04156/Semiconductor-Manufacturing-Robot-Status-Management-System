@@ -133,7 +133,8 @@ const HealthStatus = ({ componentData }) => {
     }
   }
 
-  const TotdonutData = {
+  
+const TotdonutData = {
     series: datas,
     options: {
       chart: {
@@ -145,14 +146,13 @@ const HealthStatus = ({ componentData }) => {
       plotOptions: {
         pie: {
           donut: {
-            size: '80%', 
+            size: "80%",
           },
         },
       },
       fill: {
         colors: colors,
       },
-      
       legend: {
         show: false,
       },
@@ -162,9 +162,11 @@ const HealthStatus = ({ componentData }) => {
         },
       ],
       labels: labels,
+      tooltip: {
+        enabled: false, 
+      },
     },
   };
-
   const unacceptdonutData = {
     series: unaccep_data,
     options: {
