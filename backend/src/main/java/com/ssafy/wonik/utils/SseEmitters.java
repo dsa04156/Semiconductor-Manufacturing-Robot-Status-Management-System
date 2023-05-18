@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -53,21 +54,19 @@ public class SseEmitters {
     }
 
     public void sendError(String machine) throws Exception{
-        StopWatch sw = new StopWatch()
-        sw.start
-        int n = 0;
+        StopWatch sw = new StopWatch();
+        sw.start();
+        System.out.println(emitters.size());
         emitters.forEach(sseEmitter -> {
             try {
-                System.out.println(n)
                 sseEmitter.send(SseEmitter.event()
                         .name("errorMachine")
                         .data(machine));
-                n ++
             }catch (IOException e){
                 throw new RuntimeException(e);
             }
         });
-        sw.stop
-        System.out.println(sw.getTotalTimeSeconds())
+        sw.stop();
+        System.out.println(sw.getTotalTimeSeconds());
     }
 }
