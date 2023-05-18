@@ -56,7 +56,7 @@ public class SseEmitters {
     public void sendError(String machine) throws Exception{
         StopWatch sw = new StopWatch();
         sw.start();
-        System.out.println(emitters.size());
+        System.out.println("접속자 수 : " emitters.size());
         emitters.forEach(sseEmitter -> {
             try {
                 sseEmitter.send(SseEmitter.event()
@@ -67,6 +67,6 @@ public class SseEmitters {
             }
         });
         sw.stop();
-        System.out.println(sw.getTotalTimeSeconds());
+        System.out.println("sse 보내는 속도 : " + sw.getTotalTimeSeconds());
     }
 }
