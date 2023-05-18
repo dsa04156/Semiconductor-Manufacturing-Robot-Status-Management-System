@@ -42,6 +42,9 @@ public class SseEmitters {
     }
 
     public void send(String machine) throws JsonProcessingException {
+        StopWatch sw = new StopWatch();
+        sw.start();
+        System.out.println("접속자 수 : " + emitters.size());
         emitters.forEach(sseEmitter -> {
             try {
                 sseEmitter.send(SseEmitter.event()
@@ -51,12 +54,14 @@ public class SseEmitters {
                 throw new RuntimeException(e);
             }
         });
+        sw.stop();
+        System.out.println("status 최신 sse 보내는 속도 : " + sw.getTotalTimeSeconds());
     }
 
     public void sendError(String machine) throws Exception{
         StopWatch sw = new StopWatch();
         sw.start();
-        System.out.println("접속자 수 : " emitters.size());
+        System.out.println("접속자 수 : " + emitters.size());
         emitters.forEach(sseEmitter -> {
             try {
                 sseEmitter.send(SseEmitter.event()
@@ -67,6 +72,6 @@ public class SseEmitters {
             }
         });
         sw.stop();
-        System.out.println("sse 보내는 속도 : " + sw.getTotalTimeSeconds());
+        System.out.println("error sse 보내는 속도 : " + sw.getTotalTimeSeconds());
     }
 }
