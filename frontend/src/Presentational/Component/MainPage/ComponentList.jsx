@@ -34,18 +34,20 @@ const Small = styled.div`
 `;
 
 const Font = styled.div`
-  margin: 12px 0px 12px 25px;
-  font-family: "Inter";
-  font-style: normal;
-  font-size: 16px;
+  margin : 10px 0px 10px 20px;
+  font-family: "Segoe UI";
+  font-size: 18px;
   color: #707070;
-`;
+  font-size: 18px;
+  text-transform: uppercase;
+  font-weight: 600;
 
+`;
 const Line = styled.div`
   position: absolute;
   width: 430px;
   height: 0px;
   left: 15px;
   top: 45px;
-  border: 1px solid #707070;
+  border: 1px solid #B7B7B7;
 `;

@@ -14,8 +14,8 @@ const Conbox = ({ mstate, width, fontsize }) => {
       setcolor("#FF3E53");
       seticon("icon-park-solid:bad-two");
     } else if (mstate === "unsatisfactory") {
-      setscolor("#fac769");
-      setcolor("#ffb733");
+      setscolor("#f0de9c");
+      setcolor("#f0d05b");
       seticon(
         "streamline:mail-smiley-sad-face-chat-message-smiley-emoji-sad-face-unsatisfied"
       );
