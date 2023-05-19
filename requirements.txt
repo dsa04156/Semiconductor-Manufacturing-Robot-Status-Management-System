@@ -2,8 +2,6 @@ paramiko
 boto3
 pandas
 networkx
-csv
 pymongo
 datetime
-os
 requests
