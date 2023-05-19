@@ -76,8 +76,18 @@ while True:
         sendData=filename.replace('.csv','')
         machinename = sendData
         collection = db[machinename]
-        edges_f()
+        if(sendData=='WIDAS'):
+            edges_file='csv/machine_A.edges'
+            print('WIDAS다', sendData)
+        elif(sendData=='HYETA'):
+            edges_file='csv/HYETA.edges'
+            print('machine_B다 ',sendData)
+        elif(sendData=='QUANTA'):
+            edges_file='csv/QUANTA.edges'
+            print('QUANTA다', sendData)
+
         print("파일 가져왔다")
+        edges_f()
         now =datetime.now()
         now = now.strftime("%Y-%m-%d %H:%M:%S.%f")
         try:
@@ -106,7 +116,8 @@ while True:
                 node_values[node] = G.nodes[node]['data']
             else:
                 child_values = [node_values[child] for child in G.successors(node)]
-                parent_value = sum([child_values[i] * G[node][child]['weight']  for i, child in enumerate(G.successors(node))])                node_values[node] = parent_value
+                parent_value = sum([child_values[i] * G[node][child]['weight']  for i, child in enumerate(G.successors(node))])
+                node_values[node] = parent_value
 
         documents = []
         for node in G.nodes:
@@ -136,12 +147,11 @@ while True:
                         'date': date
                     })
                 
-        
-        time.sleep(5)
         try:
             res = collection.insert_many(documents)
         
             if res.acknowledged:
+                print("url이다",url+"test/"+sendData)
                 requests.get(url+"test/"+sendData, data=sendData)  # get 요청 보내기
                 os.remove(f"/app/csv/{filename}")
                 print(f"{filepath} deleted")
