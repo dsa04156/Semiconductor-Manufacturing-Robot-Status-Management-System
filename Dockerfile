@@ -14,4 +14,4 @@ RUN echo "root:root" | chpasswd
 # CMD [ "python", "./setup.py" ]
 CMD ["/usr/sbin/sshd", "-D"]
 # 시작 프로그램 마친후에, 메인 프로그램 실행
-ENTRYPOINT ["python3.8", "CsvFileMaker.py"]
+ENTRYPOINT ["python3.8", "CsvFileMaker.py","CsvFileMaker_B.py","CsvFileMaker_C.py"]
