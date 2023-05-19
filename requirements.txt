@@ -1,2 +1,10 @@
-Flask==1.1.4
-markupsafe==1.1.1
+paramiko
+time
+boto3
+pandas
+networkx
+csv
+pymongo
+datetime
+os
+requests
