@@ -1,4 +1,3 @@
-
 import time
 import schedule
 import datetime
@@ -36,7 +35,7 @@ def read_csv():
     date = now.strftime('%Y.%m.%d-')  # '%Y-%m-%d': 년-월-일
     times = now.strftime('%H.%M.%S')  # '%H:%M:%S': 시:분:초
     new_df = data.iloc[[-1]]
-    new_df.to_csv('test/'+'machine_A.csv', header=keys, index = False)
+    new_df.to_csv('test/'+'WIDAS.csv', header=keys, index = False)
     # return data
 
 def write_csv(data,filename):
@@ -56,4 +55,4 @@ schedule.every(20).seconds.do(job)
 
 while True:
     schedule.run_pending()
-    time.sleep(1) 
+    time.sleep(1)
