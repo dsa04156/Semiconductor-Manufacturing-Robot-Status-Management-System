@@ -1,9 +1,9 @@
 # (기업 연계)반도체 제조 로봇 상태 관리 시스템
 
-기간: 2023.04 ~ 2023.05
-기술스택: MongoDB, Python, React, SSE, SpringBoot, ec2, s3
-담당역할: 서버 환경 구축, db 스키마 설계, api 개발
-프로젝트 개요:  반도체 제조 로봇 상태 진단 및 관리 시스템 서비스입니다. 이 시스템은 wPHM(WONIK Prognostics and Health Management)이라는 AI 예측/탐지 모델을 기반으로 합니다. 이 시스템은 로봇의 상태를 진단하고 관리하는 데 사용되며, 로봇의 고장을 예방하고 생산성을 향상시키는 데 도움이 될 것입니다.
+기간: 2023.04 ~ 2023.05  
+기술스택: MongoDB, Python, React, SSE, SpringBoot, ec2, s3  
+담당역할: 서버 환경 구축, db 스키마 설계, api 개발  
+프로젝트 개요:  반도체 제조 로봇 상태 진단 및 관리 시스템 서비스입니다. 이 시스템은 wPHM(WONIK Prognostics and Health Management)이라는 AI 예측/탐지 모델을 기반으로 합니다. 이 시스템은 로봇의 상태를 진단하고 관리하는 데 사용되며, 로봇의 고장을 예방하고 생산성을 향상시키는 데 도움이 될 것입니다.  
 
 
 <img src="img/1.png" width="50%" height="50%">
